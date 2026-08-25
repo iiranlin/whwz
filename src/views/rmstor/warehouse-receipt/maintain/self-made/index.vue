@@ -1,0 +1,733 @@
+<template>
+  <div class="app-container app-container-splitpanes warehouse-receipt-maintain" v-loading="_loading">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col :key="tableKey" class="app-container-col r-maintain-search-table">
+         <el-pro-table
+          :columns="columns"
+          :data="tableData"
+          :pagination="pagination"
+          :pagerConfig="pagerConfig"
+          action-width="160"
+          :total="total"
+          :toolbar-config="toolBarConfig"
+          :search-collapse-threshold="10"
+          :show-checkbox="true"
+          :keep-selection="true"
+          :gridOptions="{rowId: 'ibBillCode'}"
+          :defaultSearchForm="defaultSearchForm"
+          ref="tableRef"
+          v-loading="loading"
+          @action="handleAction"
+          @search="tableSearch"
+          @reset="tableReset"
+          @selectionChange="handleSelectionChange"
+          @sortChange="sortChange"
+        >
+        </el-pro-table>
+      </el-col>
+    </el-row>
+    <create-dialog :key="createKey" ib-source="1" @dialogClose="createDialogClose" title="自制入库单新增" :visible="createDialogVisible" width="90%"  />
+    <detail-dialog @dialogClose="detailDialogClose" title="自制入库单详情" :visible="detailVisible" :currentData="currentData" width="90%" />
+    <edit-dialog :key="editKey" @dialogClose="editDialogClose" title="自制入库单修改" :visible="editVisible" :currentData="currentData" width="90%" />
+    <red-reversal-dialog :key="redReversalKey" @dialogClose="redReversalClose" title="自制入库单红冲" :visible="redReversalVisible" :currentData="currentData" width="90%" />
+    <print-dialog ref="printRef"/>
+    <ep-dialog title="删除" class="receipt-del-dialog" v-model="delVisible" destory-on-close width="45%" @close="delDialogClose">
+      <template #default>
+        <div style="padding: 12px;" v-loading="delLoading">
+          <el-form :model="delForm" :rules="delFormRules" label-position="top" ref="delFormRef">
+            <el-form-item label="删除原因：" prop="delReason">
+              <el-input v-model="delForm.delReason" type="textarea" placeholder="请输入" :rows="5" :maxlength="200" show-word-limit />
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+      <template #footer>
+        <el-button type="primary" @click="delConfirm">删除</el-button>
+      </template>
+    </ep-dialog>
+  </div>
+</template>
+
+<script setup>
+import { noSupFormJson } from "../formJson";
+import { noSupTableJson, tableButtonJson, topTableButtonJson } from "../tableJson";
+import CreateDialog from "../components/newCreateDialog.vue";
+import detailDialog from "../components/newDetail.vue";
+import editDialog from "../components/newEdit.vue";
+import searchForm from "../../components/searchForm.vue";
+import redReversalDialog from "../components/newRedReversalDialog.vue";
+import printDialog from "../components/printDialog";
+import { selectPlantDict } from "@/api/warehouse/plantDict.js";
+import { getwarehouseByUserAndPlant } from "@/api/warehouse/warehouseDict.js"; // {plantCode: xx}
+import { getWarehousePartition } from "@/api/warehouse/partition.js"; // {depotCode: xx}
+import { dictCateList } from "@/api/system/common.js";
+import { getInboundList, inboundDelete, inboundCreateCard, inboundDeleteCard, exportInbound, writeBack, batchGetInbound } from "@/api/rmstor/inbound";
+import receiptTable from "../../components/receiptTable.vue";
+import { ElMessage } from "element-plus";
+import { paramConfigList } from "@/api/system/paramConfig.js";
+import { getSessionStorage, getCookie } from '@/utils/auth'
+import { getMonthCloseList } from "@/api/settlementFile/monthCloseGroup";
+import { supplierDialogFormJson } from '../../components/formJson.';
+import { supplierDialogTableJson } from '../../components/tableJson';
+import { parseTime, getMonthStartEnd } from "@/utils/generalMethod.js";
+import { whReceiptStatusArr } from "@/utils/dictionary";
+
+const { proxy } = getCurrentInstance();
+const tableJsonArr = ref(noSupTableJson);
+
+const byCodeObj = ref(JSON.parse(getSessionStorage('byCodeObj') || '{}')); //权限判断是否显示登卡按钮（1：隐藏）
+const yearMonth = getCookie('warehouseGetYear') ? JSON.parse(getCookie('warehouseGetYear')).yearMonth ? JSON.parse(getCookie('warehouseGetYear')).yearMonth : parseTime(new Date(), '{y}{m}') : parseTime(new Date(), '{y}{m}');
+const loginDate = getCookie('warehouseYearMonth') ? parseTime(getCookie('warehouseYearMonth'), '{y}{m}') : parseTime(new Date(), '{y}{m}');
+const loginDate2 = getCookie('warehouseYearMonth') ? getCookie('warehouseYearMonth') : parseTime(new Date(), '{y}-{m}-{d}');
+const showSearch = ref(true);
+const formRef = ref(null);
+const formSelectData = ref({
+  plantCode: [],
+  depotCode: [],
+  partitionCode: [],
+  taxFlagCode: [],
+});
+const _loading = ref(false);
+const loading = ref(false);
+const queryParams = ref({
+  pageNum: 1,
+  pageSize: 30,
+  isAsc: "",
+  orderByColumn: ""
+});
+const tableData = ref([]);
+const total = ref(0);
+const tableSelectedData = ref([]);
+const currentData = ref({});
+
+const createDialogVisible = ref(false);
+const detailVisible = ref(false);
+const editVisible = ref(false);
+const redReversalVisible = ref(false);
+const printRef = ref(null);
+const redReversalKey = ref(1);
+const createKey = ref(1);
+const detailKey = ref(1);
+const editKey = ref(1);
+const delVisible = ref(false);
+const delForm = ref({
+  delReason: "",
+});
+const delFormRules = {
+  delReason: [
+    { required: true, message: "删除理由不能为空！", trigger: "blur" }
+  ]
+};
+const delFormRef = ref(null);
+const monthlySettlement = ref({});
+
+const tableRef = ref(null);
+const tableKey = ref(0);
+
+const supplierData = ref([]);
+const supplierDataTotal = ref(0);
+
+const orderDateDefault = ref([]);
+
+const startEnd = getMonthStartEnd(yearMonth);
+if (startEnd.firstDay && startEnd.lastDay) {
+  orderDateDefault.value = [parseTime(startEnd.firstDay, "{y}-{m}-{d}"), parseTime(startEnd.lastDay, "{y}-{m}-{d}")];
+}
+
+const defaultSearchForm = {
+  orderDate: orderDateDefault.value,
+};
+
+const pagination = {current: queryParams.value.pageNum, pageSize: queryParams.value.pageSize, total: total.value, pageSizes: [10, 20, 30, 50]};
+
+const pagerConfig = { pageSizes: [10, 20, 30, 50], pageSize: queryParams.value.pageSize };
+
+const getTaxFlags = async () => {
+  try {
+    const res = await dictCateList({
+      code: "tax_flag"
+    });
+    formSelectData.value.taxFlagCode = res.data ? res.data.length ? res.data.map(item => ({label: item.name, value: item.code})) : [] : [];
+    return [...formSelectData.value.taxFlagCode];
+  } catch (error) {
+    
+  }
+}
+
+const getPlantData = async () => {
+  try {
+    const res = await selectPlantDict();
+    formSelectData.value.plantCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.plantName}`, value: { code: item.plantCode, id: item.id} })) : [] : [];
+    return [...formSelectData.value.plantCode];
+  } catch (error) {
+    console.log(error);
+  }  
+}
+
+const getWareHouesData = async ({form, changedField, setFieldValue, setFieldProps}) => {
+  try {
+    
+    if (!!!form.plantCode) {
+      setFieldValue('depotCode', undefined);
+      setFieldProps('depotCode', { options: [] });
+    } else {
+      const res = await getwarehouseByUserAndPlant({
+        plantId: form.plantCode.id,
+      });
+      formSelectData.value.depotCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.whName}`, value: { code: item.whCode, id: item.id} })) : [] : [];
+      setFieldValue('depotCode', undefined);
+      setFieldProps('depotCode', { options: formSelectData.value.depotCode });
+    }
+  } catch (error) {
+    
+  }
+}
+
+const getPartitionWHData = async ({form, changedField, setFieldValue, setFieldProps}) => {
+  try {
+    if (!!!form.depotCode) {
+      setFieldValue('partitionCode', undefined);
+      setFieldProps('partitionCode', { options: [] });
+    } else {
+      const res = await getWarehousePartition({
+        whId: form.depotCode.id,
+      });
+      formSelectData.value.partitionCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.partitionName}`, value: { code: item.partitionCode, id: item.id} })) : [] : [];
+      setFieldValue('partitionCode', undefined);
+      setFieldProps('partitionCode', { options: formSelectData.value.partitionCode });
+    }
+  } catch (error) {
+    
+  }
+}
+
+const columns = computed(() => [
+  { field: "ibBillCode", title: "入库单号", minWidth: 200, align: "center", type: "link", sortable: true, searchable: true, searchType: "input", },
+  { field: "invoiceCode", title: "发票号", minWidth: 200, align: "center", searchable: false, },
+  { field: "taxFlagCode", title: "应税用途", minWidth: 140, align: "center", searchable: true, searchType: "select", searchProps: {}, requestOptions: getTaxFlags, render: (row) => row.taxFlagName},
+  { field: "bmName", title: "业务员", minWidth: 140, align: "center", searchable: false, },
+  { field: "plantCode", title: "用料地区", minWidth: 200, align: "center", searchable: true, searchType: "select", requestOptions: getPlantData, searchProps: {
+    valueKey: "id",
+  }, render: (row) => row.plantName, },
+  { field: "depotCode", title: "仓库", minWidth: 200, align: "center", searchable: true, searchType: "select", searchProps: {
+    options: [],
+    valueKey: "id",
+  }, dependsOn: ["plantCode"], onDependencyChange: getWareHouesData, render: (row) => row.depotName},
+  { field: "partitionCode", title: "仓库分区", minWidth: 200, align: "center", searchable: true, searchType: "select", searchProps: {
+    options: [],
+    valueKey: "id",
+  }, dependsOn: ["depotCode"], onDependencyChange: getPartitionWHData, render: (row) => row.partitionName},
+  { field: "flag", title: "单据状态", minWidth: 140, align: "center", searchable: true, searchType: "select", searchProps: {
+    options: whReceiptStatusArr,
+  }, render: (row) => row.flag === "2" ? "已登卡" : "未登卡"},
+  { field: "matlCode", title: "物资编码", searchable: true, searchType: "input", hideInTable: true },
+  { field: "matlName", title: "物资名称", searchable: true, searchType: "inpt", hideInTable: true },
+  { field: "matlType", title: "规格类型", searchable: true, searchType: "input", hideInTable: true },
+  { field: "orderDate", title: "下单日期", minWidth: 140, align: "center", type: "date", searchable: true, searchType: "dateRange",},
+  { field: "noteDate", title: "登卡日期", minWidth: 140, align: "center", type: "date", searchable: false, },
+  { field: "matlAmount", title: "料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
+  { field: "incotaxAmount", title: "税额（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
+  { field: "taxMatlAmount", title: "含税料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
+]);
+
+const toolBarConfig = {
+  buttons: [
+    { code: 'add', name: "新增", type: "primary", showInRow: false, showInTop: true },
+    { code: 'del', name: "删除", type: "primary", showInRow: false, showInTop: true, },
+    { code: 'board', name: "登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
+    { code: 'revoke', name: "撤销登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
+    { code: 'redReversal', name: "红冲", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2" },
+    { code: 'edit', name: "修改", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.flag === "2" },
+    { code: 'print1', name: "打印", type: "primary", showInRow: false, showInTop: true, },
+    { code: 'print2', name: "打印", type: "primary", showInRow: true, showInTop: false },
+    { code: 'export', name: "导出", type: "primary", showInRow: false, showInTop: true },
+  ]
+}
+
+const getList = async (params = {}) => {
+  loading.value = true;
+
+  try {
+    const res = await getInboundList({
+      ...queryParams.value,
+      plantCode: params.plantCode?.code || "",
+      depotCode: params.depotCode?.code || "",
+      partitionCode: params.partitionCode?.code || "",
+      orderDateBegin: params.orderDate?.length ? params.orderDate[0] : "",
+      orderDateEnd: params.orderDate?.length ? params.orderDate[1] ? params.orderDate[1]: "" : "",
+      orderDate: "",
+      orderBy: "",
+      yearMonth: "",
+      ibSource: "1",
+    });
+    tableData.value = res.data?.list || [];
+    total.value = res.data?.total || 0;
+  } catch (error) {
+    console.log(error);
+  }
+
+  loading.value = false;
+}
+
+const handleAdd = () => {
+  createDialogVisible.value = true;
+}
+
+const handleDel = () => {
+  
+  let accFlag = ref(true);
+  let accFlag2 = ref(true);
+  const arr = [];
+  const arr2 = [];
+
+  for (const item of tableSelectedData.value) {
+    if (parseTime(item.orderDate, '{y}{m}') !== loginDate) {
+      arr.push(item.ibBillCode);
+      accFlag = false;
+    }
+
+    if (item.flag === "2") {
+      arr2.push(item.ibBillCode);
+      accFlag2 = false;
+    }
+  }
+  if (arr.length) {
+    ElMessage.error(`入库单${arr.join("、")}不是当前月份单据，不允许删除！`)
+  }
+
+  if (arr2.length) {
+    ElMessage.error(`入库单${arr2.join("、")}已登卡，不允许删除！`)
+  }
+
+  if (!accFlag || !accFlag2) return;
+
+  delVisible.value = true;
+}
+
+const delDialogClose = () => {
+  delVisible.value = false;
+  delFormRef.value.resetFields();
+}
+
+const delLoading = ref(false);
+const delConfirm = () => {
+  delFormRef.value.validate(async(valid) => {
+    if (valid) {
+      delLoading.value = true;
+      try {
+        const res = await inboundDelete({
+          delReason: delForm.value.delReason,
+          ibmtIds: tableSelectedData.value.map(item => item.ibmtId),
+          yearMonth,
+          loginDate: loginDate2,
+        });
+        delDialogClose();
+        ElMessage.success("删除成功！");
+        await getList({...tableRef.value.getSearchForm()});
+        tableRef.value.clearSelection();
+      } catch (error) {
+        
+      }
+      delLoading.value = false;
+    }
+  })
+}
+
+const handleBoard = async () => {
+  try {
+
+    let accFlag = true;
+    let accFlag2 = true;
+    const arr = [];
+    for (const item of tableSelectedData.value) {
+      if (parseTime(item.orderDate, '{y}{m}') !== loginDate) {
+        arr.push(item.ibBillCode);
+        accFlag = false;
+      }
+
+      if (item.flag === "2") {
+        accFlag2 = false;
+      }
+    }
+
+    if (arr.length) {
+      ElMessage.error(`入库单${arr.join("、")}不是当前月份单据，不允许登卡！`)
+    }
+    if (!accFlag2) {
+      ElMessage.error(`选中行必须全为未登卡状态的入库单！`)
+    }
+    if (!accFlag || !accFlag2) return;
+
+    loading.value = true;
+    const res = await inboundCreateCard({
+      ibmtIds: tableSelectedData.value.map(item => item.ibmtId),
+      yearMonth,
+      loginDate: loginDate2,
+    });
+    ElMessage.success("登卡成功！");
+    await getList({...tableRef.value.getSearchForm()});
+    tableRef.value.clearSelection();
+  } catch (error) {
+    
+  }
+  loading.value = false;
+}
+
+const handleRevokeBoard = async () => {
+
+  try {
+    let accFlag = ref(true);
+    let accFlag2 = ref(true);
+    const arr = [];
+
+    for (const item of tableSelectedData.value) {
+      if (parseTime(item.orderDate, '{y}{m}') !== loginDate)  {
+        arr.push(item.ibBillCode);
+        accFlag = false;
+      }
+
+      if (item.flag === "0" || item.falg === "1") {
+        accFlag2 = false;
+      }
+    }
+
+    if (arr.length) {
+      ElMessage.error(`入库单${arr.join("、")}不是当前月份单据，不允许撤销登卡！`)
+    }
+
+    if (!accFlag2) {
+      ElMessage.error(`选中行必须全为已登卡状态的入库单！`);
+    }
+
+    if (!accFlag || !accFlag2) return;
+
+    loading.value = true;
+    const res = await inboundDeleteCard({
+      ibmtIds: tableSelectedData.value.map(item => item.ibmtId),
+      yearMonth,
+      loginDate: loginDate2,
+    });
+    ElMessage.success("撤销登卡成功！");
+    await getList({...tableRef.value.getSearchForm()});
+    tableRef.value.clearSelection();
+  } catch (error) {
+    
+  }
+  loading.value = false;
+}
+
+const handlePrint = () => {
+  printRef.value.show(tableSelectedData.value.map(item => item.ibmtId));
+}
+
+const handleExport = async (params = []) => {
+  if (tableData.value.length === 0) {
+    ElMessage.warning("数据为空，无法导出！");
+    return;
+  }
+
+  try {
+    const res = await exportInbound({
+      ...params,
+      orderByColumn: queryParams.value.orderByColumn,
+      isAsc: queryParams.value.isAsc,
+      supUnitName: params.supUnitName?.label || "",
+      supUnitCode: params.supUnitName?.unitCode || "",
+      plantCode: params.plantCode?.code || "",
+      depotCode: params.depotCode?.code || "",
+      partitionCode: params.partitionCode?.code || "",
+      orderDateBegin: params.orderDate?.length ? params.orderDate[0] : "",
+      orderDateEnd: params.orderDate?.length ? params.orderDate[1] ? params.orderDate[1] : "" : "",
+      ibSource: "1",
+      yearMonth: "",
+      orderDate: "",
+    });
+
+    const url = URL.createObjectURL(new Blob([res.data], { type: res.headers['content-type'] }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `自制入库单信息.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.log(object);
+  }
+}
+
+// table项选择变化
+const handleSelectionChange = (data) => {
+  tableSelectedData.value = [...data];
+}
+
+// 点击表格操作列按钮
+const handleButtonClick = (prop, scope) => {
+  currentData.value = {...scope.row};
+  if (prop === "edit") {
+    editVisible.value = true;
+  }
+  if (prop === "redReversal") {
+    redReversalVisible.value = true;
+  }
+  if (prop === "print") {
+    printRef.value.show([scope.row.ibmtId])
+  }
+}
+
+// 点击表格链接列
+const clickLink = (prop, row) => {
+
+  if (prop === "ibBillCode") {
+    currentData.value = {...row};
+    detailVisible.value = true;
+  }
+}
+
+const buttonDisable = (code, row) => {
+  if (code === "redReversal") {
+    if (row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2" || monthlySettlement.value.closeFlag === "1") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  if (code === "edit") {
+    // editVisible.value = true;
+    return row.flag === "2" || monthlySettlement.value.closeFlag === "1" ? false : true;
+  }
+
+  if (code === "print") {
+    return true;
+  }
+}
+
+
+const createDialogClose = () => {
+  createDialogVisible.value = false;
+  createKey.value++;
+  getList({...tableRef.value.getSearchForm()});
+}
+
+const detailDialogClose = () => {
+  currentData.value = {};
+  detailVisible.value = false;
+}
+
+const editDialogClose = (flag) => {
+  currentData.value = {};
+  editVisible.value = false;
+  editKey.value++;
+  if (flag === "confirm") {
+    getList({...tableRef.value.getSearchForm()});
+  }
+}
+
+const redReversalClose = (flag) => {
+  currentData.value = {};
+  redReversalVisible.value = false;
+  redReversalKey.value++;
+  if (flag === "confirm") {
+    getList({...tableRef.value.getSearchForm()});
+  }
+}
+
+const tableSortSearch = (searchData) => {
+  queryParams.value.orderByColumn = searchData.orderBy;
+  queryParams.value.isAsc = searchData.isAsc;
+  getList({...tableRef.value.getSearchForm()});
+}
+
+const getMonthlySettlement = async () => {
+  try {
+    const res = await getMonthCloseList({
+      yearMonth,
+    });
+    monthlySettlement.value = res.data?.list ? res.data.list.length ? res.data.list[0] : {} : {}
+  } catch (error) {
+    
+  }
+}
+
+const handleTopButtonClick = (prop, data) => {
+  if (prop === "add") {
+    handleAdd();
+  }
+
+  if (prop === "del") {
+    handleDel();
+  }
+
+  if (prop === "board") {
+    handleBoard();
+  }
+
+  if (prop === "revokeBoard") {
+    handleRevokeBoard();
+  }
+
+  if (prop === "print") {
+    handlePrint();
+  }
+
+  if (prop === "export") {
+    handleExport();
+  }
+}
+
+const handleTopButtonDisable = (prop) => {
+  if (prop === "print" && !!!tableSelectedData.value.length) {
+    return false;
+  }
+
+  if (prop === "add" && monthlySettlement.value.closeFlag === "1") {
+    return false;
+  }
+
+  if (prop === "del" && (!!!tableSelectedData.value.length || monthlySettlement.value.closeFlag === "1")) {
+    return false;
+  }
+
+  if (["board", "revokeBoard"].includes(prop) && (!!!tableSelectedData.value.length || monthlySettlement.value.closeFlag === "1" || monthlySettlement.value.stopnoteFlag === "1")) {
+    return false;
+  }
+
+  return true;
+}
+
+const handleRowStyle = (row, index) => {
+  
+  if (row.backFlag === "1") {
+    return { color: "red" };
+  }
+
+  return {};
+}
+
+const handleAction = ({code, name, row}) => {
+  if (code === "add") {
+    handleAdd();
+  }
+
+  if (code === "del") {
+    if (!!!tableSelectedData.value.length) {
+      ElMessage.error("请选择数据！");
+      return;
+    }
+    handleDel();
+  }
+
+  if (code === "board") {
+    if (!!!tableSelectedData.value.length) {
+      ElMessage.error("请选择数据！");
+      return;
+    }
+    handleBoard();
+  }
+
+  if (code === "revoke") {
+    if (!!!tableSelectedData.value.length) {
+      ElMessage.error("请选择数据！");
+      return;
+    }
+    handleRevokeBoard();
+  }
+
+  if (code === "print1") {
+    if (!!!tableSelectedData.value.length) {
+      ElMessage.error("请选择数据！");
+      return;
+    }
+    handlePrint();
+  }
+
+  if (code === "export") {
+    handleExport()
+  }
+
+  if (code === "redReversal") {
+    currentData.value = {...row};
+    redReversalVisible.value = true;
+  }
+
+  if (code === "edit") {
+    currentData.value = {...row};
+    editVisible.value = true;
+  }
+
+  if (code === "print2") {
+    printRef.value.show([row.ibmtId]);
+  }
+
+  if (code === "link" && name === "ibBillCode") {
+    currentData.value = {...row};
+    detailVisible.value = true;
+  }
+}
+
+const tableSearch = (form, pageInfo) => {
+  queryParams.value.pageNum = pageInfo.page;
+  queryParams.value.pageSize = pageInfo.pageSize;
+
+  getList(form);
+}
+
+const tableReset = () => {
+  queryParams.value.pageNum = 1;
+  queryParams.value.isAsc = "";
+  queryParams.value.orderByColumn = "";
+  tableRef.value.getTableInstance().clearSort();
+  tableRef.value.clearSelection();
+
+  tableRef.value.reload();
+}
+
+const sortChange = ({field, order}) => {
+  if (field === "ibBillCode") {
+    queryParams.value.orderByColumn = "ibBillCode";
+    if (order === "ascending") {
+      queryParams.value.isAsc = "asc";
+    }
+    if (order === "descending") {
+      queryParams.value.isAsc = "desc";
+    }
+    getList({...tableRef.value.getSearchForm()});
+  }
+}
+
+onBeforeMount(() => {
+  getMonthlySettlement();
+})
+
+onMounted(async () => {
+   tableRef.value?.reload();
+})
+</script>
+
+<style lang="scss" scoped>
+.warehouse-receipt-maintain {
+  :deep(.receipt-supplier-dialog-box) {
+    .ep-dialog {
+      height: 80vh !important;
+      .ep-dialog__body {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: calc(100% - 93px);
+      }
+    }
+  }
+  :deep(.warehouse-receipt-search-form) {
+    .input-dialog-form-item {
+        .ep-input__suffix {
+          cursor: pointer;
+          .ep-icon {
+            font-weight: 800;
+            color: var(--ep-color-primary);
+            font-size: 16px;
+          }
+        }
+    }
+  }
+}
+</style>

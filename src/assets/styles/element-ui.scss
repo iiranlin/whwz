@@ -1,0 +1,102 @@
+// cover some element-ui styles
+
+.ep-breadcrumb__inner,
+.ep-breadcrumb__inner a {
+  font-weight: 400 !important;
+}
+
+.ep-upload {
+  input[type="file"] {
+    display: none !important;
+  }
+}
+
+.ep-upload__input {
+  display: none;
+}
+
+.cell {
+  .ep-tag {
+    margin-right: 0px;
+  }
+}
+
+.small-padding {
+  .cell {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.fixed-width {
+  .ep-button--mini {
+    padding: 7px 10px;
+    width: 60px;
+  }
+}
+
+.status-col {
+  .cell {
+    padding: 0 10px;
+    text-align: center;
+
+    .ep-tag {
+      margin-right: 0px;
+    }
+  }
+}
+
+// to fixed https://github.com/ElemeFE/element/issues/2461
+.ep-dialog {
+  transform: none;
+  left: 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+// refine element ui upload
+.upload-container {
+  .ep-upload {
+    width: 100%;
+
+    .ep-upload-dragger {
+      width: 100%;
+      height: 200px;
+    }
+  }
+}
+
+// dropdown
+.ep-dropdown-menu {
+  a {
+    display: block
+  }
+}
+
+// fix date-picker ui bug in filter-item
+.ep-range-editor.ep-input__inner {
+  display: inline-flex !important;
+}
+
+// to fix el-date-picker css style
+.ep-range-separator {
+  box-sizing: content-box;
+}
+
+.ep-menu--collapse
+  > div
+  > .ep-submenu
+  > .ep-submenu__title
+  .ep-submenu__icon-arrow {
+  display: none;
+}
+
+.ep-dropdown .ep-dropdown-link{
+  color: var(--el-color-primary) !important;
+}
+
+.ep-dropdown{
+  .ep-dropdown-link{
+    outline: none;
+  }
+}

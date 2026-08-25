@@ -1,0 +1,21 @@
+export const tableJson = [
+  { isShow: true, kye: "plantCode",  prop: "plantCode", label: "用料地区", align: "center", type: "slot", width: 160},
+  { isShow: true, kye: "depotCode",  prop: "depotCode", label: "仓库", align: "center", type: "slot", width: 160 },
+  { isShow: true, kye: "partitionName",  prop: "partitionName", label: "仓库分区", align: "center", width: 160, },
+  { isShow: true, key: "csCode", prop: "csCode", label: "盘点单号", align: "center", type: "",  width: 160 },
+  { isShow: true, key: "matlCode", prop: "matlCode", label: "物资编码", align: "center", type: "", width: 180 },
+  { isShow: true, key: "matlName", prop: "matlName", label: "物资名称", align: "center", type: "", width: 180 },
+  { isShow: true, key: "matlType", prop: "matlType", label: "规格型号", align: "center", type: "", width: 180 },
+  { isShow: true, key: "matlUnit", prop: "matlUnit", label: "计量单位", align: "center", type: "", width: 140, },
+  {isShow: true, fixed: false, type: '', key: 'batchNo', prop: 'batchNo', label: '批次', align: 'center', width: 180},
+  {isShow: true, fixed: false, type: 'slot', key: 'productionDate', prop: 'productionDate', label: '生产日期', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'validityPeriod', prop: 'validityPeriod', label: '有效期', align: 'center', width: 160},
+  {isShow: true, fixed: false, key: 'validityPeriodUnit', prop: 'validityPeriodUnit', label: '有效期单位', align: 'center', type: "slot", width: 120},
+  {isShow: true, fixed: false, type: 'slot', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160},
+  { isShow: true, key: "cardPrice", prop: "cardPrice", label: "库存单价(元)", align: "center", type: "", width: 160 },
+  { isShow: true, kye: "accStock", prop: "accStock", label: "账面数量", align: "center", type: "", width: 160 },
+  { isShow: true, key: "realStock", prop: "realStock", label: "实际数量", align: "center", type: "", width: 160 },
+  { isShow: true, key: "diffNum", prop: "diffNum", label: "差异数量", align: "center", type: "", width: 160 },
+  { isShow: true, key: "diffInfo", prop: "diffInfo", label: "差异原因", align: "center", type: "", width: 140 },
+  { isShow: true, key: "comments", prop: "comments", label: "备注", align: "center", type: "", width: 180 }
+]

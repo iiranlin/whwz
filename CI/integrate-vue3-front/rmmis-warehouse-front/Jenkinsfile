@@ -1,0 +1,74 @@
+podTemplate(containers: [
+    containerTemplate(name: 'jnlp', image: '10.3.36.124:9200/library/jenkins/slave_nodejs:v1.0.7_alpha', ttyEnabled: true),
+    containerTemplate(name: 'node20', image: '10.3.36.124:9200/kube-devops/node:20-alpine', ttyEnabled: true)
+  ],
+    volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
+                hostPathVolume(hostPath: '/usr/bin/docker', mountPath: '/usr/bin/docker'),
+                hostPathVolume(hostPath: '/usr/bin/kubectl', mountPath: '/usr/bin/kubectl')]) {
+node(POD_LABEL) {
+	    stage('Get Code') {
+            git  credentialsId: 'yhc_ssh', url: 'ssh://git@10.3.36.123:9200/rmmis-warehouse/rmmis-warehouse-front.git', branch: 'integrate-vue3-front'
+        }
+	stage('Build Project'){
+    container('node20'){
+    sh    """
+            #unzip node_modules.zip
+            #chmod -R 755 node_modules/
+            node -v
+            #npm -v
+            npm i pnpm@10.28.0 -g --registry=http://10.3.36.124:5500/repository/npm-g/
+            pnpm -v
+            pnpm i
+            pnpm build:dev
+            """
+    }
+  }
+	  stage('Build Docker image rmmis-warehouse-front-integrate-vue3-front'){
+            sh  """
+                if [ ! -f Dockerfile ];then
+                   cp Dockerfile .
+                fi
+                docker login -u admin -pDef@u1tpwd 10.3.36.124:9200
+                docker build -t 10.3.36.124:9200/rmmis-warehouse/rmmis-warehouse-front-integrate-vue3-front:$BUILD_NUMBER .
+                docker push 10.3.36.124:9200/rmmis-warehouse/rmmis-warehouse-front-integrate-vue3-front:$BUILD_NUMBER
+                docker rmi 10.3.36.124:9200/rmmis-warehouse/rmmis-warehouse-front-integrate-vue3-front:$BUILD_NUMBER
+                """
+        }
+	stage('Sonar Scanner'){
+            sh "sonar-scanner -X "+
+                "-Dsonar.host.url=http://10.3.36.113:30011/ " +
+                "-Dsonar.login=01fe8db81efd3cb71add4e410050197e8298d679 " +
+                "-Dsonar.language=js " + 
+                "-Dsonar.projectKey=rmmis-warehouse-front-integrate-vue3-front " + 
+                "-Dsonar.projectName=rmmis-warehouse-front-integrate-vue3-front " + 
+                "-Dsonar.projectVersion=$BUILD_NUMBER " + 
+                "-Dsonar.sources=. " + 
+                "-Dsonar.sourceEncoding=UTF-8 " + 
+                "-Dsonar.java.binaries=."
+       }
+	    stage('Image Scan'){
+        sh "echo 10.3.36.124:9200/rmmis-warehouse/rmmis-warehouse-front-integrate-vue3-front:$BUILD_NUMBER ./Dockerfile > anchore_images"
+        anchore  engineRetries: '300', name: 'anchore_images',bailOnFail: 'false'
+      }
+stage('Deploy rmmis-warehouse-front-integrate-vue3-front-dev'){
+            sh """
+            unset http_proxy
+            unset https_proxy
+            git reset --hard
+            git clean -df
+            git checkout integrate-vue3-front
+            cd CD/integrate-vue3-front/rmmis-warehouse-front/dev
+            cat deploy.yaml
+            sed -i s/rmmis-warehouse-front-integrate-vue3-front:[[:digit:]]*\$/rmmis-warehouse-front-integrate-vue3-front:$BUILD_NUMBER/g deploy.yaml
+            cat deploy.yaml
+            git config --global user.name system
+            git config --global user.email system@dingtalk.com
+            git remote set-url origin http://liminggang:Qq12345678!@10.3.36.123:8800/rmmis-warehouse/rmmis-warehouse-front.git
+            git add .
+            git commit -m 'update tag by jenkins'
+            git push --set-upstream origin integrate-vue3-front
+            echo "应用正在部署，请稍后......"
+            """           
+        }
+}
+}

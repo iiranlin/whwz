@@ -1,0 +1,302 @@
+@use './variables.module.scss' as vars;
+
+#app {
+
+  .main-container {
+    min-height: 100%;
+    transition: margin-left .28s;
+    margin-left: vars.$base-sidebar-width;
+    position: relative;
+  }
+
+  .sidebarHide {
+    margin-left: 0!important;
+  }
+
+  .sidebar-container {
+    transition: width 0.28s;
+    width: vars.$base-sidebar-width !important;
+    height: 100%;
+    position: fixed;
+    font-size: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+    box-shadow: 2px 0 8px rgba(2, 12, 32, 0.35);
+
+    // reset element-plus css
+    .horizontal-collapse-transition {
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+    }
+
+    .scrollbar-wrapper {
+      overflow-x: hidden !important;
+    }
+
+    .ep-scrollbar {
+      height: 100%;
+    }
+
+    &.has-logo {
+      .ep-scrollbar {
+        height: calc(100% - 50px);
+      }
+    }
+
+    .is-horizontal {
+      display: none;
+    }
+
+    // 侧边栏滚动条：细窄半透明，贴合深色背景
+    .ep-scrollbar__bar.is-vertical {
+      right: 2px;
+      width: 4px;
+    }
+
+    .ep-scrollbar__thumb {
+      background-color: rgba(255, 255, 255, 0.3) !important;
+      border-radius: 2px;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.45) !important;
+      }
+    }
+
+    a {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .ep-menu {
+      border: none;
+      height: 100%;
+      width: 100% !important;
+      background-color: transparent;
+      padding: 6px 0;
+      // 菜单尺寸变量（一级 44px，子级 40px，字号 15px）
+      --el-menu-item-height: 44px;
+      --el-menu-sub-item-height: 40px;
+      --el-menu-item-font-size: 15px;
+      --el-menu-base-level-padding: 12px;
+      --el-menu-level-padding: 14px;
+      --el-menu-icon-width: 16px;
+    }
+
+    // 图标：固定 16px，与文字间距 10px
+    .ep-menu .svg-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .ep-menu-item, .menu-title {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+
+    .ep-menu-item .ep-menu-tooltip__trigger {
+      display: inline-block !important;
+    }
+
+    // 菜单项/目录标题：卡片式（左右留边距 + 圆角）
+    .ep-menu-item,
+    .ep-sub-menu__title {
+      margin: 2px 10px;
+      width: calc(100% - 20px) !important;
+      border-radius: 6px;
+      color: vars.$base-menu-color;
+      transition: color 0.2s, background-color 0.2s;
+    }
+
+    // 展开箭头颜色跟随文字；覆盖 element-plus 的 width:inherit（会继承标题 190px 宽导致三角居中），钉在标题右端
+    .ep-sub-menu__icon-arrow {
+      color: inherit;
+      opacity: 0.7;
+      width: 12px !important;
+      right: 10px;
+    }
+
+    // hover：非激活项提亮文字 + 半透明白底
+    .ep-menu-item:not(.is-active):hover,
+    .ep-menu-item:not(.is-active):focus,
+    .ep-sub-menu__title:hover {
+      background-color: vars.$menuHover !important;
+      color: #fff !important;
+    }
+
+    // 激活的叶子项：白底卡片 + 蓝字 + 左侧蓝色高亮条
+    .ep-menu-item.is-active {
+      background: #fff !important;
+      color: #14418c !important;
+      position: relative;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 30, 100, 0.2);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 16px;
+        border-radius: 0 2px 2px 0;
+        background: #14418c;
+      }
+    }
+
+    // 包含激活子项的目录标题：文字提亮
+    .ep-sub-menu.is-active > .ep-sub-menu__title {
+      color: #fff !important;
+    }
+
+    // 子菜单区域：背景加深，增强层级感
+    .ep-sub-menu .ep-menu {
+      background-color: vars.$base-sub-menu-background;
+      border-radius: 6px;
+      margin: 2px 8px 4px;
+      padding: 2px;
+
+      .ep-menu-item {
+        margin: 2px;
+        width: calc(100% - 4px) !important;
+      }
+
+      // 面板内的子目录标题与叶子项卡片对齐（覆盖全局的 margin: 2px 10px）
+      .ep-sub-menu__title {
+        margin: 2px;
+        width: calc(100% - 4px) !important;
+      }
+    }
+  }
+
+  .hideSidebar {
+    .sidebar-container {
+      width: 54px !important;
+    }
+
+    .main-container {
+      margin-left: 54px;
+    }
+
+    .sub-menu-title-noDropdown {
+      padding: 0 !important;
+      position: relative;
+
+      .ep-tooltip {
+        padding: 0 !important;
+
+        .svg-icon {
+          margin-left: 20px;
+        }
+      }
+    }
+
+    .ep-sub-menu {
+      overflow: hidden;
+
+      &>.ep-sub-menu__title {
+        padding: 0 !important;
+
+        .svg-icon {
+          margin-left: 20px;
+        }
+
+      }
+    }
+
+    .ep-menu--collapse {
+      .ep-sub-menu {
+        &>.ep-sub-menu__title {
+          &>span {
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            visibility: hidden;
+            display: inline-block;
+          }
+          &>i {
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            visibility: hidden;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  .ep-menu--collapse .ep-menu .ep-sub-menu {
+    min-width: vars.$base-sidebar-width !important;
+  }
+
+  // mobile responsive
+  .mobile {
+    .main-container {
+      margin-left: 0px;
+    }
+
+    .sidebar-container {
+      transition: transform .28s;
+      width: vars.$base-sidebar-width !important;
+    }
+
+    &.hideSidebar {
+      .sidebar-container {
+        pointer-events: none;
+        transition-duration: 0.3s;
+        transform: translate3d(-(vars.$base-sidebar-width), 0, 0);
+      }
+    }
+  }
+
+  .withoutAnimation {
+
+    .main-container,
+    .sidebar-container {
+      transition: none;
+    }
+  }
+}
+
+// when menu collapsed
+.ep-menu--vertical {
+  &>.ep-menu {
+    .svg-icon {
+      margin-right: 10px;
+    }
+  }
+
+  .nest-menu .ep-sub-menu>.ep-sub-menu__title,
+  .ep-menu-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08) !important;
+      color: #fff !important;
+    }
+  }
+
+  // the scroll bar appears when the sub-menu is too long
+  >.ep-menu--popup {
+    max-height: 100vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar-track-piece {
+      background: #0f3273;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+    }
+  }
+}

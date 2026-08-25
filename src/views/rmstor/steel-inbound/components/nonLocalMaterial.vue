@@ -1,0 +1,154 @@
+<template>
+    <ep-dialog :title="title" iconTitle="form" v-model="nonLocalVisible" width="1300px" top="5vh" append-to-body
+        height="60vh" :close-on-press-escape="false" :close-on-click-model="false">
+        <div class="sso-front-table-container2">
+            <div class="app-container app-container-splitpanes">
+                <el-row :gutter="20"
+                    class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+                    <el-col class="app-container-col">
+                        <el-form class="form-wrapper" :model="formData" ref="elForm" :inline="true" label-width="100px"
+                            style="margin-top: 10px;">
+                            <el-row class="form-left flex1">
+                                <el-col :span="6">
+                                    <el-form-item label="物资编码：" prop="matlCode">
+                                        <el-input v-model.trim="formData.matlCode" placeholder="请输入" />
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item label="物资名称：" prop="matlName">
+                                        <el-input v-model.trim="formData.matlName" placeholder="请输入" />
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item label="规格型号：" prop="matlType">
+                                        <el-input v-model.trim="formData.matlType" placeholder="请输入" />
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6" style="display: flex;justify-content: flex-end;">
+                                    <el-button class="cancel-btn" type="primary" @click="getList">查询</el-button>
+                                    <el-button class="cancel-btn" @click="resetQuery">重置</el-button>
+                                </el-col>
+                                <el-divider style="margin-bottom: 5px;margin-top: -2px;"></el-divider>
+                            </el-row>
+                        </el-form>
+                        <!-- 表格数据 -->
+                        <table-index class="table-index" :loading="loading" :idName="idName" :tableJson="tableJsonArr"
+                            :tableData="tableData" @handleSelectionChange="handleSelectionChange" operationWidth="150">
+                        </table-index>
+                        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+                            v-model:limit="queryParams.pageSize" @pagination="getList" />
+                    </el-col>
+                </el-row>
+            </div>
+        </div>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="nonLocalVisible = false" class="cancel-btn"><svg-icon
+                        icon-class="cancel" />&nbsp;关闭</el-button>
+                <el-button type="primary" class="determine-btn" @click="saveBtn"><svg-icon
+                        icon-class="determine" />&nbsp;保存</el-button>
+            </div>
+        </template>
+    </ep-dialog>
+</template>
+
+<script setup>
+import {
+    getCheckList, getOutsaleDetailList,
+} from '@/api/rmstor/steel-inbound'
+import { tableJsonCheckMaterial } from "../tableJson"
+import { getLocalStorage } from '@/utils/auth'
+const { proxy } = getCurrentInstance()
+const tableJsonArr = ref(JSON.parse(getLocalStorage(proxy.$route.meta?.menuId)) || tableJsonCheckMaterial)
+const props = defineProps({
+    inBoundFormData: {
+        type: Object,
+        default: () => { }
+    }
+})
+
+const nonLocalVisible = defineModel({ default: false })
+const idName = ref('matlCode')
+const single = ref(true)
+const multiple = ref(true)
+const ids = ref([])
+const selectionData = ref([])
+
+watch(nonLocalVisible, (newVal) => {
+    if (newVal) {
+        getList()
+    } else {
+        formData.value = Object.assign({})
+        props.inBoundFormData.unitCode = ''
+        tableData.value = []
+    }
+})
+const tableData = ref([])
+const loading = ref(false)
+const title = ref('调拨（销售）单信息')
+
+const formData = ref({})
+const queryParams = ref({
+    pageNum: 1,
+    pageSize: 30,
+})
+const total = ref(0)
+const emit = defineEmits(['createSuccess', 'selectData']);
+
+const getList = async () => {
+    const { data } = await getCheckList({
+        ...formData.value,
+        ...queryParams.value,
+        type: '02'
+    })
+    tableData.value = data.list
+    total.value = data.total
+}
+/** 重置按钮操作 */
+function resetQuery() {
+    formData.value = Object.assign({})
+    getList()
+}
+
+const handleSelectionChange = (selection) => {
+    selectionData.value = selection
+    ids.value = selection.map(item => item['matlCode'])
+    single.value = selection.length != 1
+    multiple.value = !selection.length
+}
+const saveBtn = async () => {
+    nonLocalVisible.value = false
+    emit('selectData', formData.value.invoiceRequist, selectionData.value)
+}
+
+
+</script>
+<style lang="scss" scoped>
+.sso-front-table-container2 {
+    height: 77vh;
+    border: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+:deep(.ep-select, .ep-input) {
+    min-width: 180px;
+
+    .ep-input__inner {
+        border-color: #d2d2d2;
+
+        &:focus {
+            border-color: #1890ff;
+        }
+
+        &:hover {
+            border-color: #1890ff;
+        }
+    }
+}
+
+:deep(.ep-input) {
+    min-width: 180px;
+}
+</style>
