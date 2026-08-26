@@ -346,8 +346,11 @@ const getPlantList = async () => {
 
 // 初始化制单日期
 const setDefaultMonthDate = () => {
-  const dateStr = getCookie("warehouseYearMonth");
-  const date = new Date(dateStr);
+  let date = new Date(getCookie("warehouseYearMonth") || Date.now());
+  // cookie 缺失或格式非法时回退到当前月份，避免生成 NaN-NaN-NaN
+  if (Number.isNaN(date.getFullYear())) {
+    date = new Date();
+  }
   const year = date.getFullYear();
   const month = date.getMonth();
   // 当月第一天

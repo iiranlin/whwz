@@ -33,7 +33,11 @@ const loading = ref(false)
 const total = ref(0)
 
 const initDate = () => {
-    const date = new Date(getCookie("warehouseYearMonth"));
+    let date = new Date(getCookie("warehouseYearMonth") || Date.now());
+    // cookie 缺失或格式非法时回退到当前月份，避免生成 NaN-NaN-NaN
+    if (Number.isNaN(date.getFullYear())) {
+        date = new Date();
+    }
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     const formatDate = (date) => {
