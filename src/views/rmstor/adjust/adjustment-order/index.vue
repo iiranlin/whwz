@@ -292,7 +292,7 @@ const getbtnShow = async () => {
 }
 
 const init = async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
 }
 onMounted(async () => {
     init()

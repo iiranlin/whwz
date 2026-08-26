@@ -78,7 +78,7 @@ const data = reactive({
 const { queryParams, deptAssigndeptProp, userData } = toRefs(data)
 
 async function init () {
-  columnsData.value = await columns
+  columnsData.value = await columns()
 }
 init()
 

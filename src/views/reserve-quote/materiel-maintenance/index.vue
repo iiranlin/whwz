@@ -142,7 +142,7 @@ const createSuccess = () => {
     getList()
 }
 const init = async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
 }
 onMounted(() => {
     init()

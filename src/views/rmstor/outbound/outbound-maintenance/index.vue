@@ -294,7 +294,7 @@ const getbtnShow = async () => {
     isStopnoteFlag.value = data.stopnoteFlag
 }
 const init = async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
 }
 onMounted(() => {
     init()

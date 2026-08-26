@@ -60,7 +60,7 @@ const onAction = ({ code, row, selectedRows }) => {
     eventObj[code] && eventObj[code]()
 }
 const init = async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
 }
 onMounted(() => {
     init()

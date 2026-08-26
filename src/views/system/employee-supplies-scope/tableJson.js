@@ -109,7 +109,8 @@ const columnsData = async () => {
   ];
 }
 
-export const columns = columnsData()
+// 懒导出：模块顶层不执行请求，进入页面调用 columns() 时才发请求（避免打包后未登录即触发 401）
+export const columns = columnsData
 
 export const toolbarConfig = {
   buttons: [

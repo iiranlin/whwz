@@ -109,7 +109,7 @@ const onAction = ({ code, row, selectedRows }) => {
 }
 
 onMounted(async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
     getList()
 })
 

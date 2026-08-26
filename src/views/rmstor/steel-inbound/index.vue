@@ -312,7 +312,7 @@ const rluSelectChange = (data) => {
 }
 
 const init = async () => {
-    columnsData.value = await columns
+    columnsData.value = await columns()
 }
 
 const openPicker = (val) =>{
