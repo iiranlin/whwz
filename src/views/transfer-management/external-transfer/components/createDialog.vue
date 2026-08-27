@@ -442,14 +442,16 @@ const saveBtn = (isSign) => {
       }
       formData.value = {...formData.value, isSign,details: tableData.value}
       if(isSign){
-        proxy.$reviewerDialog({
-          billType: 'DWDBD',
-          billIdList: [],
-          multiple: true,
-          success: ({auditUserId}) => {
-            saveMainCreateModify({...formData.value, auditUserId})
-          }
-        })
+        // 无工作流：直接保存并报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+        // proxy.$reviewerDialog({
+        //   billType: 'DWDBD',
+        //   billIdList: [],
+        //   multiple: true,
+        //   success: ({auditUserId}) => {
+        //     saveMainCreateModify({...formData.value, auditUserId})
+        //   }
+        // })
+        saveMainCreateModify(formData.value)
         return
       }
       saveMainCreateModify(formData.value)
@@ -457,8 +459,8 @@ const saveBtn = (isSign) => {
   })
 }
 
-const setMainReview = (isApproved, auditUserId, comment) => {
-  mainReview([{auditUserId, billType: 'DWDBD', comment, mtId: formData.value.mtId, state: isApproved}]).then(({message}) => {
+const setMainReview = (isApproved, comment) => {
+  mainReview([{billType: 'DWDBD', comment, mtId: formData.value.mtId, state: isApproved}]).then(({message}) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
     emit('createSuccess')
@@ -467,14 +469,16 @@ const setMainReview = (isApproved, auditUserId, comment) => {
 
 const handleApprove = (isApproved) => {
   if(isApproved === '1'){
-    proxy.$reviewerDialog({
-      billId: formData.value.mtId,
-      multiple: true,
-      urlType: false,
-      success: ({auditUserId, comment}) => {
-        setMainReview(isApproved, auditUserId, comment)
-      }
-    })
+    // 无工作流：直接审批通过，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+    // proxy.$reviewerDialog({
+    //   billId: formData.value.mtId,
+    //   multiple: true,
+    //   urlType: false,
+    //   success: ({auditUserId, comment}) => {
+    //     setMainReview(isApproved, auditUserId, comment)
+    //   }
+    // })
+    setMainReview(isApproved, '')
   }else{
     proxy.$modal.prompt('驳回原因', {
       inputValidator: (val) => {
@@ -483,7 +487,7 @@ const handleApprove = (isApproved) => {
       },
       inputErrorMessage: '请输入驳回原因'
     }).then( (data) => {
-      setMainReview(isApproved, '', data.value)
+      setMainReview(isApproved, data.value)
     })
   }
 }

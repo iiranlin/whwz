@@ -89,13 +89,14 @@ const toolbarConfig = {
                 }
             }
         },
-        {
-            code: 'detail',
-            name: '审批详情',
-            type: 'primary',
-            showInTop: false,
-            showInRow: true,
-        },
+        // 无工作流：隐藏"审批详情"入口（$flow 流程轨迹），将来接入工作流放开
+        // {
+        //     code: 'detail',
+        //     name: '审批详情',
+        //     type: 'primary',
+        //     showInTop: false,
+        //     showInRow: true,
+        // },
         {
             code: 'modify',
             name: '修改',
@@ -176,10 +177,10 @@ const onAction = ({ code, row, selectedRows }) => {
         create: () => {
             proxy.$refs.createDialog.show()
         },
-        //审批详情
-        detail: () => {
-            proxy.$flow({ bid: row.id })
-        },
+        //审批详情（无工作流：隐藏，$flow 流程轨迹，将来接入工作流放开）
+        // detail: () => {
+        //     proxy.$flow({ bid: row.id })
+        // },
         // 修改
         modify: () => {
             proxy.$refs.createDialog.show('modify', row)
@@ -234,17 +235,18 @@ const reportClick = (row, selectedRows) => {
         return
     }
     proxy.$modal.confirm('您确定要报批所选订单吗？').then(() => {
-        proxy.$reviewerDialog({
-            billType: 'TZD',
-            billIdList: selectedRows?.map(item => item.id),
-            multiple: true,
-            success: ({ auditUserId }) => {
-                rmstorInternalSubmit({ idList: releaseId, auditUserId }).then(({ message }) => {
-                    proxy.$modal.msgSuccess(message)
-                    getList()
-                })
-            }
+        // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+        // proxy.$reviewerDialog({
+        //     billType: 'TZD',
+        //     billIdList: selectedRows?.map(item => item.id),
+        //     multiple: true,
+        //     success: ({ auditUserId }) => {
+        rmstorInternalSubmit({ idList: releaseId }).then(({ message }) => {
+            proxy.$modal.msgSuccess(message)
+            getList()
         })
+        //     }
+        // })
     })
 }
 const publishClick = async (row, selectedRows) => {

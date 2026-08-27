@@ -180,7 +180,8 @@ export const toolbarConfig = {
           return false
         }
       },
-      {code: 'history', name: '审核历史', showInTop: false, showInRow: true},
+      // 无工作流：隐藏"审核历史"入口（$flow 流程轨迹），将来接入工作流放开
+      // {code: 'history', name: '审核历史', showInTop: false, showInRow: true},
       {code: 'delete', name: '删除', type: 'primary'},
       {code: 'submit', name: '报批', type: 'primary'},
       {code: 'denka', name: '登卡', type: 'primary'},

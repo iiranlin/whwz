@@ -11,7 +11,8 @@ export const tableJson = [
 
 export const tableButtonJson = [
    {code: 'maintain', name: "维护盘点单数量", type: "inline", disabled: false},
-   {code: 'reviewDetail', name: "审批详情", type: "inline", disabled: false},
+   // 无工作流：隐藏"审批详情"入口（$flow 流程轨迹），将来接入工作流放开
+   // {code: 'reviewDetail', name: "审批详情", type: "inline", disabled: false},
 ]
 
 export const matinTableJson = [

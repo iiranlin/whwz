@@ -124,17 +124,18 @@ const handleDelete = () => {
 const handleSubmit = () => {
   if(isIdsFun() && isSaleFlagFun() && isPermFlagFun()){
     proxy.$modal.confirm('您确定要报批所选订单吗？').then(() => {
-      proxy.$reviewerDialog({
-        billType: 'DWDBD',
-        billIdList: ids.value,
-        multiple: true,
-        success: ({auditUserId}) => {
-          mainSign({mtIdList: ids.value, auditUserId}).then(({message}) => {
-            proxy.$modal.msgSuccess(message)
-            getList()
-          })
-        }
+      // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+      // proxy.$reviewerDialog({
+      //   billType: 'DWDBD',
+      //   billIdList: ids.value,
+      //   multiple: true,
+      //   success: ({auditUserId}) => {
+      mainSign({mtIdList: ids.value}).then(({message}) => {
+        proxy.$modal.msgSuccess(message)
+        getList()
       })
+      //   }
+      // })
     })
   }
 }
@@ -195,7 +196,8 @@ const onAction = (payload) => {
       handleRevokeDenka()
     },
     history: () => {
-      proxy.$flow({bid: row.mtId})
+      // 无工作流：隐藏"审核历史"入口（$flow 流程轨迹），将来接入工作流放开
+      // proxy.$flow({bid: row.mtId})
       // proxy.$refs.reviewHistoryDialog.show(data.row)
     },
     // 打印

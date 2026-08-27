@@ -1,6 +1,6 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="900px" top="8vh" append-to-body v-loading="loading">
-    <el-form ref="elFormRef" :model="form" :rules="rules" label-width="130px">
+    <el-form ref="elFormRef" :model="form" :rules="rules" label-width="130px" :disabled="disabled">
       <el-divider content-position="left">基本信息</el-divider>
       <el-row>
         <el-col :span="12">
@@ -170,8 +170,13 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="submit">确 定</el-button>
-        <el-button @click="visible = false">取 消</el-button>
+        <template v-if="type === 'detail'">
+          <el-button type="primary" @click="visible = false">关 闭</el-button>
+        </template>
+        <template v-else>
+          <el-button type="primary" @click="submit">确 定</el-button>
+          <el-button @click="visible = false">取 消</el-button>
+        </template>
       </div>
     </template>
   </ep-dialog>
@@ -190,6 +195,7 @@ const loading = ref(false)
 const title = ref('新增供应商')
 const type = ref('create')
 const id = ref('')
+const disabled = ref(false)
 const suTypeOptions = ref([])
 const industryOptions = ref([])
 
@@ -268,6 +274,7 @@ function init(dialogType, rowId) {
   type.value = dialogType
   id.value = rowId || ''
   visible.value = true
+  disabled.value = false
   form.value = {
     suId: null,
     suCode: '',
@@ -300,8 +307,9 @@ function init(dialogType, rowId) {
     notes: ''
   }
   loadDict()
-  if (dialogType === 'update') {
-    title.value = '修改供应商'
+  if (dialogType === 'update' || dialogType === 'detail') {
+    title.value = dialogType === 'detail' ? '供应商详情' : '修改供应商'
+    disabled.value = dialogType === 'detail'
     loading.value = true
     supplierDetail(rowId).then(({ data }) => {
       form.value = {

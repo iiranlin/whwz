@@ -442,9 +442,9 @@ const trackNumber = async () => {
   formData.value.adjustCode = data
 }
 
-//审批和驳回
-const setRmstorInternalReview = (isApproved, auditUserId, comment) => {
-  rmstorInternalReview([{ auditUserId, billType: 'TZD', comment, id: formData.value.id, state: isApproved }]).then(({ message }) => {
+//审批和驳回（无工作流：不再传 auditUserId）
+const setRmstorInternalReview = (isApproved, comment) => {
+  rmstorInternalReview([{ billType: 'TZD', comment, id: formData.value.id, state: isApproved }]).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
     emit('createSuccess')
@@ -452,14 +452,16 @@ const setRmstorInternalReview = (isApproved, auditUserId, comment) => {
 }
 const handleApprove = (isApproved) => {
   if (isApproved === '1') {
-    proxy.$reviewerDialog({
-      billId: formData.value.id,
-      multiple: true,
-      urlType: false,
-      success: ({ auditUserId, comment }) => {
-        setRmstorInternalReview(isApproved, auditUserId, comment)
-      }
-    })
+    // 无工作流：直接审批通过，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+    // proxy.$reviewerDialog({
+    //   billId: formData.value.id,
+    //   multiple: true,
+    //   urlType: false,
+    //   success: ({ auditUserId, comment }) => {
+    //     setRmstorInternalReview(isApproved, auditUserId, comment)
+    //   }
+    // })
+    setRmstorInternalReview(isApproved, '')
   } else {
     proxy.$modal.prompt('驳回原因', {
       inputValidator: (val) => {
@@ -468,7 +470,7 @@ const handleApprove = (isApproved) => {
       },
       inputErrorMessage: '请输入驳回原因'
     }).then((data) => {
-      setRmstorInternalReview(isApproved, '', data.value)
+      setRmstorInternalReview(isApproved, data.value)
     })
   }
 }

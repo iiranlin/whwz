@@ -13,7 +13,7 @@
 <script setup name="supplierArchives">
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
-import { supplierList, supplierBatchRemove, supplierDisable, supplierResetStatus } from '@/api/base/supplier'
+import { supplierList, supplierBatchRemove, supplierDisable, supplierResetStatus, supplierSubmitAudit } from '@/api/base/supplier'
 
 const { proxy } = getCurrentInstance()
 
@@ -106,6 +106,20 @@ function handleWithdraw(row) {
   })
 }
 
+/** 提交审核（本地，不走工作流） */
+function handleSubmitAudit(row) {
+  proxy.$modal.confirm('是否确认提交审核?').then(() => {
+    loading.value = true
+    return supplierSubmitAudit(row.suId)
+  }).then(({ message }) => {
+    proxy.$modal.msgSuccess(message || '提交成功')
+    getList()
+  }).catch(() => {
+  }).finally(() => {
+    loading.value = false
+  })
+}
+
 const onAction = (payload) => {
   const { code, row } = payload
   const eventObj = {
@@ -113,7 +127,8 @@ const onAction = (payload) => {
     update: () => handleUpdate(row),
     delete: () => handleDelete(row),
     disableCooperate: () => handleDisable(row),
-    withdraw: () => handleWithdraw(row)
+    withdraw: () => handleWithdraw(row),
+    submitAudit: () => handleSubmitAudit(row)
   }
   eventObj[code] && eventObj[code]()
 }

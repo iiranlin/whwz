@@ -57,7 +57,7 @@
           <el-option v-for="item in rankList" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="form.rank === 4" label="权限范围：" prop="deptIds">
+      <el-form-item v-if="form.rank === '4'" label="权限范围：" prop="deptIds">
         <el-tree
           ref="deptTreeRef"
           :data="deptOptions"
@@ -89,13 +89,17 @@ const title = ref('新增用户')
 const type = ref('create')
 const id = ref('')
 const deptOptions = ref([])
+const pendingCheckedIds = ref([])
 
+// 数据权限（用户级别）：仓储侧只支持两档，rank=1 全路局，rank!=1 本单位
 const rankList = [
-  { code: '1', name: '仅本人' },
-  { code: '2', name: '本部门' },
-  { code: '3', name: '本部门及子部门' },
-  { code: '4', name: '自定义' },
-  { code: '5', name: '全部' }
+  { code: '1', name: '全路局（路局级）' },
+  { code: '3', name: '本单位（站段级）' }
+  // 以下 rank 选项仓储逻辑不区分，注释保留
+  // { code: '0', name: '院级' },
+  // { code: '2', name: '本部门' },
+  // { code: '4', name: '自定义' },
+  // { code: '5', name: '本部门及以下部门' }
 ]
 
 const data = reactive({
@@ -104,7 +108,7 @@ const data = reactive({
     nickName: '',
     deptId: undefined,
     status: 0,
-    rank: '5',
+    rank: '3',
     deptIds: [],
     sort: 1,
     phone: '',
@@ -128,6 +132,16 @@ const { form, rules } = toRefs(data)
 
 const emit = defineEmits(['createSuccess'])
 
+// 部门树数据加载完成后回显自定义权限勾选（兜底部门树晚于用户详情返回的情况）
+watch(deptOptions, () => {
+  if (pendingCheckedIds.value.length && proxy.$refs.deptTreeRef) {
+    proxy.$nextTick(() => {
+      proxy.$refs.deptTreeRef.setCheckedKeys(pendingCheckedIds.value)
+      pendingCheckedIds.value = []
+    })
+  }
+})
+
 // 部门树
 function getDeptTree() {
   deptTree().then(({ data }) => {
@@ -150,6 +164,16 @@ function init(dialogType, rowId) {
     userDetail(rowId).then(({ data }) => {
       form.value = data
       form.value.deptId = data.deptId || undefined
+      // 自定义数据权限时回显已保存的权限范围（部门树数据已加载则立即回显，否则由 watch 兜底）
+      if (form.value.rank === '4') {
+        pendingCheckedIds.value = form.value.deptIds || []
+        proxy.$nextTick(() => {
+          if (proxy.$refs.deptTreeRef && pendingCheckedIds.value.length) {
+            proxy.$refs.deptTreeRef.setCheckedKeys(pendingCheckedIds.value)
+            pendingCheckedIds.value = []
+          }
+        })
+      }
     })
   } else {
     title.value = '新增用户'
@@ -161,7 +185,7 @@ function submit() {
   proxy.$refs.elFormRef.validate(valid => {
     if (!valid) return
     // 自定义权限范围时收集勾选的部门
-    if (form.value.rank === 4 && proxy.$refs.deptTreeRef) {
+    if (form.value.rank === '4' && proxy.$refs.deptTreeRef) {
       form.value.deptIds = proxy.$refs.deptTreeRef.getCheckedKeys()
     }
     loading.value = true

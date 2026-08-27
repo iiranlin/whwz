@@ -58,7 +58,7 @@ export function noticeDeleteBatch(data) {
 export function noticePublish(noticeId) {
   return request({
     url: `${BASE}/notice/publish/${noticeId}`,
-    method: 'post'
+    method: 'get'
   })
 }
 
@@ -66,6 +66,6 @@ export function noticePublish(noticeId) {
 export function noticeUnPublish(noticeId) {
   return request({
     url: `${BASE}/notice/unPublish/${noticeId}`,
-    method: 'post'
+    method: 'get'
   })
 }

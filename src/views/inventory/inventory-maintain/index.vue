@@ -212,7 +212,6 @@ import detailDialog from "./components/detailDialog.vue";
 import { ElMessageBox, ElMessage } from 'element-plus';
 import MessageContent from "./components/messageContent.vue";
 import reviewDialog from "./components/reviewDialog.vue";
-import { workflowHistoryList } from "@/api/workflow/index.js";
 import { validityPeriodUnitObj } from '@/utils/dictionary';
 
 const { proxy } = getCurrentInstance()
@@ -339,35 +338,35 @@ const handleSubmit = async () => {
       return
     }
 
-    proxy.$modal.confirm('您确定要报批所选盘点单吗？').then(() => {
+    proxy.$modal.confirm('您确定要报批所选盘点单吗？').then(async () => {
       const ids = tableSelectedData.value.map(item => item.csmId)
-      proxy.$reviewerDialog({
-        billType: 'PDD',
-        billIdList: ids,
-        multiple: true,
-        success: async ({auditUserId}) => {
-          const res = await inventorySign({
-            csmIdList: ids,
-            auditUserId
-          });
+      // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+      // proxy.$reviewerDialog({
+      //   billType: 'PDD',
+      //   billIdList: ids,
+      //   multiple: true,
+      //   success: async ({auditUserId}) => {
+      const res = await inventorySign({
+        csmIdList: ids,
+      });
 
-          ElMessageBox({
-            title: "提示",
-            message: () => h(MessageContent, {
-              _info: `共选择${(res.data?.successCount || 0) + (res.data?.failureCount || 0)}条单据，提交成功${res.data?.successCount}条，失败${res.data?.failureCount}条`,
-              _arr: res.data?.message || []
-            }),
-            showCancelButton: false,
-            customClass: "divider-message-box-inventory-common"
-          }).then(() => {
-          }).catch((err) => {
-            console.log(err);
-          }).finally(() => {
-            tableSelectedData.value = [];
-            getList();
-          });
-        }
-      })
+      ElMessageBox({
+        title: "提示",
+        message: () => h(MessageContent, {
+          _info: `共选择${(res.data?.successCount || 0) + (res.data?.failureCount || 0)}条单据，提交成功${res.data?.successCount}条，失败${res.data?.failureCount}条`,
+          _arr: res.data?.message || []
+        }),
+        showCancelButton: false,
+        customClass: "divider-message-box-inventory-common"
+      }).then(() => {
+      }).catch((err) => {
+        console.log(err);
+      }).finally(() => {
+        tableSelectedData.value = [];
+        getList();
+      });
+      //   }
+      // })
     })
 
   } catch (error) {
@@ -457,22 +456,23 @@ const handleButtonClick = async (prop, {row}) => {
     dialogLoading.value = false;
   }
   if (prop === "reviewDetail") {
-    proxy.$flow({bid: row.csmId})
+    // 无工作流：隐藏"审批详情"入口（$flow 流程轨迹），将来接入工作流放开
+    // proxy.$flow({bid: row.csmId})
     return;
-    reviewVisible.value = true;
-    reviewDialogLoading.value = true;
+    // reviewVisible.value = true;
+    // reviewDialogLoading.value = true;
 
-    try {
-      currentDetailData.value = {...row};
-      const res = await workflowHistoryList({
-        billId: currentDetailData.value.csmId,
-      });
-      console.log(res);
-    } catch (error) {
-      
-    }
+    // try {
+    //   currentDetailData.value = {...row};
+    //   const res = await workflowHistoryList({
+    //     billId: currentDetailData.value.csmId,
+    //   });
+    //   console.log(res);
+    // } catch (error) {
 
-    reviewDialogLoading.value = false;
+    // }
+
+    // reviewDialogLoading.value = false;
   }
 }
 
@@ -644,32 +644,32 @@ const handleSubmitInventory = async () => {
     // const res = await toSubmitBatch({
     //   csCodeList: [currentDetailData.value.csCode]
     // });
-    proxy.$reviewerDialog({
-      billType: 'PDD',
-      billIdList: [currentDetailData.value.csmId],
-      multiple: true,
-      success: async ({auditUserId}) => {
-        const res = await inventorySign({
-          csmIdList: [currentDetailData.value.csmId],
-          auditUserId
-        });
+    // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+    // proxy.$reviewerDialog({
+    //   billType: 'PDD',
+    //   billIdList: [currentDetailData.value.csmId],
+    //   multiple: true,
+    //   success: async ({auditUserId}) => {
+    const res = await inventorySign({
+      csmIdList: [currentDetailData.value.csmId],
+    });
 
-        ElMessageBox.confirm(
-          `提交成功！`,
-          "提示",
-          {
-            type: "warning",
-            confirmButtonText: "确定",
-            showCancelButton: false,
-          }
-        ).then(() => {
-        }).catch(() => {
-        }).finally(() => {
-          maintainDialogClose();
-          getList();
-        });
+    ElMessageBox.confirm(
+      `提交成功！`,
+      "提示",
+      {
+        type: "warning",
+        confirmButtonText: "确定",
+        showCancelButton: false,
       }
-    })
+    ).then(() => {
+    }).catch(() => {
+    }).finally(() => {
+      maintainDialogClose();
+      getList();
+    });
+    //   }
+    // })
 
   } catch (error) {
     console.log(error);
@@ -777,8 +777,8 @@ const transformIsCheck = (val) => {
   }
 }
 
-const setCheckReview = (isApproved, auditUserId, comment) => {
-  checkReview([{auditUserId, billType: 'PDD', comment, csmId: currentDetailData.value.csmId, state: isApproved}]).then(({message}) => {
+const setCheckReview = (isApproved, comment) => {
+  checkReview([{billType: 'PDD', comment, csmId: currentDetailData.value.csmId, state: isApproved}]).then(({message}) => {
     proxy.$modal.msgSuccess(message)
     detailVisible.value = false
     getList()
@@ -787,14 +787,16 @@ const setCheckReview = (isApproved, auditUserId, comment) => {
 
 const handleApprove = (isApproved) => {
   if(isApproved === '1'){
-    proxy.$reviewerDialog({
-      billId: currentDetailData.value.csmId,
-      multiple: true,
-      urlType: false,
-      success: ({auditUserId, comment}) => {
-        setCheckReview(isApproved, auditUserId, comment)
-      }
-    })
+    // 无工作流：直接审批通过，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+    // proxy.$reviewerDialog({
+    //   billId: currentDetailData.value.csmId,
+    //   multiple: true,
+    //   urlType: false,
+    //   success: ({auditUserId, comment}) => {
+    //     setCheckReview(isApproved, auditUserId, comment)
+    //   }
+    // })
+    setCheckReview(isApproved, '')
   }else{
     proxy.$modal.prompt('驳回原因', {
       inputValidator: (val) => {
@@ -803,7 +805,7 @@ const handleApprove = (isApproved) => {
       },
       inputErrorMessage: '请输入驳回原因'
     }).then( (data) => {
-      setCheckReview(isApproved, '', data.value)
+      setCheckReview(isApproved, data.value)
     })
   }
 }

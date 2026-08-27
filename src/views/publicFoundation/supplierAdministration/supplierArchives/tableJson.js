@@ -135,6 +135,13 @@ export const toolbarConfig = {
       }
     },
     {
+      code: 'submitAudit', name: '提交', showInTop: false, showInRow: true,
+      disabled: (selectedRows) => {
+        const row = selectedRows[0] || {}
+        return row.status !== '1'
+      }
+    },
+    {
       code: 'delete', name: '删除', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}

@@ -29,7 +29,7 @@
 </template>
 
 <script setup name="process-approval">
-import { taskNextFlowNode } from '@/api/workflow'
+// 无工作流：暂不使用 taskNextFlowNode（import { taskNextFlowNode } from '@/api/workflow'），将来接入工作流放开
 const { proxy } = getCurrentInstance()
 
 const emit = defineEmits(['saveProcessApproval'])
@@ -61,17 +61,16 @@ function init(businessIds) {
   changeRadio()
 }
 
-/** 审批状态切换时加载驳回节点（TODO: 节点接口参数待与工作流后端确认） */
+/** 审批状态切换时加载驳回节点（无工作流：不查询节点，将来接入工作流放开 taskNextFlowNode 调用） */
 function changeRadio() {
   if (formData.value.status === '2') {
-    loading.value = true
-    taskNextFlowNode({ businessKey: ids.value[0] }).then(({ data }) => {
-      activityList.value = data || []
-    }).catch(() => {
-      activityList.value = []
-    }).finally(() => {
-      loading.value = false
-    })
+    // taskNextFlowNode({ businessKey: ids.value[0] }).then(({ data }) => {
+    //   activityList.value = data || []
+    // }).catch(() => {
+    //   activityList.value = []
+    // }).finally(() => {
+    //   loading.value = false
+    // })
   }
 }
 

@@ -113,8 +113,8 @@ const handleDeleteSuccess = (file) => {
 }
 
 
-const setPrePayPlanDtReview = (isApproved, auditUserId, comment) => {
-  prePayPlanDtReview({auditUserId, billType: 'YFK', comment, payBatchNos: [payBatchNo.value], state: isApproved}).then(({message}) => {
+const setPrePayPlanDtReview = (isApproved, comment) => {
+  prePayPlanDtReview({billType: 'YFK', comment, payBatchNos: [payBatchNo.value], state: isApproved}).then(({message}) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
     emit('success')
@@ -123,14 +123,16 @@ const setPrePayPlanDtReview = (isApproved, auditUserId, comment) => {
 
 const handleApprove = (isApproved) => {
   if(isApproved === '1'){
-    proxy.$reviewerDialog({
-      billId: payBatchNo.value,
-      multiple: true,
-      urlType: false,
-      success: ({auditUserId, comment}) => {
-        setPrePayPlanDtReview(isApproved, auditUserId, comment)
-      }
-    })
+    // 无工作流：直接审批通过，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+    // proxy.$reviewerDialog({
+    //   billId: payBatchNo.value,
+    //   multiple: true,
+    //   urlType: false,
+    //   success: ({auditUserId, comment}) => {
+    //     setPrePayPlanDtReview(isApproved, auditUserId, comment)
+    //   }
+    // })
+    setPrePayPlanDtReview(isApproved, '')
   }else{
     proxy.$modal.prompt('驳回原因', {
       inputValidator: (val) => {
@@ -139,7 +141,7 @@ const handleApprove = (isApproved) => {
       },
       inputErrorMessage: '请输入驳回原因'
     }).then( (data) => {
-      setPrePayPlanDtReview(isApproved, '', data.value)
+      setPrePayPlanDtReview(isApproved, data.value)
     })
   }
 }

@@ -51,24 +51,31 @@
         </div>
       </div>
       <div class="panel">
-        <div class="block-title">使用提示</div>
-        <div class="tip-card">
-          <div class="tip-item">通过左侧菜单切换各业务模块，菜单内容与您的账号权限保持一致。</div>
-          <div class="tip-item">点击上方快捷导航卡片，可直达对应业务模块的第一个页面。</div>
-          <div class="tip-item">列表页支持条件查询与分页浏览，表格区域内滚动查看数据。</div>
-          <div class="tip-item">如遇菜单或权限问题，请联系系统管理员处理。</div>
+        <div class="block-title">通知公告</div>
+        <div class="notice-card" v-loading="noticeLoading">
+          <div v-if="!noticeLoading && notices.length === 0" class="notice-empty">暂无公告</div>
+          <template v-else>
+            <div v-for="n in notices" :key="n.id" class="notice-item" @click="viewNotice(n)">
+              <span class="notice-title" :title="n.noticeTitle">{{ n.noticeTitle }}</span>
+              <span class="notice-time">{{ formatDate(n.createTime) }}</span>
+            </div>
+          </template>
         </div>
       </div>
     </div>
+
+    <notice-message ref="noticeMessageRef" />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import useUserStore from '@/store/modules/user'
 import usePermissionStore from '@/store/modules/permission'
 import { getCookie } from '@/utils/auth'
+import { noticePage } from '@/api/base/notice'
+import NoticeMessage from '@/views/system/notice/components/noticeMessage'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -127,6 +134,38 @@ const palette = [
 ]
 
 const go = (path) => path && router.push(path)
+
+// 通知公告
+const noticeMessageRef = ref()
+const notices = ref([])
+const noticeLoading = ref(false)
+
+// 加载已发布通知公告（最新5条）
+function getNotices() {
+  noticeLoading.value = true
+  noticePage({ flag: 1, pageNum: 1, pageSize: 5 }).then(({ data }) => {
+    notices.value = data.list || data.records || []
+  }).finally(() => {
+    noticeLoading.value = false
+  })
+}
+
+// 查看公告全文
+function viewNotice(row) {
+  noticeMessageRef.value && noticeMessageRef.value.init(row.noticeMessage)
+}
+
+// 时间格式化：YYYY-MM-DD
+function formatDate(t) {
+  if (!t) return ''
+  const d = new Date(t)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+onMounted(() => {
+  getNotices()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -418,31 +457,55 @@ const go = (path) => path && router.push(path)
   }
 }
 
-.tip-card {
+.notice-card {
   background: #fff;
   border-radius: 10px;
   border: 1px solid #e4e7ed;
-  padding: 14px 20px;
+  padding: 6px 20px;
   height: calc(100% - 47px);
   box-sizing: border-box;
+  overflow-y: auto;
 
-  .tip-item {
-    position: relative;
-    padding: 9px 0 9px 18px;
+  .notice-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f2f5;
     font-size: 13px;
-    color: #606266;
-    line-height: 1.7;
+    cursor: pointer;
 
-    &::before {
-      content: '';
-      position: absolute;
-      left: 2px;
-      top: 17px;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #2563eb;
+    &:last-child {
+      border-bottom: none;
     }
+
+    &:hover .notice-title {
+      color: #2563eb;
+    }
+
+    .notice-title {
+      flex: 1;
+      min-width: 0;
+      color: #303133;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+
+    .notice-time {
+      flex-shrink: 0;
+      color: #909399;
+      font-size: 12px;
+    }
+  }
+
+  .notice-empty {
+    padding: 30px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #909399;
   }
 }
 </style>

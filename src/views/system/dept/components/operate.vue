@@ -7,7 +7,7 @@
           <el-input v-model="batchForm.deptName" placeholder="不填则不修改" clearable />
         </el-form-item>
         <el-form-item label="排序：">
-          <el-input-number v-model="batchForm.sort" controls-position="right" :min="1" :max="9999" />
+          <el-input-number v-model="batchForm.seq" controls-position="right" :min="1" :max="9999" />
         </el-form-item>
         <el-form-item label="状态：">
           <el-radio-group v-model="batchForm.status">
@@ -37,8 +37,8 @@
       <el-form-item label="部门编码：" prop="deptCode">
         <el-input v-model="form.deptCode" placeholder="请输入部门编码" :disabled="type === 'update'" />
       </el-form-item>
-      <el-form-item label="排序：" prop="sort">
-        <el-input-number v-model="form.sort" controls-position="right" :min="1" :max="9999" />
+      <el-form-item label="排序：" prop="seq">
+        <el-input-number v-model="form.seq" controls-position="right" :min="1" :max="9999" />
       </el-form-item>
       <el-form-item label="状态：">
         <el-radio-group v-model="form.status">
@@ -74,12 +74,12 @@ const data = reactive({
     parentId: undefined,
     deptName: '',
     deptCode: '',
-    sort: 1,
+    seq: 1,
     status: 0
   },
   batchForm: {
     deptName: '',
-    sort: 1,
+    seq: 1,
     status: 0
   },
   rules: {
@@ -116,11 +116,14 @@ function init(dialogType, rowId, parentRow, batchIds) {
     title.value = '批量修改部门'
   } else {
     title.value = '新增部门'
-    form.value.parentId = parentRow ? parentRow.id : undefined
-    form.value.deptName = ''
-    form.value.deptCode = ''
-    form.value.sort = 1
-    form.value.status = 0
+    // 整体重置表单，避免残留上次编辑的 id 等字段导致主键冲突
+    form.value = {
+      parentId: parentRow ? parentRow.id : undefined,
+      deptName: '',
+      deptCode: '',
+      seq: 1,
+      status: 0
+    }
   }
 }
 

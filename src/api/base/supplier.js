@@ -71,6 +71,23 @@ export function supplierResetStatus(id) {
   })
 }
 
+// 供应商档案提交审核（本地，不走工作流）
+export function supplierSubmitAudit(id) {
+  return request({
+    url: `${BASE}/Pu/Su/submitAudit/${id}`,
+    method: 'post'
+  })
+}
+
+// 供应商审核（本地，不走工作流）state: 3-通过 0-驳回
+export function supplierAudit(id, state, comment) {
+  return request({
+    url: `${BASE}/Pu/Su/audit`,
+    method: 'post',
+    data: { id, state, comment }
+  })
+}
+
 // 供应商档案批量提交审批
 export function supplierSubmitList(data) {
   return request({

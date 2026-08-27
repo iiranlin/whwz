@@ -7,21 +7,11 @@ export const columns = [
     searchType: "input"
   },
   {
-    field: "noticeType",
-    title: "通知类型",
-    minWidth: 120,
-    searchable: true,
-    searchType: "select",
-    requestOptions: async () => [
-      { value: "0", label: "通知" },
-      { value: "1", label: "公告" }
-    ],
-    optionsCacheKey: "system-notice:type"
-  },
-  {
-    field: "publish",
+    field: "flag",
     title: "发布状态",
     minWidth: 100,
+    searchable: true,
+    searchType: "select",
     type: "dict",
     requestOptions: async () => [
       { value: "1", label: "已发布" },
@@ -30,7 +20,7 @@ export const columns = [
     optionsCacheKey: "system-notice:publish"
   },
   {
-    field: "createBy",
+    field: "createUser",
     title: "创建人",
     minWidth: 120
   },
@@ -57,14 +47,14 @@ export const toolbarConfig = {
       code: 'publish', name: '发布', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return row.publish === '1'
+        return String(row.flag) === '1'
       }
     },
     {
       code: 'unPublish', name: '撤回', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return row.publish !== '1'
+        return String(row.flag) !== '1'
       }
     },
     {

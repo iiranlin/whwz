@@ -252,24 +252,23 @@ const handleSubmit = (selectedRows) => {
   }
   const pdmIds = selectedRows.map(item => item.pdmId)
   proxy.$modal.confirm('您确定要报批所选供货单吗？').then(() => {
-    proxy.$reviewerDialog({
-      billType: 'ZCGHD',
-      billIdList: pdmIds,
-      multiple: true,
-      success: ({ auditUserId }) => {
-        submitAudit({
-          businessIds: pdmIds,
-          businessIdMap: {},
-          auditUserId,
-          auditType: '1',
-          // TODO: processKey 按工作流配置，需与后端约定，例如 'GHDGL_ZCGHD'
-          processKey: 'GHDGL_ZCGHD',
-        }).then(({ message }) => {
-          proxy.$modal.msgSuccess(message)
-          getList()
-        })
-      }
+    // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId/processKey
+    // 将来接入工作流：放开下方 $reviewerDialog 调用并传 auditUserId/processKey
+    // proxy.$reviewerDialog({
+    //   billType: 'ZCGHD',
+    //   billIdList: pdmIds,
+    //   multiple: true,
+    //   success: ({ auditUserId }) => {
+    submitAudit({
+      businessIds: pdmIds,
+      businessIdMap: {},
+      auditType: '1',
+    }).then(({ message }) => {
+      proxy.$modal.msgSuccess(message)
+      getList()
     })
+    //   }
+    // })
   })
 }
 

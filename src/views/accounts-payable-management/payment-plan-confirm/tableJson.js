@@ -24,7 +24,8 @@ export const tableButtonJson = [
   {code: 'back', name: '回退'},
   {code: 'export', name: '导出'},
   {code: 'uploadEnclosure', name: '上传附件'},
-  {code: 'history', name: '审核历史', type: 'inline'},
+  // 无工作流：隐藏"审核历史"入口（$flow 流程轨迹），将来接入工作流放开
+  // {code: 'history', name: '审核历史', type: 'inline'},
 ]
 
 // 付款计划明细列表

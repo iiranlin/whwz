@@ -19,7 +19,7 @@ export const columns = [
     minWidth: 160
   },
   {
-    field: "sort",
+    field: "seq",
     title: "排序",
     minWidth: 80,
     align: "center"

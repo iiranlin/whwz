@@ -147,18 +147,19 @@ const handleUploadEnclosure = () => {
 const handleSubmitForApproval = () => {
   if(isIdsFun() && isStatusFun('不能再次提报付款批次单')){
     proxy.$modal.confirm('您确定要报批所选付款批次单吗？').then(() => {
-      proxy.$reviewerDialog({
-        billType: 'YFK',
-        billIdList: ids.value,
-        multiple: true,
-        success: ({auditUserId}) => {
-          const payBatchNos = selectionData.value.map(item => item.payBatchNo)
-          prePayPlanDtSubmitAudit({ids: ids.value, payBatchNos, auditUserId}).then(({message}) => {
-            proxy.$modal.msgSuccess(message)
-            getList()
-          })
-        }
+      // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
+      // proxy.$reviewerDialog({
+      //   billType: 'YFK',
+      //   billIdList: ids.value,
+      //   multiple: true,
+      //   success: ({auditUserId}) => {
+      const payBatchNos = selectionData.value.map(item => item.payBatchNo)
+      prePayPlanDtSubmitAudit({ids: ids.value, payBatchNos}).then(({message}) => {
+        proxy.$modal.msgSuccess(message)
+        getList()
       })
+      //   }
+      // })
     })
   }
 }
@@ -219,7 +220,8 @@ const handleButtonClick = (code, data) => {
       handleUploadEnclosure()
     },
     history: () => {
-      proxy.$flow({bid: data.row.payBatchNo})
+      // 无工作流：隐藏"审核历史"入口（$flow 流程轨迹），将来接入工作流放开
+      // proxy.$flow({bid: data.row.payBatchNo})
     },
   }
   eventObj[code] && eventObj[code]()
