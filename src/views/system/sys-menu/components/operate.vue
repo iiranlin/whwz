@@ -174,6 +174,21 @@ function onParentChange(val) {
   }
 }
 
+/** 重置表单数据和校验 */
+function resetForm() {
+  Object.assign(form.value, defaultForm())
+  proxy.$nextTick(() => {
+    proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
+  })
+}
+
+/** 监听弹窗关闭，自动清空表单 */
+watch(visible, (val) => {
+  if (!val) {
+    resetForm()
+  }
+})
+
 // 打开弹窗
 function init(dialogType, rowId, parentRow) {
   visible.value = true
@@ -196,7 +211,6 @@ function init(dialogType, rowId, parentRow) {
     })
   } else {
     title.value = '新增菜单'
-    form.value = defaultForm()
     if (parentRow) {
       form.value.parentId = parentRow.id
       onParentChange(parentRow.id)

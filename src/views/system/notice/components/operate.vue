@@ -44,13 +44,32 @@ const { form, rules } = toRefs(data)
 
 const emit = defineEmits(['createSuccess'])
 
+/** 表单初始值 */
+const initialForm = {
+  noticeTitle: '',
+  noticeMessage: ''
+}
+
+/** 重置表单数据和校验 */
+function resetForm() {
+  Object.assign(form.value, initialForm)
+  proxy.$nextTick(() => {
+    proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
+  })
+}
+
+/** 监听弹窗关闭，自动清空表单 */
+watch(visible, (val) => {
+  if (!val) {
+    resetForm()
+  }
+})
+
 // 打开弹窗
 function init(dialogType, rowId) {
   visible.value = true
   type.value = dialogType
   id.value = rowId || ''
-  form.value.noticeTitle = ''
-  form.value.noticeMessage = ''
   if (dialogType === 'update') {
     title.value = '修改通知'
     noticeDetail(rowId).then(({ data }) => {

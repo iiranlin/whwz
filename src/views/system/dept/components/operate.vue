@@ -99,6 +99,38 @@ function getDeptTree() {
   })
 }
 
+/** 表单初始值 */
+const initialForm = {
+  parentId: undefined,
+  deptName: '',
+  deptCode: '',
+  seq: 1,
+  status: 0
+}
+
+const initialBatchForm = {
+  deptName: '',
+  seq: 1,
+  status: 0
+}
+
+/** 重置表单数据和校验 */
+function resetForm() {
+  Object.assign(form.value, initialForm)
+  Object.assign(batchForm.value, initialBatchForm)
+  proxy.$nextTick(() => {
+    proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
+    proxy.$refs.batchFormRef && proxy.$refs.batchFormRef.resetFields()
+  })
+}
+
+/** 监听弹窗关闭，自动清空表单 */
+watch(visible, (val) => {
+  if (!val) {
+    resetForm()
+  }
+})
+
 // 打开弹窗
 function init(dialogType, rowId, parentRow, batchIds) {
   visible.value = true
@@ -116,14 +148,7 @@ function init(dialogType, rowId, parentRow, batchIds) {
     title.value = '批量修改部门'
   } else {
     title.value = '新增部门'
-    // 整体重置表单，避免残留上次编辑的 id 等字段导致主键冲突
-    form.value = {
-      parentId: parentRow ? parentRow.id : undefined,
-      deptName: '',
-      deptCode: '',
-      seq: 1,
-      status: 0
-    }
+    form.value.parentId = parentRow ? parentRow.id : undefined
   }
 }
 
