@@ -33,6 +33,7 @@ function init(row) {
   checkedRoleIds.value = roleIds
   loading.value = true
   roleListAll().then(({ data }) => {
+    // 标品系统中暂未调用这个接口
     // roleList.value = data || []
   })
   userRoleList(row.id).then(({ data }) => {
