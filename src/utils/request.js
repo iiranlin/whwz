@@ -126,6 +126,8 @@ service.interceptors.response.use(res => {
       } else if (code === 601) {
         ElMessage({ message: msg, type: 'warning' })
         return Promise.reject(new Error(msg))
+      } else if (code === 10015) {
+        return  Promise.resolve(res.data)
       } else if (code !== 200) {
         ElMessage({ message: msg, type: 'error' })
         return Promise.reject('error')

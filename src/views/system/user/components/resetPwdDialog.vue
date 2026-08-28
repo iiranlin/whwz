@@ -55,6 +55,14 @@ const rules = {
     { validator: validateConfirm, trigger: 'blur' }
   ]
 }
+/** 监听弹窗关闭，重置表单数据和校验 */
+watch(visible, (val) => {
+  if (!val) {
+    proxy.$nextTick(() => {
+      proxy.$refs.pwdFormRef && proxy.$refs.pwdFormRef.resetFields()
+    })
+  }
+})
 
 // 打开弹窗
 function init(row) {

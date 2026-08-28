@@ -27,15 +27,17 @@ const userInfo = ref({})
 
 // 打开弹窗
 function init(row) {
+  let roleIds = row.roleId ? row.roleId.split(',') : []
   visible.value = true
   userInfo.value = row
-  checkedRoleIds.value = []
+  checkedRoleIds.value = roleIds
   loading.value = true
   roleListAll().then(({ data }) => {
-    roleList.value = data || []
+    // roleList.value = data || []
   })
   userRoleList(row.id).then(({ data }) => {
-    checkedRoleIds.value = (data || []).map(item => item.id)
+    roleList.value = data || []
+    // checkedRoleIds.value = (data || []).map(item => item.id)
   }).finally(() => {
     loading.value = false
   })
@@ -44,7 +46,7 @@ function init(row) {
 // 提交
 function submit() {
   loading.value = true
-  userBindRole({ ids: checkedRoleIds.value }, userInfo.value.id).then(({ message }) => {
+  userBindRole({ roleIds: checkedRoleIds.value }, userInfo.value.id).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
   }).finally(() => {
@@ -62,6 +64,7 @@ defineExpose({
   &__title {
     font-weight: 600;
     margin-bottom: 12px;
+    padding-left: 10px;
   }
 
   &__group {
@@ -70,6 +73,7 @@ defineExpose({
     gap: 10px;
     max-height: 400px;
     overflow-y: auto;
+    padding-left: 30px;
   }
 }
 </style>

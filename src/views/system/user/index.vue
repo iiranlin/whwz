@@ -22,7 +22,7 @@
       </el-col>
       <!-- 右侧用户列表 -->
       <el-col :span="18" class="app-container-col">
-        <el-pro-table ref="proTableRef" v-loading="loading" action-width="180" :page-size="30" :data="tableData"
+        <el-pro-table ref="proTableRef" v-loading="loading" action-width="210" :page-size="30" :data="tableData"
           :total="total" :columns="columns" show-checkbox :toolbar-config="toolbarConfig"
           :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch" @action="onAction"
           @selection-change="onSelectionChange">
@@ -65,14 +65,25 @@ const data = reactive({
 
 const { queryParams } = toRefs(data)
 
+/** 递归过滤树，只保留前2层级 */
+function filterTreeDepth(list, depth) {
+  if (!list || depth > 2) return []
+  return list.map(item => ({
+    ...item,
+    children: depth < 2 && item.children ? filterTreeDepth(item.children, depth + 1) : []
+  }))
+}
+
 /** 部门树 */
 function getDeptTree() {
   deptTree().then(({ data }) => {
+    let treeData = []
     if (data && data[0] && data[0].deptCode === '10000001') {
-      deptOptions.value = data[0].children || []
+      treeData = data[0].children || []
     } else {
-      deptOptions.value = data || []
+      treeData = data || []
     }
+    deptOptions.value = filterTreeDepth(treeData, 1)
   })
 }
 
