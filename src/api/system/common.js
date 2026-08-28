@@ -1,19 +1,20 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
+const VITE_APP_BASE_BASE_SERVICE = import.meta.env.VITE_APP_BASE_BASE_SERVICE
 
-// 查询通用字典明细列表
+// 查询通用字典明细列表（改用 base 字典接口：按父字典编码查子项）
 export function dictCateList(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/sys/common/dict/list`,
+    url: `${VITE_APP_BASE_BASE_SERVICE}/dict/getChildsByParentCode`,
     method: 'get',
     params
   })
 }
 
-// 部门用户树
+// 部门用户树（改用 base：部门节点下挂用户）
 export function treeWithUser(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/sys/dept/treeWithUser`,
+    url: `${VITE_APP_BASE_BASE_SERVICE}/dept/treeWithUser`,
     method: 'get',
     params
   })

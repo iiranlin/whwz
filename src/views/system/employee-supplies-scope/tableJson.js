@@ -62,11 +62,16 @@ const columnsData = async () => {
         setFieldProps('whCode', { options: [] })
         if(!form.plantCode) return
         const plantCodeObj = plantArr.find(a => a.plantCode === form.plantCode)
-        const res = await warehouseDictListAll({plantId: plantCodeObj.id})
-        whArr = res.data.map(r => {
-          return {...r, label: r.whName, value: r.whCode}
-        })
-        setFieldProps('whCode', { options: whArr })
+        if(!plantCodeObj) return
+        try {
+          const res = await warehouseDictListAll({plantId: plantCodeObj.id})
+          whArr = (res.data || []).map(r => {
+            return {...r, label: r.whName, value: r.whCode}
+          })
+          setFieldProps('whCode', { options: whArr })
+        } catch (e) {
+          // 接口异常仅清空选项，不冒泡导致整页崩溃
+        }
       },
     },
     {
@@ -89,11 +94,16 @@ const columnsData = async () => {
         setFieldProps('partitionCode', { options: [] })
         if(!form.whCode) return
         const whCodeObj = whArr.find(a => a.whCode === form.whCode)
-        const res = await partitionListAll({whId: whCodeObj.id})
-        const options = res.data.map(r => {
-          return {...r, label: r.partitionName, value: r.partitionCode}
-        })
-        setFieldProps('partitionCode', { options })
+        if(!whCodeObj) return
+        try {
+          const res = await partitionListAll({whId: whCodeObj.id})
+          const options = (res.data || []).map(r => {
+            return {...r, label: r.partitionName, value: r.partitionCode}
+          })
+          setFieldProps('partitionCode', { options })
+        } catch (e) {
+          // 接口异常仅清空选项，不冒泡导致整页崩溃
+        }
       },
     },
     {

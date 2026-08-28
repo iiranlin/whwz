@@ -171,7 +171,7 @@ export function createModifyOrder(data = {}) {
 export function matlcateNoAuthorizeTree(params = {}) {
   return request({
     method: "get",
-    url: `${VITE_APP_BASE_SSO_BASE}/rmstat/matlcate/noAuthorize/tree`,
+    url: `${VITE_APP_BASE_WAREHOUSE}/matlcate/tree`,
     params,
   })
 }
