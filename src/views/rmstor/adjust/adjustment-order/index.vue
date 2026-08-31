@@ -1,10 +1,14 @@
 <!-- 调整单维护  -->
 <template>
     <div class="app-container app-container-splitpanes">
+        <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+            <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch" table-id="adjustment-order" :show-checkbox="true"
             :grid-options="{ rowId: 'id' }" :default-search-form="defaultSearchForm" />
+            </el-col>
+        </el-row>
         <create-dialog ref="createDialog" @createSuccess="getList" />
         <print-dialog ref="printDialog" />
         <ApprovalDetail v-model="approvalVisible" :rowData="rowData" />

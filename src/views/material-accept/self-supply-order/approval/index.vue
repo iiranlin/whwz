@@ -1,10 +1,14 @@
 <!-- 自采供货单审批 -->
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
       :toolbar-config="toolbarConfig" @action="onAction" :data="tableData"
       :total="total" @search="onSearch" table-id="self-supply-order-approval" :show-checkbox="true"
       :grid-options="{ rowId: 'pdmId' }" :default-search-form="defaultSearchForm" @selection-change="onSelectionChange" />
+        </el-col>
+    </el-row>
     <order-detail ref="orderDetailRef" />
     <order-history ref="orderHistoryRef" />
     <process-approval ref="processApprovalRef" @saveProcessApproval="saveProcessApproval" />

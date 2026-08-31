@@ -1,10 +1,14 @@
 <!-- 储备定额预警(站段)  -->
 <template>
     <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch" table-id="norm-warning-section" :show-checkbox="true"
             :grid-options="{ rowId: 'mtId' }" :show-action="false" />
+            </el-col>
+        </el-row>
     </div>
 </template>
 <script setup name="norm-warning-section">

@@ -1,9 +1,13 @@
 <!-- 多次验收物资维护 -->
 <template>
     <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
         <el-pro-table :columns="columns" :page-size="queryParams.pageSize" :toolbar-config="toolbarConfig"
             :search-collapse-threshold="3" @action="onAction" :data="tableData" :total="total" @search="onSearch"
             table-id="multiple-accept-material" />
+        </el-col>
+    </el-row>
         <add-dialog ref="addDialog" @createSuccess="getList()" />
     </div>
 </template>

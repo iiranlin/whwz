@@ -1,10 +1,14 @@
 <!-- 自采供货单维护 -->
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
       :toolbar-config="toolbarConfig" @action="onAction" :data="tableData"
       :total="total" @search="onSearch" table-id="self-supply-order-maintain" :show-checkbox="true"
       action-width="300" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }" />
+        </el-col>
+    </el-row>
     <self-order-add-or-revise ref="addOrReviseRef" @createSuccess="getList" />
     <order-detail ref="orderDetailRef" @getList="getList" />
     <order-history ref="orderHistoryRef" />

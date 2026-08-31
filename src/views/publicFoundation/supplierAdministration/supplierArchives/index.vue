@@ -1,10 +1,14 @@
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table ref="proTableRef" v-loading="loading" action-width="240" :page-size="30" :data="tableData"
       :total="total" :columns="columns" show-checkbox :toolbar-config="toolbarConfig"
       :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch" @action="onAction"
       @selection-change="onSelectionChange">
     </el-pro-table>
+      </el-col>
+    </el-row>
 
     <operate ref="operateRef" @createSuccess="getList" />
   </div>

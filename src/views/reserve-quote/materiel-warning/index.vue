@@ -1,10 +1,14 @@
 <!-- 物资高低储预警  -->
 <template>
     <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" 
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch"  table-id="materiel-warning" :show-checkbox="true"
             :grid-options="{ rowId: 'mtId' }"  :show-action="false"/>
+            </el-col>
+        </el-row>
         <add-dialog v-model="visible" :rowData="rowData" @createSuccess="createSuccess" />
     </div>
 </template>
