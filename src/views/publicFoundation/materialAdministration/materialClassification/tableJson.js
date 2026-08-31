@@ -1,31 +1,25 @@
 export const columns = [
   {
-    field: "matlClassifyName",
+    field: "matlCateName",
     title: "分类名称",
     minWidth: 200,
     searchable: true,
     searchType: "input"
   },
   {
-    field: "matlClassifyCode",
+    field: "matlCateCode",
     title: "分类编码",
     minWidth: 140,
     searchable: true,
     searchType: "input"
   },
   {
-    field: "parentName",
+    field: "supCateName",
     title: "上级分类",
     minWidth: 160
   },
   {
-    field: "sort",
-    title: "排序",
-    minWidth: 80,
-    align: "center"
-  },
-  {
-    field: "bizStatus",
+    field: "effectFlag",
     title: "状态",
     minWidth: 90,
     align: "center",
@@ -37,14 +31,6 @@ export const columns = [
       { value: "1", label: "停用" }
     ],
     optionsCacheKey: "material-classify:status"
-  },
-  {
-    field: "createDate",
-    title: "创建时间",
-    minWidth: 170,
-    searchable: true,
-    searchType: "dateRange",
-    type: "date"
   }
 ]
 
@@ -55,14 +41,14 @@ export const toolbarConfig = {
       code: 'addChild', name: '新增下级', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return !row.matlClassifyId
+        return !row.matlCateCode
       }
     },
     {
       code: 'update', name: '修改', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return !row.matlClassifyId
+        return !row.matlCateCode
       }
     },
     { code: 'delete', name: '删除', type: 'primary' }

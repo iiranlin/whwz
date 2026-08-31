@@ -11,8 +11,8 @@
           <el-tree
             ref="treeRef"
             :data="treeOptions"
-            :props="{ label: 'matlClassifyName', children: 'children' }"
-            node-key="matlClassifyId"
+            :props="{ label: 'matlCateName', children: 'children' }"
+            node-key="matlCateCode"
             highlight-current
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -37,20 +37,20 @@
 <script setup name="materialArchives">
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
-import { materialList, materialBatchRemove } from '@/api/base/materialMatl'
-import { classifyTree } from '@/api/base/materialClassify'
+import { rmstatCatalogList, rmstatCatalogBatchRemove } from '@/api/warehouse/rmstatCatalog'
+import { rmstatMatlcateTree } from '@/api/warehouse/rmstatMatlcate'
 
 const { proxy } = getCurrentInstance()
 
 const menuId = ref(proxy.$route.meta?.menuId)
 const tableData = ref([])
 const loading = ref(false)
-const idName = ref('matlId')
+const idName = ref('matlCode')
 const ids = ref([])
 const total = ref(0)
 const treeOptions = ref([])
 const filterText = ref('')
-const currentClassifyId = ref('')
+const currentClassifyCode = ref('')
 
 const data = reactive({
   queryParams: {
@@ -63,7 +63,7 @@ const { queryParams } = toRefs(data)
 
 /** 分类树 */
 function getTree() {
-  classifyTree().then(({ data }) => {
+  rmstatMatlcateTree().then(({ data }) => {
     treeOptions.value = data || []
   })
 }
@@ -71,7 +71,7 @@ function getTree() {
 /** 过滤树 */
 function filterNode(value, data) {
   if (!value) return true
-  return data.matlClassifyName.indexOf(value) !== -1 || (data.matlClassifyCode && data.matlClassifyCode.indexOf(value) !== -1)
+  return data.matlCateName.indexOf(value) !== -1 || (data.matlCateCode && data.matlCateCode.indexOf(value) !== -1)
 }
 
 watch(filterText, val => {
@@ -80,11 +80,11 @@ watch(filterText, val => {
 
 /** 节点点击 */
 function handleNodeClick(node) {
-  if (currentClassifyId.value === node.matlClassifyId) {
-    currentClassifyId.value = ''
+  if (currentClassifyCode.value === node.matlCateCode) {
+    currentClassifyCode.value = ''
     proxy.$refs.treeRef.setCurrentKey(null)
   } else {
-    currentClassifyId.value = node.matlClassifyId
+    currentClassifyCode.value = node.matlCateCode
   }
   queryParams.value.pageNum = 1
   getList()
@@ -94,10 +94,10 @@ function handleNodeClick(node) {
 function getList() {
   loading.value = true
   const params = { ...queryParams.value }
-  if (currentClassifyId.value) {
-    params.matlClassifyId = currentClassifyId.value
+  if (currentClassifyCode.value) {
+    params.supMatlCode = currentClassifyCode.value
   }
-  materialList(params).then(({ data }) => {
+  rmstatCatalogList(params).then(({ data }) => {
     tableData.value = data.list || data.records || []
     total.value = data.total || tableData.value.length
   }).finally(() => {
@@ -108,7 +108,7 @@ function getList() {
 /** 搜索 */
 function onSearch(form, pageInfo) {
   queryParams.value = { ...form, ...pageInfo }
-  currentClassifyId.value = ''
+  currentClassifyCode.value = ''
   proxy.$refs.treeRef && proxy.$refs.treeRef.setCurrentKey(null)
   getList()
 }
@@ -120,12 +120,12 @@ function onSelectionChange(rows) {
 
 /** 新增 */
 function handleCreate() {
-  proxy.$refs.operateRef.init('create', undefined, currentClassifyId.value)
+  proxy.$refs.operateRef.init('create', undefined, currentClassifyCode.value)
 }
 
 /** 修改 */
 function handleUpdate(row) {
-  proxy.$refs.operateRef.init('update', row.matlId)
+  proxy.$refs.operateRef.init('update', row.matlCode)
 }
 
 /** 删除 */
@@ -135,7 +135,7 @@ function handleDelete() {
     return
   }
   proxy.$modal.confirm('是否确认删除选中的物料？').then(() => {
-    return materialBatchRemove({ ids: ids.value })
+    return rmstatCatalogBatchRemove({ ids: ids.value })
   }).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     getList()

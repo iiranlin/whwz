@@ -66,7 +66,7 @@ const data = reactive({
   deptAssigndeptProp: {
     children: 'children',
     label: 'unitName',
-    value: 'unitCode',
+    value: 'id',
     isLeaf: true
   },
 })

@@ -14,17 +14,16 @@ export const columns = [
     searchType: "input"
   },
   {
-    field: "matlClassifyName",
+    field: "matlCateName",
     title: "物料分类",
-    minWidth: 160,
-    searchable: true,
-    searchType: "input"
+    minWidth: 160
   },
   {
     field: "matlType",
-    title: "物料性质",
-    minWidth: 120,
-    align: "center"
+    title: "规格型号",
+    minWidth: 140,
+    searchable: true,
+    searchType: "input"
   },
   {
     field: "matlUnit",
@@ -35,7 +34,7 @@ export const columns = [
     searchType: "input"
   },
   {
-    field: "bizStatus",
+    field: "enableState",
     title: "状态",
     minWidth: 90,
     align: "center",
@@ -43,8 +42,8 @@ export const columns = [
     searchType: "select",
     type: "dict",
     requestOptions: async () => [
-      { value: "0", label: "启用" },
-      { value: "1", label: "停用" }
+      { value: "1", label: "启用" },
+      { value: "0", label: "停用" }
     ],
     optionsCacheKey: "material-matl:status"
   },
@@ -52,8 +51,6 @@ export const columns = [
     field: "createDate",
     title: "创建时间",
     minWidth: 170,
-    searchable: true,
-    searchType: "dateRange",
     type: "date"
   }
 ]
@@ -65,7 +62,7 @@ export const toolbarConfig = {
       code: 'update', name: '修改', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return !row.matlId
+        return !row.matlCode
       }
     },
     { code: 'delete', name: '删除', type: 'primary' }

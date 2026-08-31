@@ -65,15 +65,6 @@ const data = reactive({
 
 const { queryParams } = toRefs(data)
 
-/** 递归过滤树，只保留前2层级 */
-function filterTreeDepth(list, depth) {
-  if (!list || depth > 2) return []
-  return list.map(item => ({
-    ...item,
-    children: depth < 2 && item.children ? filterTreeDepth(item.children, depth + 1) : []
-  }))
-}
-
 /** 部门树 */
 function getDeptTree() {
   deptTree().then(({ data }) => {
@@ -83,7 +74,7 @@ function getDeptTree() {
     } else {
       treeData = data || []
     }
-    deptOptions.value = filterTreeDepth(treeData, 1)
+    deptOptions.value = treeData
   })
 }
 

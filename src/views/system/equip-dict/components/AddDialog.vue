@@ -58,7 +58,7 @@
 <script setup>
 import { statusArr } from '@/utils/dictionary'
 import { equipDictCreateModify } from '@/api/warehouse/equipDict'
-import { deptTree } from '@/api/system/common'
+import { deptTree } from '@/api/base/dept'
 const { proxy } = getCurrentInstance()
 
 const visible = ref(false)
