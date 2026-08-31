@@ -268,6 +268,21 @@ function loadDict() {
     industryOptions.value = (data || []).map(item => ({ label: item.label || item.name, value: item.value || item.code }))
   })
 }
+/** 表单初始值（从 data.form 浅拷贝，保留 null/undefined） */
+const initialForm = { ...data.form }
+/** 重置表单数据和校验 */
+function resetForm() {
+  Object.assign(form.value, initialForm)
+  proxy.$nextTick(() => {
+    proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
+  })
+}
+/** 监听弹窗关闭，自动清空表单 */
+watch(visible, (val) => {
+  if (!val) {
+    resetForm()
+  }
+})
 
 /** 打开弹窗 */
 function init(dialogType, rowId) {

@@ -110,6 +110,23 @@ function handleClassifyChange(id) {
   form.value.matlClassifyName = node ? node.matlClassifyName : ''
 }
 
+/** 表单初始值从 data.form 浅拷贝 */
+const initialForm = { ...data.form }
+/** 重置表单数据和校验 */
+function resetForm() {
+  Object.assign(form.value, initialForm)
+  proxy.$nextTick(() => {
+    proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
+  })
+}
+
+/** 监听弹窗关闭，自动清空表单 */
+watch(visible, (val) => {
+  if (!val) {
+    resetForm()
+  }
+})
+
 /** 打开弹窗 */
 function init(dialogType, rowId, defaultClassifyId) {
   type.value = dialogType
