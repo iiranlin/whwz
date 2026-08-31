@@ -1,13 +1,13 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="560px" top="10vh" append-to-body v-loading="loading">
     <el-form ref="elFormRef" :model="form" :rules="rules" label-width="110px">
-      <el-form-item label="物料编码：" prop="matlCode">
-        <el-input v-model="form.matlCode" :disabled="type === 'update'" placeholder="请输入物料编码" maxlength="30" />
+      <el-form-item label="物资编码：" prop="matlCode">
+        <el-input v-model="form.matlCode" :disabled="type === 'update'" placeholder="请输入物资编码" maxlength="30" />
       </el-form-item>
-      <el-form-item label="物料名称：" prop="matlName">
-        <el-input v-model="form.matlName" placeholder="请输入物料名称" maxlength="150" />
+      <el-form-item label="物资名称：" prop="matlName">
+        <el-input v-model="form.matlName" placeholder="请输入物资名称" maxlength="150" />
       </el-form-item>
-      <el-form-item label="物料分类：" prop="supMatlCode">
+      <el-form-item label="物资分类：" prop="supMatlCode">
         <el-tree-select
           v-model="form.supMatlCode"
           :data="treeOptions"
@@ -15,7 +15,7 @@
           node-key="matlCateCode"
           check-strictly
           clearable
-          placeholder="请选择物料分类"
+          placeholder="请选择物资分类"
           style="width: 100%"
         />
       </el-form-item>
@@ -60,7 +60,7 @@ const emit = defineEmits(['createSuccess'])
 
 const visible = ref(false)
 const loading = ref(false)
-const title = ref('新增物料')
+const title = ref('新增物资')
 const type = ref('create')
 
 const data = reactive({
@@ -74,8 +74,8 @@ const data = reactive({
     comments: ''
   },
   rules: {
-    matlCode: [{ required: true, message: '请输入物料编码', trigger: 'blur' }],
-    matlName: [{ required: true, message: '请输入物料名称', trigger: 'blur' }],
+    matlCode: [{ required: true, message: '请输入物资编码', trigger: 'blur' }],
+    matlName: [{ required: true, message: '请输入物资名称', trigger: 'blur' }],
     matlUnit: [{ required: true, message: '请输入计量单位', trigger: 'blur' }]
   }
 })
@@ -96,7 +96,7 @@ function init(dialogType, rowId, defaultClassifyCode) {
     comments: ''
   }
   if (dialogType === 'update') {
-    title.value = '修改物料'
+    title.value = '修改物资'
     rmstatCatalogDetail(rowId).then(({ data }) => {
       form.value = {
         matlCode: data.matlCode || '',
@@ -109,7 +109,7 @@ function init(dialogType, rowId, defaultClassifyCode) {
       }
     })
   } else {
-    title.value = '新增物料'
+    title.value = '新增物资'
     if (defaultClassifyCode) {
       form.value.supMatlCode = defaultClassifyCode
     }

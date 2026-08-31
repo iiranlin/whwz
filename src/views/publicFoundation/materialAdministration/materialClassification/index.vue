@@ -6,7 +6,7 @@
         <pane size="16" class="integrated-manage-pane-tree">
           <el-col>
             <div class="integrated-manage-tree-divs">
-              <h1 class="supplier-region-dict-h1">物料分类</h1>
+              <h1 class="supplier-region-dict-h1">物资分类</h1>
               <div class="head-container-input">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable suffix-icon="Search" />
               </div>
@@ -31,6 +31,7 @@
         <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" v-loading="loading" action-width="180" :page-size="30" :data="tableData"
           :total="total" :columns="columns" show-checkbox :toolbar-config="toolbarConfig"
+          :default-search-form="{ effectFlag: '0' }"
           :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch" @action="onAction"
           @selection-change="onSelectionChange">
         </el-pro-table>
@@ -65,7 +66,9 @@ const resizeSplitData = ref(0)
 const data = reactive({
   queryParams: {
     pageNum: 1,
-    pageSize: 30
+    pageSize: 30,
+    // 默认只显示启用状态数据（启用=0，停用=1）
+    effectFlag: '0'
   }
 })
 
@@ -149,7 +152,7 @@ function handleDelete() {
     proxy.$modal.msgWarning('请选择数据')
     return
   }
-  proxy.$modal.confirm('是否确认删除选中的物料分类？').then(() => {
+  proxy.$modal.confirm('是否确认删除选中的物资分类？').then(() => {
     return rmstatMatlcateBatchRemove({ ids: ids.value })
   }).then(({ message }) => {
     proxy.$modal.msgSuccess(message)

@@ -1,21 +1,21 @@
 export const columns = [
   {
     field: "matlCode",
-    title: "物料编码",
+    title: "物资编号",
     minWidth: 140,
     searchable: true,
     searchType: "input"
   },
   {
     field: "matlName",
-    title: "物料名称",
+    title: "物资名称",
     minWidth: 200,
     searchable: true,
     searchType: "input"
   },
   {
     field: "matlCateName",
-    title: "物料分类",
+    title: "物资分类",
     minWidth: 160
   },
   {
@@ -65,6 +65,8 @@ export const toolbarConfig = {
         return !row.matlCode
       }
     },
-    { code: 'delete', name: '删除', type: 'primary' }
+    { code: 'delete', name: '删除', type: 'primary' },
+    { code: 'download', name: '下载模板', type: 'primary' },
+    { code: 'upload', name: '模板导入', type: 'primary', upload: { multiple: false } }
   ]
 }

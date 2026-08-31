@@ -51,7 +51,7 @@ const emit = defineEmits(['createSuccess'])
 
 const visible = ref(false)
 const loading = ref(false)
-const title = ref('新增物料分类')
+const title = ref('新增物资分类')
 const type = ref('create')
 
 const data = reactive({
@@ -95,7 +95,7 @@ function init(dialogType, rowId, parentRow) {
     effectFlag: '0'
   }
   if (dialogType === 'update') {
-    title.value = '修改物料分类'
+    title.value = '修改物资分类'
     rmstatMatlcateDetail(rowId).then(({ data }) => {
       form.value = {
         supCateCode: data.supCateCode || undefined,
@@ -105,7 +105,7 @@ function init(dialogType, rowId, parentRow) {
       }
     })
   } else {
-    title.value = '新增物料分类'
+    title.value = '新增物资分类'
     if (parentRow) {
       // 新增下级：预填上级
       form.value.supCateCode = parentRow.matlCateCode
