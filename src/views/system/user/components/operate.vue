@@ -91,10 +91,11 @@ const id = ref('')
 const deptOptions = ref([])
 const pendingCheckedIds = ref([])
 
-// 数据权限（用户级别）：仓储侧只支持两档，rank=1 全路局，rank!=1 本单位
+// 数据权限（用户级别）：仓储侧只支持两档。
+// 界面文案按业务约定：1=本单位（路局级，按 railway_code 过滤）、3=本部门（按 unit_id 过滤）
 const rankList = [
-  { code: '1', name: '全路局（路局级）' },
-  { code: '3', name: '本单位（站段级）' }
+  { code: '1', name: '本单位' },
+  { code: '3', name: '本部门' }
   // 以下 rank 选项仓储逻辑不区分，注释保留
   // { code: '0', name: '院级' },
   // { code: '2', name: '本部门' },
