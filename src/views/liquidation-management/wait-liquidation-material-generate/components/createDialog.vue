@@ -175,7 +175,7 @@ const handleMouseleave = () => {
 }
 
 const getUnitGetUnitList = () => {
-  unitGetUnitList({parentUnitCode: getCookie('railwayCode'), unitLevel: '3', enableStatus: '1', unitStatus: '1'}).then(({ data }) => {
+  unitGetUnitList().then(({ data }) => {
     deptAssignList.value = data || []
   })
 }

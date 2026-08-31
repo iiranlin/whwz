@@ -78,7 +78,6 @@
 import { normListCreateModify, normListEditModify, getUnitList, sumAmount } from '@/api/reserve-quote/maintenance'
 import { getCurrentInstance, reactive, toRefs } from 'vue';
 const { proxy } = getCurrentInstance()
-import { getCookie } from '@/utils/auth'
 const props = defineProps({
     rowData: {
         type: Object,
@@ -136,10 +135,7 @@ const rules = reactive({
 
 const selectData = ref([])
 const getUnitListData = async () => {
-    let { data } = await getUnitList({
-        unitFlag: "1",
-        parentUnitCode: getCookie('railwayCode'),
-    })
+    let { data } = await getUnitList()
     selectData.value = data
 }
 

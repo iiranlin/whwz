@@ -104,7 +104,7 @@ const { formData, rules, deptAssignList, plantList, supplyAreaListData } = toRef
 const emit = defineEmits(['createSuccess']);
 
 const getUnitGetUnitList = () => {
-  unitGetUnitList({sysCode: '08'}).then(({ data }) => {
+  unitGetUnitList().then(({ data }) => {
     deptAssignList.value = data
   })
 }

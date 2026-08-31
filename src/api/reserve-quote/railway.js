@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_WAREHOUSE=import.meta.env.VITE_APP_BASE_WAREHOUSE
-const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
+const VITE_APP_BASE_BASE_SERVICE = import.meta.env.VITE_APP_BASE_BASE_SERVICE
 //储备定额预警（路局）列表
 export function normListPage(data){
     return request({
@@ -15,7 +15,7 @@ export const normListExport = `${VITE_APP_BASE_WAREHOUSE}/rmstor/ration/mt/warni
 //单位
 export function getUnitList(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/sys/unit/getUnitList`,
+    url: `${VITE_APP_BASE_BASE_SERVICE}/dept/getAllUnit`,
     method: 'get',
     params
   })

@@ -10,7 +10,6 @@
 
 <script setup name="norm-warning-railway">
 import { normListPage, normListExport, getUnitList } from '@/api/reserve-quote/railway'
-import { getCookie } from '@/utils/auth'
 
 const { proxy } = getCurrentInstance()
 const tableData = ref([])
@@ -124,10 +123,7 @@ const onSearch = (params, pageConfig) => {
     getList()
 }
 const getUnitListData = async () => {
-    let { data } = await getUnitList({
-        unitFlag: "1",
-        parentUnitCode: getCookie('railwayCode'),
-    })
+    let { data } = await getUnitList()
     return data.map(item => {
         return {
             label: item.unitName,

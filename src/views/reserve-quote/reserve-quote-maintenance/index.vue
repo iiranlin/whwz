@@ -217,10 +217,7 @@ const onSearch = (params, pageConfig) => {
     getList()
 }
 const getUnitListData = async () => {
-    const { data } = await getUnitList({
-        unitFlag: "1",
-        parentUnitCode: getCookie('railwayCode'),
-    })
+    const { data } = await getUnitList()
     return data.map(item => {
         return {
             label: item.unitName,

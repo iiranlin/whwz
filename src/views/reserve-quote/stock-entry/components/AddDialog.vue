@@ -118,7 +118,7 @@ const handlenormListDetail = async () => {
 const emit = defineEmits(['createSuccess']);
 const getList = (val) => {
     loading.value = true
-    normLgetUnitListWithout(queryParams.value).then(({ data }) => {
+    normLgetUnitListWithout().then(({ data }) => {
         tableData.value = data?.map((item) => {
             return {
                 ...item,

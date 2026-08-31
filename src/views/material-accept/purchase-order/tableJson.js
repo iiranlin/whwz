@@ -2,10 +2,7 @@
 import { getUnitList, selectListWithoutLogin } from '@/api/materialAccept/purchaseOrder'
 import { getCookie } from '@/utils/auth'
 const getUnitListData = async () => {
-    let { data } = await getUnitList({
-        unitFlag: "1",
-        parentUnitCode: getCookie('railwayCode'),
-    })
+    let { data } = await getUnitList()
     return data.map(item => {
         return {
             label: item.unitName,

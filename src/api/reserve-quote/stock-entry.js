@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE
-const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
+const VITE_APP_BASE_BASE_SERVICE = import.meta.env.VITE_APP_BASE_BASE_SERVICE
 //储备定额维护（路局）列表
 export function normListPage(params) {
     return request({
@@ -51,7 +51,7 @@ export function normListDetail(id) {
 //弹框列表
 export function normLgetUnitListWithout(params) {
     return request({
-        url: `${VITE_APP_BASE_SSO_BASE}/sys/unit/getUnitListWithoutLogin`,
+        url: `${VITE_APP_BASE_BASE_SERVICE}/dept/getAllUnit`,
         method: 'get',
         params
     })

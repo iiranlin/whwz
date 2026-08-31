@@ -10,6 +10,9 @@
     "build:prod": "vite build",
     "build:stage": "vite build --mode staging",
     "build:dev": "vite build --mode dev",
+    "pack:dev": "node scripts/pack.mjs dev",
+    "pack:prod": "node scripts/pack.mjs prod",
+    "pack:stage": "node scripts/pack.mjs stage",
     "preview": "vite preview"
   },
   "dependencies": {
