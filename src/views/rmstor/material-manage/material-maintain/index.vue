@@ -1,10 +1,12 @@
 <!-- 退料单维护 -->
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table
+      ref="proTableRef" 
       :columns="columns"
       :page-size="queryParams.pageSize"
-      :height="height"
       :toolbar-config="toolbarConfig"
       :search-collapse-threshold="3"
       @action="onAction"
@@ -22,7 +24,8 @@
         }}</el-link>
       </template>
     </el-pro-table>
-
+    </el-col>
+    </el-row>
     <add-dialog ref="addDialog" @createSuccess="getList()" />
     <print-dialog ref="printDialog" />
     <delete-dialog ref="deleteDialog" @deleteSuccess="getList" />

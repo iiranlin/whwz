@@ -21,7 +21,7 @@ const activeName = ref("batch"); // conversion
 
 <style lang="scss" scoped>
 .material-accetp-attribute-page {
-  padding-top: 0;
+  // padding-top: 0;
   :deep(.ep-tabs) {
     height: 100%;
     // flex-grow: 1;

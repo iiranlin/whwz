@@ -7,8 +7,8 @@
       <div class="hero-ring"></div>
       <div class="hero-left">
         <div class="greeting">{{ greeting }}，{{ username }}</div>
-        <div class="sys-name">仓储业务信息管理系统</div>
-        <div class="sys-en">WAREHOUSE MANAGEMENT SYSTEM</div>
+        <div class="sys-name">物资管理信息系统</div>
+        <div class="sys-en">MATERIAL MANAGEMENT SYSTEM</div>
       </div>
       <div class="hero-right">
         <div class="date">{{ todayText }}</div>
@@ -44,8 +44,8 @@
       <div class="panel">
         <div class="block-title">系统信息</div>
         <div class="info-card">
-          <div class="info-item"><span class="label">系统名称</span><span class="value">中国铁路武汉局集团有限公司仓储业务信息管理系统</span></div>
-          <div class="info-item"><span class="label">当前版本</span><span class="value">V3.0</span></div>
+          <div class="info-item"><span class="label">系统名称</span><span class="value">物资管理信息系统</span></div>
+          <div class="info-item"><span class="label">当前版本</span><span class="value">V1.0</span></div>
           <div class="info-item"><span class="label">登录账号</span><span class="value">{{ username }}</span></div>
           <div class="info-item"><span class="label">所属单位</span><span class="value">{{ unitName }}</span></div>
         </div>

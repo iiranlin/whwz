@@ -32,7 +32,7 @@ import logoImg from '@/assets/logo/logo.png'
 
 const route = useRoute()
 // 侧边栏宽度有限，使用精简名称；完整名称见登录页/浏览器标题
-const title = '仓储信息管理'
+const title = '物资管理信息系统'
 </script>
 
 <style lang="scss" scoped>
@@ -94,7 +94,7 @@ const title = '仓储信息管理'
   height: 100%;
   margin-left: 210px;
   position: relative;
-  background-color: #f0f2f5;
+  // background-color: #f0f2f5;
   display: flex;
   flex-direction: column;
 }

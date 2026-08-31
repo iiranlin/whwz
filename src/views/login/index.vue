@@ -13,11 +13,11 @@
         </div>
         <div class="brand-title">{{ title }}</div>
         <div class="brand-divider"><span class="divider-dot"></span></div>
-        <div class="brand-subtitle">数字化仓储管理平台</div>
-        <div class="brand-en">WAREHOUSE MANAGEMENT SYSTEM</div>
+        <div class="brand-subtitle">数字化物资管理平台</div>
+        <div class="brand-en">MATERIAL MANAGEMENT SYSTEM</div>
       </div>
 
-      <div class="brand-copyright">© 2026 中国铁路武汉局集团有限公司</div>
+      <div class="brand-copyright">© 2026 武汉武铁机辆装备有限公司</div>
     </div>
 
     <!-- 右侧登录表单区 -->
@@ -107,7 +107,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const title = import.meta.env.VITE_APP_TITLE || '仓储信息管理系统'
+const title = import.meta.env.VITE_APP_TITLE || '物资管理信息系统'
 
 const loginFormRef = ref(null)
 const loginForm = reactive({

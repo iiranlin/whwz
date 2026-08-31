@@ -77,11 +77,12 @@
         />
       </el-col>
     </el-row> -->
-
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table
+      ref="proTableRef" 
       :columns="columns"
       :page-size="queryParams.pageSize"
-      :height="height"
       :toolbar-config="toolbarConfig"
       :search-collapse-threshold="3"
       @action="onAction"
@@ -126,6 +127,8 @@
         </el-checkbox>
       </template>
     </el-pro-table>
+    </el-col>
+    </el-row>
   </div>
 </template>
 
