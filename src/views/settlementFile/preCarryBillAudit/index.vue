@@ -1,10 +1,12 @@
 <!-- 结转前单据检查 -->
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table
+      ref="proTableRef" 
       :columns="columns"
       :page-size="queryParams.pageSize"
-      :height="height"
       :toolbar-config="toolbarConfig"
       :search-collapse-threshold="3"
       :default-search-form="defaultSearchForm"
@@ -21,6 +23,8 @@
         <el-link type="primary" @click="handleClickLink(row)">{{ row.billCode }}</el-link>
       </template>
     </el-pro-table>
+    </el-col>
+    </el-row>
     <!-- 出库单 -->
     <outbound-detail ref="outboundDetail" @createSuccess="getList" />
     <!-- 入库单 -->

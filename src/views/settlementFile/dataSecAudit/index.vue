@@ -1,10 +1,12 @@
 <!-- 数据安全检查 -->
 <template>
   <div class="app-container app-container-splitpanes">
+    <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
+      <el-col class="app-container-col">
     <el-pro-table
+      ref="proTableRef" 
       :columns="flagVisible === 1 ? tableJsonArr : tablePriceJson"
       :page-size="queryParams.pageSize"
-      :height="height"
       :toolbar-config="toolbarConfig"
       :search-collapse-threshold="3"
       :default-search-form="defaultSearchForm"
@@ -18,6 +20,8 @@
       :keep-selection="true"
     >
     </el-pro-table>
+    </el-col>
+    </el-row>
 
     <detail-dialog ref="detailDialog" @deleteSuccess="getList" />
   </div>

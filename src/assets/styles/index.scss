@@ -122,7 +122,7 @@ aside {
 
 //main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -390,6 +390,12 @@ aside {
           right: 8px;
           top: 2px;
         }
+      }
+      .supplier-region-dict-h1 {
+        font-size: 16px;
+        padding-left: 8px;
+        font-weight: 600;
+        color: #3d424d;
       }
     }
   }

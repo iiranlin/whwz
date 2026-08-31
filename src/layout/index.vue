@@ -94,7 +94,7 @@ const title = '仓储信息管理'
   height: 100%;
   margin-left: 210px;
   position: relative;
-  background-color: #f0f2f5;
+  // background-color: #f0f2f5;
   display: flex;
   flex-direction: column;
 }

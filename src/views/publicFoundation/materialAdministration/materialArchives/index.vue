@@ -1,15 +1,19 @@
 <template>
   <div class="app-container app-container-splitpanes">
-    <el-row :gutter="12" class="app-container-row">
+   <el-row :gutter="20" class="app-container-row">
+      <splitpanes class="app-container-splitpanes default-theme" @resize="resizeSplit">
       <!-- 左侧分类树 -->
-      <el-col :span="6" class="app-container-col">
-        <el-card shadow="never" class="tree-card">
-          <template #header>
-            <span>物料分类</span>
-          </template>
-          <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable style="margin-bottom: 8px" />
+      <pane size="16" class="integrated-manage-pane-tree">
+        <el-col>
+          <div class="integrated-manage-tree-divs">
+            <h1 class="supplier-region-dict-h1">物料分类</h1>
+            <div class="head-container-input">
+              <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable suffix-icon="Search" />
+            </div>
+            <el-scrollbar class="head-container-tree">
           <el-tree
             ref="treeRef"
+            class="drawer-tree"
             :data="treeOptions"
             :props="{ label: 'matlCateName', children: 'children' }"
             node-key="matlCateCode"
@@ -18,23 +22,29 @@
             :filter-node-method="filterNode"
             @node-click="handleNodeClick"
           />
-        </el-card>
+        </el-scrollbar>
+        </div>
       </el-col>
+      </pane>
       <!-- 右侧物料列表 -->
-      <el-col :span="18" class="app-container-col">
+      <pane size="84" class="integrated-manage-pane-form">
+          <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" v-loading="loading" action-width="160" :page-size="30" :data="tableData"
           :total="total" :columns="columns" show-checkbox :toolbar-config="toolbarConfig"
           :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch" @action="onAction"
           @selection-change="onSelectionChange">
         </el-pro-table>
       </el-col>
-    </el-row>
-
+      </pane>
+    </splitpanes>
+    </el-row> 
     <operate ref="operateRef" :tree-options="treeOptions" @createSuccess="getList" />
   </div>
 </template>
 
 <script setup name="materialArchives">
+import { Splitpanes, Pane } from "splitpanes"
+import "splitpanes/dist/splitpanes.css"
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
 import { rmstatCatalogList, rmstatCatalogBatchRemove } from '@/api/warehouse/rmstatCatalog'
@@ -51,7 +61,7 @@ const total = ref(0)
 const treeOptions = ref([])
 const filterText = ref('')
 const currentClassifyCode = ref('')
-
+const resizeSplitData = ref(0)
 const data = reactive({
   queryParams: {
     pageNum: 1,
@@ -151,18 +161,16 @@ const onAction = (payload) => {
   }
   eventObj[code] && eventObj[code]()
 }
-
+const resizeSplit = (val) => {
+  resizeSplitData.value = val.event.x
+}
 getTree()
 getList()
 </script>
 
 <style lang="scss" scoped>
-.tree-card {
-  height: 100%;
-
-  :deep(.el-card__body) {
-    max-height: calc(100vh - 200px);
-    overflow: auto;
-  }
+.splitpanes__pane:nth-child(1) {
+  width: 16%;
+  min-width: 286px;
 }
 </style>
