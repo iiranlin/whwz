@@ -1,7 +1,7 @@
 {
   "name": "warehouse-manage-v3",
   "version": "1.0.0",
-  "description": "仓储信息管理系统",
+  "description": "物资管理信息系统",
   "author": "T",
   "license": "MIT",
   "type": "module",
