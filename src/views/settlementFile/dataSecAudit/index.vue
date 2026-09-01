@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script setup name="system-parameter-configuration">
+<script setup name="dataSecAudit">
 import { formJson } from "./formJson";
 import { tableJson, toolbarConfig, tablePriceJson } from "./tableJson";
 import { getLocalStorage } from "@/utils/auth";

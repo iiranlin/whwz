@@ -28,6 +28,7 @@ import {qiankunWindow} from 'vite-plugin-qiankun/dist/helper'
 export const constantRoutes = [
   {
     path: '/redirect',
+    component: () => import('@/layout/index.vue'),
     hidden: true,
     children: [
       {

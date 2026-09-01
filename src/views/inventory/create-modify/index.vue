@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="create-modify">
 import { formJson } from "./formJson";
 import { tableJson } from "./tableJson";
 import { getLocalStorage } from "@/utils/auth";

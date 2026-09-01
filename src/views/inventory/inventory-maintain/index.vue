@@ -197,7 +197,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="inventory-maintain">
 import { formJson } from "./formJson";
 import { tableJson, tableButtonJson, matinTableJson, diffInfoOptions, detailTableJson, reviewTableJson } from "./tableJson";
 import { getLocalStorage, getCookie } from '@/utils/auth';

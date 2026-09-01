@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="dashboard">
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import useUserStore from '@/store/modules/user'

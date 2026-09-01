@@ -127,7 +127,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="inventory-create">
 import InventoryForm from './components/InventoryForm.vue';
 import { formJson, formRules, rangeFormJson } from './formJson';
 import { tableJson, rangeTableJson } from './tableJson';

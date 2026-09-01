@@ -44,16 +44,19 @@ const usePermissionStore = defineStore(
           getUserMenu().then(res => {
             const menuList = res.data || []
             const accessRoutes = buildAsyncRoutes(menuList)
-            // 首页工作台固定路由置顶：路由与侧边栏同步生效，登录后默认进入
-            accessRoutes.unshift({
+            const dashboardRoute = {
               path: '/dashboard',
               name: 'Dashboard',
               component: () => import('@/views/dashboard/index.vue'),
-              meta: { title: '首页工作台', menuIcon: 'dashboard' }
-            })
-            this.setRoutes(accessRoutes)
+              meta: { title: '首页工作台', menuIcon: 'dashboard', affix: true }
+            }
+            accessRoutes.unshift(dashboardRoute)
+            // 侧边栏路由：保持 ParentView 层级结构，用于侧边栏分组展示
             this.setSidebarRouters(accessRoutes)
-            resolve(accessRoutes)
+            const routerRoutes = flattenRoutes(accessRoutes)
+            routerRoutes.unshift(dashboardRoute)
+            this.setRoutes(routerRoutes)
+            resolve(routerRoutes)
           }).catch(error => reject(error))
         })
       }
@@ -75,7 +78,8 @@ function buildAsyncRoutes(menuList) {
         title: item.menuName,
         menuIcon: item.menuIcon,
         parentId: item.parentId,
-        menuId: item.id
+        menuId: item.id,
+        noCache: false
       }
     }
     if (children.length > 0) {
@@ -87,21 +91,39 @@ function buildAsyncRoutes(menuList) {
       // 叶子：优先用后端 component 字段（如 system/dept）加载 views 下对应页面，无匹配视图时兜底 404
       // component 为 'ParentView' 属于历史脏数据（应回退用 menuUrl 匹配），不按字符串去 views 下找页面
       const comp = item.component && item.component !== 'ParentView' ? item.component : view
-      params.component = loadView(comp) || (() => import('@/views/error/404'))
+      params.component = loadView(comp, params.name) || (() => import('@/views/error/404'))
     }
     res.push(params)
   })
   return res
 }
 
-export const loadView = (view) => {
+// 扁平化路由树：移除 ParentView 中间层，叶子路由直接提升到顶层 ParentView 只用于侧边栏分组，不进入 router
+function flattenRoutes(routes) {
+  const result = []
+  routes.forEach(route => {
+    if (route.children && route.children.length > 0) {
+      // 目录路由：展开子路由，跳过 ParentView 中间层
+      result.push(...flattenRoutes(route.children))
+    } else {
+      // 叶子路由：直接加入结果
+      result.push(route)
+    }
+  })
+  return result
+}
+
+export const loadView = (view, routeName) => {
   let res
   // view 形如 system/dept、system/log/login 等，去掉首尾斜杠后匹配 views 下目录
   const target = view.replace(/^\/+|\/+$/g, '')
   for (const path in modules) {
     const dir = path.split('views/')[1].split('.vue')[0]
     if (dir === target || dir === target + '/index') {
-      res = () => modules[path]()
+      // 设置组件 name 匹配路由 name，使 keep-alive :include 能正确匹配
+      res = () => modules[path]().then(mod => {
+        return { ...mod.default, name: routeName }
+      })
     }
   }
   return res

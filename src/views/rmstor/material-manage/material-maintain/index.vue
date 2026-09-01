@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<script setup name="system-parameter-configuration">
+<script setup name="material-maintain">
 import { formJson } from "./formJson";
 import { tableJson, tableButtonJson } from "./tableJson";
 import { getLocalStorage, getSessionStorage } from "@/utils/auth";

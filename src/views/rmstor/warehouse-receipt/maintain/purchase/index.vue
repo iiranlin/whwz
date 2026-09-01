@@ -48,7 +48,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="purchase">
 import { pFormJson } from "../formJson";
 import { pTableJson, tableButtonJson, topTableButtonJson } from "../tableJson";
 import createDialog from "../components/newCreateDialog.vue";

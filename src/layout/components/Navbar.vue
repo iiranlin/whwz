@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <div class="navbar-breadcrumb">
-      <span class="navbar-title">{{ pageTitle }}</span>
+      <Breadcrumb class="breadcrumb-container" />
     </div>
     <div class="navbar-right">
       <el-dropdown trigger="click" @command="handleCommand">
@@ -25,6 +25,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import useUserStore from '@/store/modules/user'
+import Breadcrumb from '@/components/Breadcrumb/index.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,7 +37,6 @@ const avatarChar = computed(() => {
   const name = userStore.userInfo.nickName || userStore.userInfo.username || '用'
   return name.charAt(0).toUpperCase()
 })
-const pageTitle = computed(() => (route.meta && route.meta.title) || '')
 
 // 退出登录
 function handleCommand(command) {
@@ -58,20 +58,17 @@ function handleCommand(command) {
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
-  line-height: 50px;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
 
   .navbar-breadcrumb {
-    .navbar-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #303133;
-    }
+    float: left;
   }
 
   .navbar-right {

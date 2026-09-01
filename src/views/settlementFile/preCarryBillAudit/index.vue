@@ -52,7 +52,7 @@
   </div>
 </template>
 
-<script setup name="system-parameter-configuration">
+<script setup name="preCarryBillAudit">
 import { formJson } from "./formJson";
 import { tableJson, toolbarConfig } from "./tableJson";
 import { getLocalStorage } from "@/utils/auth";

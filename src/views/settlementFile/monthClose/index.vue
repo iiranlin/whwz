@@ -132,7 +132,7 @@
   </div>
 </template>
 
-<script setup name="system-parameter-configuration">
+<script setup name="monthClose">
 import { formJson } from "./formJson";
 import { tableJson, toolbarConfig } from "./tableJson";
 import { getLocalStorage } from "@/utils/auth";

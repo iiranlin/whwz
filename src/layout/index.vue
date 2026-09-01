@@ -11,13 +11,11 @@
       </el-scrollbar>
     </div>
     <!-- 右侧主区域 -->
-    <div class="main-container">
+   <div class="main-container" :class="{ hasTagsView: true }">
       <Navbar />
+      <TagsView />
       <div class="app-main">
-        <!-- 用错误边界包裹 router-view：页面渲染异常时显示占位，防止组件树损坏导致后续菜单全部无法渲染 -->
-        <RouterErrorBoundary>
-          <router-view :key="route.path" />
-        </RouterErrorBoundary>
+        <AppMain />
       </div>
     </div>
   </div>
@@ -29,7 +27,8 @@ import Sidebar from './components/Sidebar.vue'
 import Navbar from './components/Navbar.vue'
 import RouterErrorBoundary from '@/components/RouterErrorBoundary/index.vue'
 import logoImg from '@/assets/logo/logo.png'
-
+import TagsView from './components/TagsView/index.vue'
+import AppMain from './components/AppMain.vue'
 const route = useRoute()
 // 侧边栏宽度有限，使用精简名称；完整名称见登录页/浏览器标题
 const title = '物资管理信息系统'
@@ -102,6 +101,6 @@ const title = '物资管理信息系统'
 .app-main {
   flex: 1;
   overflow: auto;
-  padding: 10px;
+  padding: 5px;
 }
 </style>
