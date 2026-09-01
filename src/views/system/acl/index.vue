@@ -1,12 +1,16 @@
 <template>
   <div class="app-container app-container-acl">
-    <el-row :gutter="12" class="container-row">
-      <!-- 左侧角色树 -->
-      <el-col :span="4" class="container-col">
-        <el-card shadow="never" class="tree-card">
-          <template #header><span>角色</span></template>
-          <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable style="margin-bottom: 8px" />
-          <el-tree ref="treeRef" v-loading="roleLoading" :data="roleOptions"
+    <el-row :gutter="20" class="app-container-row">
+      <splitpanes class="app-container-splitpanes default-theme" @resize="resizeSplit">
+        <pane size="16" class="integrated-manage-pane-tree">
+        <el-col>
+          <div class="integrated-manage-tree-divs">
+            <h1 class="supplier-region-dict-h1">角色</h1>
+            <div class="head-container-input">
+              <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable suffix-icon="Search" />
+            </div>
+            <el-scrollbar class="head-container-tree">
+          <el-tree ref="treeRef" class="drawer-tree" v-loading="roleLoading" :data="roleOptions"
             :props="{ label: 'roleName', children: 'children' }" node-key="id" highlight-current
             :expand-on-click-node="false" :filter-node-method="filterNode" @node-click="handleNodeClick">
             <template #default="{ data }">
@@ -18,10 +22,13 @@
               </span>
             </template>
           </el-tree>
-        </el-card>
+       </el-scrollbar>
+        </div>
       </el-col>
+      </pane>
       <!-- 右侧权限矩阵 -->
-      <el-col :span="20" class="container-col">
+     <pane size="84" class="integrated-manage-pane-form">
+        <el-col class="app-container-col">
         <el-card shadow="never" class="table-card">
           <template #header>
             <div class="table-card-header">
@@ -43,11 +50,15 @@
           </el-table>
         </el-card>
       </el-col>
+    </pane>
+    </splitpanes>
     </el-row>
   </div>
 </template>
 
 <script setup name="system-acl">
+import { Splitpanes, Pane } from "splitpanes"
+import "splitpanes/dist/splitpanes.css"
 import { rolePage } from '@/api/base/role'
 import { aclList, aclAssign } from '@/api/base/acl'
 import AclCheckbox from './components/aclCheckbox'
@@ -69,7 +80,7 @@ const arrAclList = ref([])
 const arrChangeAllObj = ref({})
 // 复选框组件 ref 集合 { [menuId]: componentInstance }
 const checkboxRefs = {}
-
+const resizeSplitData = ref(0)
 watch(filterText, val => treeRef.value?.filter(val))
 
 onMounted(() => {
@@ -332,9 +343,16 @@ function toggleSelection(rows, flag) {
     productRef.value?.clearSelection()
   }
 }
+const resizeSplit = (val) => {
+  resizeSplitData.value = val.event.x
+}
 </script>
 
 <style lang="scss" scoped>
+.splitpanes__pane:nth-child(1) {
+  width: 16%;
+  min-width: 286px;
+}
 .app-container-acl {
   .container-row {
     height: 100%;

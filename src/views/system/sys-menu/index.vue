@@ -1,15 +1,18 @@
 <template>
   <div class="app-container app-container-splitpanes">
-    <el-row :gutter="12" class="app-container-row">
-      <!-- 左侧菜单树 -->
-      <el-col :span="5" class="app-container-col">
-        <el-card shadow="never" class="tree-card">
-          <template #header>
-            <span>菜单树</span>
-          </template>
-          <el-input v-model="filterText" placeholder="输入关键字过滤" clearable class="tree-filter" />
+    <el-row :gutter="20" class="app-container-row">
+      <splitpanes class="app-container-splitpanes default-theme" @resize="resizeSplit">
+        <pane size="16" class="integrated-manage-pane-tree">
+        <el-col>
+          <div class="integrated-manage-tree-divs">
+            <h1 class="supplier-region-dict-h1">菜单树</h1>
+            <div class="head-container-input">
+              <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable suffix-icon="Search" />
+            </div>
+            <el-scrollbar class="head-container-tree">
           <el-tree
             ref="treeRef"
+            class="drawer-tree"
             v-loading="loading"
             :data="tableData"
             :props="{ label: 'menuName', children: 'children' }"
@@ -23,10 +26,13 @@
               <span class="tree-node">{{ data.menuName }}</span>
             </template>
           </el-tree>
-        </el-card>
+        </el-scrollbar>
+        </div>
       </el-col>
+      </pane>
       <!-- 右侧菜单列表 -->
-      <el-col :span="19" class="app-container-col">
+      <pane size="84" class="integrated-manage-pane-form">
+        <el-col class="app-container-col">
         <el-form :model="queryParams" ref="queryRef" inline class="menu-search" @submit.prevent>
           <el-form-item label="菜单名称" prop="menuName">
             <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable style="width: 200px" />
@@ -95,6 +101,8 @@
           </el-table-column>
         </el-table>
       </el-col>
+    </pane>
+    </splitpanes>
     </el-row>
 
     <operate ref="operateRef" @createSuccess="getList()" />
@@ -102,6 +110,8 @@
 </template>
 
 <script setup name="system-menu">
+import { Splitpanes, Pane } from "splitpanes"
+import "splitpanes/dist/splitpanes.css"
 import Operate from "./components/operate"
 import { menuTree, menuDeleteBatch } from '@/api/base/menu'
 
@@ -120,7 +130,7 @@ const queryParams = reactive({
 const filterText = ref('')
 const treeRef = ref()
 const selectedNodeId = ref('')
-
+const resizeSplitData = ref(0)
 watch(filterText, val => treeRef.value?.filter(val))
 
 function filterNode(value, data) {
@@ -231,18 +241,16 @@ function handleDelete(row) {
     getList()
   }).catch(() => {})
 }
-
+const resizeSplit = (val) => {
+  resizeSplitData.value = val.event.x
+}
 getList()
 </script>
 
 <style lang="scss" scoped>
-.tree-card {
-  height: 100%;
-
-  :deep(.el-card__body) {
-    max-height: calc(100vh - 200px);
-    overflow: auto;
-  }
+.splitpanes__pane:nth-child(1) {
+  width: 16%;
+  min-width: 286px;
 }
 
 .tree-filter {

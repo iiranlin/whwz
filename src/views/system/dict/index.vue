@@ -1,14 +1,15 @@
 <template>
   <div class="app-container app-container-splitpanes">
-    <el-row :gutter="12" class="app-container-row">
-      <!-- 左侧字典树 -->
-      <el-col :span="6" class="app-container-col">
-        <el-card shadow="never" class="tree-card">
-          <template #header>
-            <span>字典树</span>
-          </template>
+    <el-row :gutter="20" class="app-container-row">
+      <splitpanes class="app-container-splitpanes default-theme" @resize="resizeSplit">
+        <pane size="16" class="integrated-manage-pane-tree">
+        <el-col>
+          <div class="integrated-manage-tree-divs">
+            <h1 class="supplier-region-dict-h1">字典树</h1>
+            <el-scrollbar class="head-container-tree">
           <el-tree
             ref="treeRef"
+            class="drawer-tree"
             :data="treeData"
             :props="{ label: 'name', children: 'children' }"
             node-key="id"
@@ -22,16 +23,21 @@
               </span>
             </template>
           </el-tree>
-        </el-card>
+         </el-scrollbar>
+        </div>
       </el-col>
+      </pane>
       <!-- 右侧字典列表 -->
-      <el-col :span="18" class="app-container-col">
+      <pane size="84" class="integrated-manage-pane-form">
+        <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" v-loading="loading" action-width="120" :page-size="30" :data="tableData"
           :total="total" :columns="columns" show-checkbox :toolbar-config="toolbarConfig"
           :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch" @action="onAction"
           @selection-change="onSelectionChange">
         </el-pro-table>
       </el-col>
+    </pane>
+    </splitpanes>
     </el-row>
 
     <operate ref="operateRef" :dept-options="treeData" @createSuccess="getList()" />
@@ -39,6 +45,8 @@
 </template>
 
 <script setup name="system-dict">
+import { Splitpanes, Pane } from "splitpanes"
+import "splitpanes/dist/splitpanes.css"
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
 import { dictPage, dictDeleteBatch, dictTree, refreshCache } from '@/api/base/dict'
@@ -53,7 +61,7 @@ const ids = ref([])
 const total = ref(0)
 const treeData = ref([])
 const currentParentId = ref(undefined)
-
+const resizeSplitData = ref(0)
 const data = reactive({
   queryParams: {
     pageNum: 1,
@@ -142,12 +150,18 @@ const onAction = (payload) => {
   }
   eventObj[code] && eventObj[code]()
 }
-
+const resizeSplit = (val) => {
+  resizeSplitData.value = val.event.x
+}
 getTree()
 getList()
 </script>
 
 <style lang="scss" scoped>
+.splitpanes__pane:nth-child(1) {
+  width: 16%;
+  min-width: 286px;
+}
 .tree-card {
   height: 100%;
 

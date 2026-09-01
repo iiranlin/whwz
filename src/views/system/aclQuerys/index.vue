@@ -27,7 +27,12 @@ watch(activeName, val => { renderedTabs[val] = true })
   display: flex;
   flex-direction: column;
   height: 100%;
-
+  :deep(.ep-tabs--top){
+    height: 100%;
+    .ep-tab-pane {
+      height: 100%;
+    }
+  }
   :deep(.el-tabs) {
     display: flex;
     flex-direction: column;
