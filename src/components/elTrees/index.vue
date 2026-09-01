@@ -30,16 +30,12 @@
 							</template>
 						</span>
 						<span v-else-if="isShowFile">
-							<template>
-								{{ node.label }}<span class="el-aside-h-span-icon"> ({{ data.fileNum }})</span>
-							</template>
+							{{ node.label }}<span class="el-aside-h-span-icon"> ({{ data.fileNum }})</span>
 						</span>
 						<slot v-else-if="isSolt" :node="node" :data="data"></slot>
 						<span v-else>
-							<template>
-								{{ node.label }}<span v-if="data.children && data.children.length > 0"
-									class="el-aside-h-span-icon"></span>
-							</template>
+							{{ node.label }}<span v-if="data.children && data.children.length > 0"
+								class="el-aside-h-span-icon"></span>
 						</span>
 						<el-button v-if="isButtonModify" class="custom-tree-node-click" icon="el-icon-edit" circle
 							@click="modifyNodeClick(data)"></el-button>

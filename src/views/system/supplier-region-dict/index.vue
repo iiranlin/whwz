@@ -98,7 +98,7 @@ function getList() {
 
 const getUnitGetUnitList = () => {
   treeLoading.value = true
-  unitGetUnitList().then(({ data }) => {
+  unitGetUnitList({ scopeSelf: 1 }).then(({ data }) => {
     // 接口返回扁平单位列表，按 parentId 组装成"公司 → 部门"树形（level=1 根为虚拟节点不展示）
     const map = {}
     data.forEach(item => { map[item.id] = { ...item, children: [] } })

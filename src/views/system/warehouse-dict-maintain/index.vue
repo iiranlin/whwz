@@ -102,7 +102,7 @@ const getPlantDictListAll = async () => {
   treeLoading.value = true
   try {
     // 机构树（公司 → 部门）与用料地区列表并行获取
-    const [unitRes, plantRes] = await Promise.all([unitGetUnitList(), plantDictListAll()])
+    const [unitRes, plantRes] = await Promise.all([unitGetUnitList({ scopeSelf: 1 }), plantDictListAll()])
     // 用料地区按所属单位 unitCode 分组
     const plantMap = {}
     ;(plantRes.data || []).forEach(p => {
