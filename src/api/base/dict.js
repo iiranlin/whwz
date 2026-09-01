@@ -57,7 +57,7 @@ export function getMaxSeqByParentId(params) {
 export function refreshCache() {
   return request({
     url: `${BASE}/dict/refreshCache`,
-    method: 'post'
+    method: 'get'
   })
 }
 
