@@ -33,7 +33,6 @@ import { columns, toolbarConfig } from "./tableJson"
 import AddDialog from "./components/AddDialog"
 import ElTrees from "@/components/elTrees"
 import { unitGetUnitList } from "@/api/system/unit"
-import { getCookie } from '@/utils/auth'
 import { plantDictList } from '@/api/warehouse/plantDict'
 
 
@@ -57,21 +56,15 @@ const data = reactive({
     pageNum: 1,
     pageSize: 30
   },
-  unitObj:{
-    unitName: getCookie('unitName'),
-    unitCode: getCookie('unitCode'),
-    id: '0'
-  },
   unitData: {},
   deptAssigndeptProp: {
     children: 'children',
     label: 'unitName',
-    value: 'id',
-    isLeaf: true
+    value: 'id'
   },
 })
 
-const { queryParams, unitObj, unitData, deptAssigndeptProp } = toRefs(data)
+const { queryParams, unitData, deptAssigndeptProp } = toRefs(data)
 
 const resizeSplit = (val) => {
   resizeSplitData.value = val.event.x
@@ -106,7 +99,19 @@ function getList() {
 const getUnitGetUnitList = () => {
   treeLoading.value = true
   unitGetUnitList().then(({ data }) => {
-    deptAssignList.value = [{...unitObj.value, children: data}]
+    // 接口返回扁平单位列表，按 parentId 组装成"公司 → 部门"树形（level=1 根为虚拟节点不展示）
+    const map = {}
+    data.forEach(item => { map[item.id] = { ...item, children: [] } })
+    const roots = []
+    data.forEach(item => {
+      const parent = map[item.parentId]
+      if (parent) {
+        parent.children.push(map[item.id])
+      } else {
+        roots.push(map[item.id])
+      }
+    })
+    deptAssignList.value = roots
   }).finally(() => {
     treeLoading.value = false
   })

@@ -31,9 +31,9 @@
 import { Splitpanes, Pane } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 import { columns, toolbarConfig } from "./tableJson"
-import { getCookie } from '@/utils/auth'
 import { warehouseDictListX, deleteWarehouseDict } from '@/api/warehouse/warehouseDict'
 import { plantDictListAll } from '@/api/warehouse/plantDict'
+import { unitGetUnitList } from "@/api/system/unit"
 import AddDialog from "./components/AddDialog"
 import ElTrees from "@/components/elTrees"
 
@@ -56,17 +56,11 @@ const data = reactive({
     pageNum: 1,
     pageSize: 30
   },
-  unitObj: {
-    plantName: getCookie('unitName'),
-    plantCode: getCookie('unitCode'),
-    id: '0'
-  },
   plantList: [],
   deptAssigndeptProp: {
     children: 'children',
-    label: 'plantName',
-    value: 'id',
-    isLeaf: true
+    label: 'unitName',
+    value: 'id'
   },
   plantData: {
     plantName: '',
@@ -74,7 +68,7 @@ const data = reactive({
   }
 })
 
-const { queryParams, unitObj, deptAssigndeptProp, plantData } = toRefs(data)
+const { queryParams, deptAssigndeptProp, plantData } = toRefs(data)
 
 function onSelectionChange(rows) {
   selectionData.value = rows
@@ -104,13 +98,41 @@ function onAction(payload) {
   eventObj[code] && eventObj[code]()
 }
 
-const getPlantDictListAll = () => {
+const getPlantDictListAll = async () => {
   treeLoading.value = true
-  plantDictListAll().then(({ data }) => {
-    deptAssignList.value = [{ ...unitObj.value, children: data }]
-  }).finally(() => {
+  try {
+    // 机构树（公司 → 部门）与用料地区列表并行获取
+    const [unitRes, plantRes] = await Promise.all([unitGetUnitList(), plantDictListAll()])
+    // 用料地区按所属单位 unitCode 分组
+    const plantMap = {}
+    ;(plantRes.data || []).forEach(p => {
+      (plantMap[p.unitCode] = plantMap[p.unitCode] || []).push({ ...p, isPlant: true, unitName: p.plantName })
+    })
+    // 机构扁平列表按 parentId 组装树（level=1 根为虚拟节点不展示，树从 level=2 公司开始）
+    const unitList = unitRes.data || []
+    const map = {}
+    unitList.forEach(item => { map[item.id] = { ...item, children: [] } })
+    const roots = []
+    unitList.forEach(item => {
+      const parent = map[item.parentId]
+      if (parent) {
+        parent.children.push(map[item.id])
+      } else {
+        roots.push(map[item.id])
+      }
+    })
+    // 把用料地区挂到对应机构/部门节点下（公司直属地区挂公司下，部门地区挂部门下，直属地区排在部门前）
+    const attach = (nodes) => {
+      nodes.forEach(node => {
+        node.children = (plantMap[node.unitCode] || []).concat(node.children)
+        if (node.children.length) attach(node.children.filter(c => !c.isPlant))
+      })
+    }
+    attach(roots)
+    deptAssignList.value = roots
+  } finally {
     treeLoading.value = false
-  })
+  }
 }
 
 /** 查询列表 */
@@ -158,13 +180,15 @@ const resizeSplit = (val) => {
 function handleNodeClick(data) {
   queryParams.value.plantId = ''
   plantData.value = {}
-  if (data) {
-    queryParams.value.plantId = data.id === '0' ? '' : data.id
+  if (data && data.isPlant) {
+    // 用料地区节点：按地区过滤右侧仓库
+    queryParams.value.plantId = data.id
     plantData.value = {
       plantName: data.plantName,
       plantId: data.id
     }
   }
+  // 机构节点（公司/部门）：清空过滤看全部
   getList()
 }
 

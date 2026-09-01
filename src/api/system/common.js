@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
 const VITE_APP_BASE_BASE_SERVICE = import.meta.env.VITE_APP_BASE_BASE_SERVICE
+const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE
 
 // 查询通用字典明细列表（改用 base 字典接口：按父字典编码查子项）
 export function dictCateList(params) {
@@ -20,12 +21,13 @@ export function treeWithUser(params) {
   })
 }
 
-// 查询物资目录列表
+// 查询物资目录列表（仓储化：切换至仓储后端 /rmstatCatalog/list）
+// 选物资弹框场景，未显式传 enableState 时默认只查启用状态物料（ENABLE_STATE='1'）
 export function noAuthorizeList(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/rmstat/catalog/noAuthorize/list`,
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstatCatalog/list`,
     method: 'get',
-    params
+    params: { ...params, enableState: params?.enableState ?? '1' }
   })
 }
 

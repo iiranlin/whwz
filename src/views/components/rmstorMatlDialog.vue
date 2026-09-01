@@ -73,7 +73,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 30,
-    effectFlag: '1',
+    enableState: '1',
     partitionCode: '',
     depotCode: ''
   },

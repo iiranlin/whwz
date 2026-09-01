@@ -553,11 +553,16 @@ const getMaltList = async () => {
 
   try {
     
-    const res = await paramConfignoAuthorizeList({
+    const queryParams = {
       ...addMatlQueryParams.value,
-      // ...addMatlFormRef.value?.formData,
       ...mSearchFormData.value,
-    });
+    };
+    if (queryParams.matlCateCode) {
+      // 仓储接口按 supMatlCode 过滤（含下级分类）；'all' 表示全部类别，不传分类过滤
+      queryParams.supMatlCode = queryParams.matlCateCode === 'all' ? '' : queryParams.matlCateCode;
+    }
+    delete queryParams.matlCateCode;
+    const res = await paramConfignoAuthorizeList(queryParams);
     matlTableData.value = res.data?.list || [];
     matlTableCount.value = res.data?.total || 0;
   } catch (error) {

@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE
-const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
 // 查询参数配置列表
 export function paramConfigList(params) {
   return request({
@@ -36,18 +35,19 @@ export function paramConfigDelete(data) {
   })
 }
 
-//查询物资目录列表
+//查询物资目录列表（仓储化：切换至仓储后端 /rmstatCatalog/list）
+// 选物资弹框场景，未显式传 enableState 时默认只查启用状态物料（ENABLE_STATE='1'）
 export function paramConfignoAuthorizeList(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/rmstat/catalog/noAuthorize/list`,
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstatCatalog/list`,
     method: 'get',
-    params
+    params: { ...params, enableState: params?.enableState ?? '1' }
   })
 }
-//查询物资大类列表
+//查询物资大类列表（仓储化：切换至仓储后端 /matlcate/list 分页列表）
 export function paramConfignoAuthorizeTree(params) {
   return request({
-    url: `${VITE_APP_BASE_SSO_BASE}/rmstat/matlcate/noAuthorize/getMatlcates`,
+    url: `${VITE_APP_BASE_WAREHOUSE}/matlcate/list`,
     method: 'get',
     params
   })

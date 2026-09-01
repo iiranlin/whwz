@@ -4,7 +4,7 @@
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="tableJsonGroup" :page-size="queryParams.pageSize"
         :search-collapse-threshold="5" :data="tableData" :total="total" @search="onSearch" :show-checkbox="true"
-        selection-mode="single" :grid-options="{ rowId: 'seq' }" :show-action="false"
+        selection-mode="single" :grid-options="{ rowId: 'matlCode' }" :show-action="false"
         @row-click="handleSelectionChange" />
     </div>
     <template #footer>
