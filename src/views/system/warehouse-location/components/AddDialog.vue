@@ -36,12 +36,14 @@
           <el-form-item label="位：" prop="position">
             <el-input v-model="formData.position" placeholder="请输入位" />
           </el-form-item>
+          <!-- 货位类型字段注释保留：需求去掉新增页货位类型，如需恢复放开本段及下方formData/rules注释即可
           <el-form-item label="货位类型：" prop="positionType">
             <el-select v-model="formData.positionType" placeholder="请选择货位类型" clearable>
               <el-option v-for="item in positionTypeArr" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
+          -->
           <el-form-item label="是否有效：" prop="status">
             <el-select v-model="formData.status" placeholder="请选择是否有效" clearable>
               <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value">
@@ -86,7 +88,7 @@ const data = reactive({
     frame: '',
     layer: '',
     position: '',
-    positionType: '',
+    // positionType: '', // 货位类型注释保留，恢复时放开
     status: '1',
     comments: ''
   },
@@ -98,7 +100,7 @@ const data = reactive({
     frame: [{ required: true, message: '请输入', trigger: 'blur' }],
     layer: [{ required: true, message: '请输入层', trigger: 'blur' }],
     position: [{ required: true, message: '请输入位', trigger: 'blur' }],
-    positionType: [{ required: true, message: '请选择货位类型', trigger: ['blur', 'change'] }],
+    // positionType: [{ required: true, message: '请选择货位类型', trigger: ['blur', 'change'] }], // 货位类型注释保留，恢复时放开
     status: [{ required: true, message: '请选择是否有效', trigger: ['blur', 'change']}],
   },
   plantList: [],

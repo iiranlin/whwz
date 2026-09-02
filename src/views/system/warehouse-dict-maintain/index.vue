@@ -101,14 +101,14 @@ function onAction(payload) {
 const getPlantDictListAll = async () => {
   treeLoading.value = true
   try {
-    // 机构树（公司 → 部门）与用料地区列表并行获取
-    const [unitRes, plantRes] = await Promise.all([unitGetUnitList({ scopeSelf: 1 }), plantDictListAll()])
+    // 机构列表与用料地区并行获取（不传 scopeSelf，顶层恒为公司）
+    const [unitRes, plantRes] = await Promise.all([unitGetUnitList(), plantDictListAll()])
     // 用料地区按所属单位 unitCode 分组
     const plantMap = {}
     ;(plantRes.data || []).forEach(p => {
       (plantMap[p.unitCode] = plantMap[p.unitCode] || []).push({ ...p, isPlant: true, unitName: p.plantName })
     })
-    // 机构扁平列表按 parentId 组装树（level=1 根为虚拟节点不展示，树从 level=2 公司开始）
+    // 机构扁平列表按 parentId 组装（level=1 根为虚拟节点不展示，树从 level=2 公司开始）
     const unitList = unitRes.data || []
     const map = {}
     unitList.forEach(item => { map[item.id] = { ...item, children: [] } })
@@ -121,14 +121,22 @@ const getPlantDictListAll = async () => {
         roots.push(map[item.id])
       }
     })
-    // 把用料地区挂到对应机构/部门节点下（公司直属地区挂公司下，部门地区挂部门下，直属地区排在部门前）
-    const attach = (nodes) => {
-      nodes.forEach(node => {
-        node.children = (plantMap[node.unitCode] || []).concat(node.children)
-        if (node.children.length) attach(node.children.filter(c => !c.isPlant))
-      })
+    // 部门层级不展示：整棵子树的地区统一提升到顶层单位（公司）直属，形成"公司 → 地区"两级树
+    const used = new Set()
+    const collect = (node) => {
+      const plants = []
+      const walk = (n) => {
+        (plantMap[n.unitCode] || []).forEach(p => { plants.push(p); used.add(p.id) })
+        n.children.forEach(walk)
+      }
+      walk(node)
+      node.children = plants
     }
-    attach(roots)
+    roots.forEach(collect)
+    // 无归属机构的地区（旧机构/外局数据）兜底挂首个顶层节点
+    if (roots.length) {
+      Object.values(plantMap).flat().forEach(p => { if (!used.has(p.id)) roots[0].children.push(p) })
+    }
     deptAssignList.value = roots
   } finally {
     treeLoading.value = false

@@ -2,15 +2,15 @@
   <div class="app-container">
     <el-row :gutter="20" class="app-container-row">
       <splitpanes class="app-container-splitpanes  default-theme" @resize="resizeSplit">
-        <!--部门数据-->
-        <pane size="16" class="integrated-manage-pane-tree" v-loading="treeLoading">
+        <!--部门数据（左侧树暂不展示，代码保留，恢复时去掉 v-if 并将右侧 size 改回 84）-->
+        <pane size="16" class="integrated-manage-pane-tree" v-loading="treeLoading" v-if="false">
           <el-col>
             <el-trees :data="deptAssignList" :propsObj="deptAssigndeptProp" title="" :filterShow="false" :code="'unitCode'"
                 :defaultExpandAll="defaultExpandAll" @handleNodeClick="handleNodeClick">
             </el-trees>
           </el-col>
         </pane>
-        <pane size="84" class="integrated-manage-pane-form">
+        <pane size="100" class="integrated-manage-pane-form">
           <el-col class="app-container-col">
             <el-pro-table ref="proTableRef" v-loading="loading" action-width="120" :page-size="30" :data="tableData"
               :total="total" :columns="columns" show-checkbox click-row-to-toggle-selection :table-alert-render="false"
@@ -98,7 +98,7 @@ function getList() {
 
 const getUnitGetUnitList = () => {
   treeLoading.value = true
-  unitGetUnitList({ scopeSelf: 1 }).then(({ data }) => {
+  unitGetUnitList().then(({ data }) => {
     // 接口返回扁平单位列表，按 parentId 组装成"公司 → 部门"树形（level=1 根为虚拟节点不展示）
     const map = {}
     data.forEach(item => { map[item.id] = { ...item, children: [] } })
@@ -112,6 +112,16 @@ const getUnitGetUnitList = () => {
       }
     })
     deptAssignList.value = roots
+    // 左树隐藏期间，新增默认挂"最大的单位"（顶层公司节点 11000001）下
+    if (roots.length > 0) {
+      unitData.value = {
+        unitName: roots[0].unitName,
+        unitCode: roots[0].unitCode,
+        sysCode: roots[0].sysCode,
+        // 顶层单位即公司/路局节点，railway_code=自身编码（34号文档口径）
+        railwayCode: roots[0].unitCode
+      }
+    }
   }).finally(() => {
     treeLoading.value = false
   })
@@ -125,7 +135,7 @@ function onSearch(form, pageInfo) {
 
 const handleCreate = () => {
   if(!unitData.value.unitCode){
-    proxy.$modal.msgWarning('请先选择单位')
+    proxy.$modal.msgWarning('单位数据加载中，请稍后')
     return
   }
   proxy.$refs["addDialog"].show('create')

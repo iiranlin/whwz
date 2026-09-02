@@ -1,6 +1,6 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="900px" top="8vh" append-to-body v-loading="loading">
-    <el-form ref="elFormRef" :model="form" :rules="rules" label-width="130px" :disabled="disabled">
+    <el-form ref="elFormRef" :model="form" :rules="rules" label-width="140px" :disabled="disabled">
       <el-divider content-position="left">基本信息</el-divider>
       <el-row>
         <el-col :span="12">
@@ -90,6 +90,8 @@
         </el-col>
       </el-row>
 
+      <!-- 联系信息（隐藏，需要时放开注释） -->
+      <!--
       <el-divider content-position="left">联系信息</el-divider>
       <el-row>
         <el-col :span="12">
@@ -167,6 +169,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+      -->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -233,14 +236,10 @@ const data = reactive({
   },
   rules: {
     suName: [{ required: true, message: '请输入供应商名称', trigger: 'blur' }],
-    suSimpleName: [{ required: true, message: '请输入供应商简称', trigger: 'blur' }],
-    suUnicode: [{ required: true, message: '请输入统一社会信用代码', trigger: 'blur' }],
-    owner: [{ required: true, message: '请输入法定代表人', trigger: 'blur' }],
-    suBizCode: [{ required: true, message: '请输入营业执照编号', trigger: 'blur' }],
-    suBizCodeExpire: [{ required: true, message: '请选择营业执照有效期', trigger: 'change' }],
-    suTaxCode: [{ required: true, message: '请输入税务登记证编号', trigger: 'blur' }],
-    contactPhone: [{ pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }],
-    contactEmail: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }]
+    suUnicode: [{ required: true, message: '请输入统一社会信用代码', trigger: 'blur' }]
+    // 联系信息校验规则（区块已隐藏，需要时放开注释）
+    // contactPhone: [{ pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }],
+    // contactEmail: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }]
   }
 })
 

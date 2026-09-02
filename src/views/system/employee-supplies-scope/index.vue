@@ -121,7 +121,12 @@ function getList() {
 const getTreeWithUser = () => {
   treeLoading.value = true
   treeWithUser().then( ({data}) => {
-    withUserList.value = data
+    // 顶层为武汉局根节点时剥离，直接以公司节点作为展示顶点
+    if (data && data[0] && data[0].deptCode === '10000001') {
+      withUserList.value = data[0].children || []
+    } else {
+      withUserList.value = data || []
+    }
   }).finally(() => {
     treeLoading.value = false
   })

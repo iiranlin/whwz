@@ -74,7 +74,7 @@ import { useRouter } from 'vue-router'
 import useUserStore from '@/store/modules/user'
 import usePermissionStore from '@/store/modules/permission'
 import { getCookie } from '@/utils/auth'
-import { noticePage } from '@/api/base/notice'
+import { noticePage, noticeDetail } from '@/api/base/notice'
 import NoticeMessage from '@/views/system/notice/components/noticeMessage'
 
 const router = useRouter()
@@ -152,7 +152,10 @@ function getNotices() {
 
 // 查看公告全文
 function viewNotice(row) {
-  noticeMessageRef.value && noticeMessageRef.value.init(row.noticeMessage)
+  // 列表不含 CLOB 正文，调详情接口获取
+  noticeDetail(row.id).then(({ data }) => {
+    noticeMessageRef.value && noticeMessageRef.value.init(data.noticeMessage)
+  })
 }
 
 // 时间格式化：YYYY-MM-DD

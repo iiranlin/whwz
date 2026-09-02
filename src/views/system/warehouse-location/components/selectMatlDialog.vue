@@ -70,7 +70,8 @@ const getList = () => {
 
 // 显示弹框
 function show(row) {
-  queryParams.value.positionType = row.positionType
+  // 货位类型过滤注释保留：需求分配物资不再限制随机货位只能选商城物资，恢复时放开
+  // queryParams.value.positionType = row.positionType
   visible.value = true
   tableData.value = []
   total.value = 0

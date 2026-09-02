@@ -1,4 +1,4 @@
-import { plantDictList } from '@/api/warehouse/plantDict'
+import { plantDictListAll } from '@/api/warehouse/plantDict'
 
 // 供货单状态
 export const statusOptions = [
@@ -36,7 +36,7 @@ async function createRichColumns() {
   // 用料地区
   let plantArr = []
   try {
-    const res = await plantDictList()
+    const res = await plantDictListAll()
     plantArr = (res.data || []).map(item => ({ ...item, label: item.plantName, value: item.plantCode }))
   } catch (e) {
     plantArr = []

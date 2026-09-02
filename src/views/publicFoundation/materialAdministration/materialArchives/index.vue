@@ -20,7 +20,11 @@
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             @node-click="handleNodeClick"
-          />
+          >
+            <template #default="{ data }">
+              <span>{{ data.matlCateCode }} {{ data.matlCateName }}</span>
+            </template>
+          </el-tree>
         </el-scrollbar>
         </div>
       </el-col>
@@ -38,7 +42,7 @@
       </pane>
     </splitpanes>
     </el-row>
-    <operate ref="operateRef" :tree-options="treeOptions" @createSuccess="getList" />
+    <operate ref="operateRef" @createSuccess="getList" />
   </div>
 </template>
 
@@ -132,7 +136,7 @@ function onSelectionChange(rows) {
 
 /** 新增 */
 function handleCreate() {
-  proxy.$refs.operateRef.init('create', undefined, currentClassifyCode.value)
+  proxy.$refs.operateRef.init('create')
 }
 
 /** 修改 */

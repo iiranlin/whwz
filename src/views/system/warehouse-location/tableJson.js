@@ -115,6 +115,7 @@ const columnsData = async () => {
       searchable: true,
       searchType: "input",
     },
+    /* 货位类型列注释保留：需求列表去掉货位类型，恢复时放开本段
     {
       field: "positionType",
       title: "货位类型",
@@ -123,6 +124,7 @@ const columnsData = async () => {
       requestOptions: async () => positionTypeArr,
       optionsCacheKey: "warehouse-location:positionType",
     },
+    */
     {
       field: "status",
       title: "是否有效",

@@ -5,7 +5,7 @@
         <el-tree-select
           v-model="form.supCateCode"
           :data="treeOptions"
-          :props="{ label: 'matlCateName', children: 'children' }"
+          :props="treeProps"
           node-key="matlCateCode"
           check-strictly
           clearable
@@ -48,6 +48,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['createSuccess'])
+
+/** 分类树节点显示：编码 + 名称（与左侧树一致） */
+const treeProps = {
+  label: data => (data.matlCateCode ? `${data.matlCateCode} ${data.matlCateName}` : data.matlCateName),
+  children: 'children'
+}
 
 const visible = ref(false)
 const loading = ref(false)

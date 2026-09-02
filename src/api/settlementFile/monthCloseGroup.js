@@ -2,6 +2,13 @@
 import request from "@/utils/request";
 const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE;
 const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE;
+// 获取财务年月（导航栏登录日期展示，返回 nowDate、yearMonth）
+export function getCcrecordYear() {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/b/ccrecord/getYear`,
+    method: "get",
+  });
+}
 // 查询参数配置列表
 export function getMonthCloseList(params) {
   return request({

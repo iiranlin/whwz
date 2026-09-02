@@ -39,7 +39,8 @@ export const toolbarConfig = {
       code: 'update', name: '修改', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return !row.id
+        // 已发布的通知不允许修改（与后端规则对齐）
+        return !row.id || String(row.flag) === '1'
       }
     },
     { code: 'delete', name: '删除', type: 'primary' },
@@ -61,7 +62,8 @@ export const toolbarConfig = {
       code: 'view', name: '查看', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return !row.noticeMessage
+        // 列表不含 CLOB 正文，查看统一走详情接口，仅要求有 id
+        return !row.id
       }
     }
   ]

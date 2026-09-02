@@ -19,7 +19,7 @@
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
 import NoticeMessage from "./components/noticeMessage"
-import { noticePage, noticeDeleteBatch, noticePublish, noticeUnPublish } from '@/api/base/notice'
+import { noticePage, noticeDetail, noticeDeleteBatch, noticePublish, noticeUnPublish } from '@/api/base/notice'
 
 const { proxy } = getCurrentInstance()
 
@@ -107,9 +107,11 @@ function handleUnPublish(row) {
   }).catch(() => {})
 }
 
-/** 查看内容 */
+/** 查看内容（列表不含 CLOB 正文，调详情接口获取） */
 function handleView(row) {
-  proxy.$refs.noticeMessageRef.init(row.noticeMessage)
+  noticeDetail(row.id).then(({ data }) => {
+    proxy.$refs.noticeMessageRef.init(data.noticeMessage)
+  })
 }
 
 const onAction = (payload) => {

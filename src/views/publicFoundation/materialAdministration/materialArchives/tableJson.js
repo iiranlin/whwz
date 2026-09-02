@@ -14,14 +14,16 @@ export const columns = [
     searchType: "input"
   },
   {
-    field: "matlCateName",
-    title: "物资分类",
-    minWidth: 160
-  },
-  {
     field: "matlType",
     title: "规格型号",
     minWidth: 140,
+    searchable: true,
+    searchType: "input"
+  },
+  {
+    field: "matlRaw",
+    title: "材质",
+    minWidth: 120,
     searchable: true,
     searchType: "input"
   },
@@ -34,8 +36,60 @@ export const columns = [
     searchType: "input"
   },
   {
+    field: "matlPcode",
+    title: "图号",
+    minWidth: 140,
+    searchable: true,
+    searchType: "input"
+  },
+  {
+    field: "unitWeight",
+    title: "物资单重",
+    minWidth: 100,
+    align: "center"
+  },
+  {
+    field: "trainTypeName",
+    title: "车型",
+    minWidth: 140
+  },
+  {
+    field: "exStandard",
+    title: "执行标准名称",
+    minWidth: 160
+  },
+  {
+    field: "materialCode",
+    title: "物料编号",
+    minWidth: 120
+  },
+  {
+    field: "standByattr5",
+    title: "技术平台",
+    minWidth: 100,
+    align: "center"
+  },
+  {
+    field: "standByattr3",
+    title: "是否集中编制",
+    minWidth: 120,
+    align: "center",
+    type: "dict",
+    requestOptions: async () => [
+      { value: "0", label: "否" },
+      { value: "1", label: "是" }
+    ],
+    optionsCacheKey: "material-matl:standbyattr3"
+  },
+  {
+    field: "auditDate",
+    title: "发布日期",
+    minWidth: 130,
+    type: "date"
+  },
+  {
     field: "enableState",
-    title: "状态",
+    title: "目录状态",
     minWidth: 90,
     align: "center",
     searchable: true,
@@ -48,10 +102,14 @@ export const columns = [
     optionsCacheKey: "material-matl:status"
   },
   {
-    field: "createDate",
-    title: "创建时间",
-    minWidth: 170,
-    type: "date"
+    field: "stopReason",
+    title: "停用原因",
+    minWidth: 120
+  },
+  {
+    field: "comments",
+    title: "申请备注",
+    minWidth: 140
   }
 ]
 

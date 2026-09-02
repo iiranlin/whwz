@@ -7,20 +7,14 @@
       <el-form-item label="物资名称：" prop="matlName">
         <el-input v-model="form.matlName" placeholder="请输入物资名称" maxlength="150" />
       </el-form-item>
-      <el-form-item label="物资分类：" prop="supMatlCode">
-        <el-tree-select
-          v-model="form.supMatlCode"
-          :data="treeOptions"
-          :props="{ label: 'matlCateName', children: 'children' }"
-          node-key="matlCateCode"
-          check-strictly
-          clearable
-          placeholder="请选择物资分类"
-          style="width: 100%"
-        />
-      </el-form-item>
       <el-form-item label="规格型号：" prop="matlType">
         <el-input v-model="form.matlType" placeholder="请输入规格型号" maxlength="100" />
+      </el-form-item>
+      <el-form-item label="材质：" prop="matlRaw">
+        <el-input v-model="form.matlRaw" placeholder="请输入材质" maxlength="100" />
+      </el-form-item>
+      <el-form-item label="图号：" prop="matlPcode">
+        <el-input v-model="form.matlPcode" placeholder="请输入图号" maxlength="100" />
       </el-form-item>
       <el-form-item label="计量单位：" prop="matlUnit">
         <el-input v-model="form.matlUnit" placeholder="请输入计量单位" maxlength="50" />
@@ -49,13 +43,6 @@ import { rmstatCatalogCreate, rmstatCatalogModify, rmstatCatalogDetail } from '@
 
 const { proxy } = getCurrentInstance()
 
-const props = defineProps({
-  treeOptions: {
-    type: Array,
-    default: () => []
-  }
-})
-
 const emit = defineEmits(['createSuccess'])
 
 const visible = ref(false)
@@ -67,8 +54,9 @@ const data = reactive({
   form: {
     matlCode: '',
     matlName: '',
-    supMatlCode: undefined,
     matlType: '',
+    matlRaw: '',
+    matlPcode: '',
     matlUnit: '',
     enableState: '1',
     comments: ''
@@ -83,14 +71,15 @@ const data = reactive({
 const { form, rules } = toRefs(data)
 
 /** 打开弹窗 */
-function init(dialogType, rowId, defaultClassifyCode) {
+function init(dialogType, rowId) {
   type.value = dialogType
   visible.value = true
   form.value = {
     matlCode: '',
     matlName: '',
-    supMatlCode: undefined,
     matlType: '',
+    matlRaw: '',
+    matlPcode: '',
     matlUnit: '',
     enableState: '1',
     comments: ''
@@ -101,8 +90,9 @@ function init(dialogType, rowId, defaultClassifyCode) {
       form.value = {
         matlCode: data.matlCode || '',
         matlName: data.matlName || '',
-        supMatlCode: data.supMatlCode || undefined,
         matlType: data.matlType || '',
+        matlRaw: data.matlRaw || '',
+        matlPcode: data.matlPcode || '',
         matlUnit: data.matlUnit || '',
         enableState: data.enableState != null ? String(data.enableState) : '1',
         comments: data.comments || ''
@@ -110,9 +100,6 @@ function init(dialogType, rowId, defaultClassifyCode) {
     })
   } else {
     title.value = '新增物资'
-    if (defaultClassifyCode) {
-      form.value.supMatlCode = defaultClassifyCode
-    }
   }
 }
 

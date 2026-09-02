@@ -108,26 +108,109 @@ const styles = computed(() => {
 
 const content = ref("")
 watch(() => props.modelValue, (v) => {
+  // 空值时 vue-quill 对空字符串不触发更新，需用 quill API 以 silent 方式清空（不触发 textChange 回写）
+  if (!v) {
+    if (content.value) {
+      content.value = ""
+      nextTick(() => {
+        const quill = quillEditorRef.value && quillEditorRef.value.getQuill()
+        quill && quill.setText("", "silent")
+      })
+    }
+    return
+  }
   if (v !== content.value) {
-    content.value = v == undefined ? "<p></p>" : v
+    content.value = v
   }
 }, { immediate: true })
 
 // 如果设置了上传地址则自定义图片上传事件
 onMounted(() => {
-  if (props.type == 'url') {
-    let quill = quillEditorRef.value.getQuill()
-    let toolbar = quill.getModule("toolbar")
-    toolbar.addHandler("image", (value) => {
-      if (value) {
+  let quill = quillEditorRef.value.getQuill()
+  let toolbar = quill.getModule("toolbar")
+  toolbar.addHandler("image", (value) => {
+    if (value) {
+      if (props.type == 'url') {
         proxy.$refs.uploadRef.click()
       } else {
-        quill.format("image", false)
+        selectLocalImage()
       }
-    })
-    quill.root.addEventListener('paste', handlePasteCapture, true)
-  }
+    } else {
+      quill.format("image", false)
+    }
+  })
+  quill.root.addEventListener('paste', handlePasteCapture, true)
 })
+
+// base64 模式图片校验：格式白名单 + 原图大小上限
+const IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const IMAGE_MAX_SIZE = 10 * 1024 * 1024 // 原图上限 10MB
+const IMAGE_MAX_WIDTH = 1200 // 压缩后最大宽度
+function checkImage(file) {
+  if (!IMAGE_TYPES.includes(file.type)) {
+    proxy.$modal.msgError("图片格式错误!")
+    return false
+  }
+  if (file.size > IMAGE_MAX_SIZE) {
+    proxy.$modal.msgError("图片大小不能超过 10MB!")
+    return false
+  }
+  return true
+}
+
+// 压缩图片并输出 base64：gif/svg 不压缩（保留动画/矢量），其余宽度超 1200 等比缩放，jpeg 有损 0.8
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      if (file.type === "image/gif" || file.type === "image/svg+xml") {
+        resolve(e.target.result)
+        return
+      }
+      const img = new Image()
+      img.onload = () => {
+        let { width, height } = img
+        if (width > IMAGE_MAX_WIDTH) {
+          height = Math.round(height * IMAGE_MAX_WIDTH / width)
+          width = IMAGE_MAX_WIDTH
+        }
+        const canvas = document.createElement("canvas")
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height)
+        const outType = (file.type === "image/jpeg" || file.type === "image/jpg") ? "image/jpeg" : "image/png"
+        resolve(canvas.toDataURL(outType, 0.8))
+      }
+      img.onerror = reject
+      img.src = e.target.result
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+// base64 模式：压缩后插入编辑器
+function insertBase64Image(file) {
+  if (!checkImage(file)) return
+  compressImage(file).then(dataUrl => {
+    let quill = toRaw(quillEditorRef.value).getQuill()
+    let range = quill.getSelection() || quill.selection.savedRange || { index: quill.getLength() }
+    quill.insertEmbed(range.index, "image", dataUrl)
+    quill.setSelection(range.index + 1)
+  }).catch(() => proxy.$modal.msgError("图片插入失败"))
+}
+
+// base64 模式：工具栏点击图片按钮，弹出文件选择
+function selectLocalImage() {
+  const input = document.createElement("input")
+  input.type = "file"
+  input.accept = IMAGE_TYPES.join(",")
+  input.onchange = () => {
+    const file = input.files[0]
+    if (file) insertBase64Image(file)
+  }
+  input.click()
+}
 
 // 上传前校检格式和大小
 function handleBeforeUpload(file) {
@@ -179,8 +262,13 @@ function handlePasteCapture(e) {
       const item = clipboard.items[i]
       if (item.type.indexOf('image') !== -1) {
         e.preventDefault()
+        e.stopPropagation() // 阻止 quill 默认粘贴处理重复插入
         const file = item.getAsFile()
-        insertImage(file)
+        if (props.type == 'url') {
+          insertImage(file)
+        } else {
+          insertBase64Image(file)
+        }
       }
     }
   }

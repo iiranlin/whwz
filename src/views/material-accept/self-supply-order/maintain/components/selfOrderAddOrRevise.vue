@@ -121,7 +121,7 @@ import { detailConfig } from './table-config'
 import { purcTypeOptions, taxFlagOptions, planCycleOptions } from '../tableJson'
 import { uploadHaders } from '@/utils/auth'
 import { supplierList } from '@/api/base/supplier'
-import { plantDictList } from '@/api/warehouse/plantDict'
+import { plantDictListAll } from '@/api/warehouse/plantDict'
 import {
   createPurchaseOrderMt,
   modifyPurchaseOrderMt,
@@ -233,9 +233,11 @@ function remoteMethod(query, force = false) {
 
 /** 获取下拉数据 */
 function getFormSelectList() {
-  plantDictList().then(({ data }) => {
+  plantDictListAll().then(({ data }) => {
     plantOptions.value = (data || []).map(item => ({ label: item.plantName, value: item.plantCode }))
   })
+  // 供应商下拉预加载前 50 条，便于直接点选；输入关键词时仍走远程搜索
+  remoteMethod('', true)
 }
 
 function handleSelectionChange(rows) {

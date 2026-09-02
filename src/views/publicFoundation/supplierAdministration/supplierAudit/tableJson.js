@@ -40,18 +40,19 @@ export const columns = [
     requestOptions: getSuTypeOptions,
     optionsCacheKey: "supplier:suType"
   },
-  {
-    field: "contactName",
-    title: "联系人",
-    minWidth: 100,
-    align: "center"
-  },
-  {
-    field: "contactPhone",
-    title: "手机号",
-    minWidth: 120,
-    align: "center"
-  },
+  // 联系信息列表列（已隐藏，需要时放开注释）
+  // {
+  //   field: "contactName",
+  //   title: "联系人",
+  //   minWidth: 100,
+  //   align: "center"
+  // },
+  // {
+  //   field: "contactPhone",
+  //   title: "手机号",
+  //   minWidth: 120,
+  //   align: "center"
+  // },
   {
     field: "status",
     title: "审核状态",

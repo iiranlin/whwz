@@ -21,7 +21,11 @@
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             @node-click="handleNodeClick"
-          />
+          >
+            <template #default="{ data }">
+              <span>{{ data.matlCateCode }} {{ data.matlCateName }}</span>
+            </template>
+          </el-tree>
           </el-scrollbar>
           </div>
         </el-col>

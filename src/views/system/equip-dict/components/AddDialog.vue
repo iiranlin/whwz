@@ -3,37 +3,50 @@
     <div class="sso-front-table-container">
       <el-form class="form-wrapper" :model="formData" :rules="rules" ref="elForm" :inline="true" label-width="120px"> 
         <div class="form-left flex1">
+          <el-form-item label="年度：" prop="yearCode">
+            <el-date-picker v-model="formData.yearCode" type="year" format="YYYY" value-format="YYYY" placeholder="请选择年度" :clearable="false" :disabled="dialogType != 'create'" />
+          </el-form-item>
           <el-form-item label="设备编码：" prop="equipCode">
             <el-input v-model="formData.equipCode" :disabled="dialogType != 'create'" placeholder="请输入设备编码" />
-          </el-form-item>
-          <el-form-item label="简拼：" prop="equipSpell">
-            <el-input v-model="formData.equipSpell" placeholder="请输入简拼" />
           </el-form-item>
           <el-form-item label="设备名称：" prop="equipName">
             <el-input v-model="formData.equipName" placeholder="请输入设备名称" />
           </el-form-item>
+          <el-form-item label="定额（元）：" prop="quota">
+            <el-input v-model="formData.quota" v-number-input.float="2" placeholder="请输入定额（元）" />
+          </el-form-item>
           <el-form-item label="设备类型：" prop="equipType">
             <el-input v-model="formData.equipType" placeholder="请输入设备类型" />
           </el-form-item>
-          <el-form-item label="上级编码：" prop="parentCode">
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】简拼 -->
+          <!-- <el-form-item label="简拼：" prop="equipSpell">
+            <el-input v-model="formData.equipSpell" placeholder="请输入简拼" />
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】上级编码 -->
+          <!-- <el-form-item label="上级编码：" prop="parentCode">
             <el-input v-model="formData.parentCode" placeholder="请输入上级编码" />
-          </el-form-item>
-          <el-form-item label="原始价值：" prop="originalValue">
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】原始价值 -->
+          <!-- <el-form-item label="原始价值：" prop="originalValue">
             <el-input v-model="formData.originalValue" v-number-input.float="2" placeholder="请输入原始价值" />
-          </el-form-item>
-          <el-form-item label="配属部门：" prop="deptId">
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】配属部门 -->
+          <!-- <el-form-item label="配属部门：" prop="deptId">
             <el-tree-select v-model="formData.deptId" :data="deptTreeData" :props="{children: 'children', label: 'deptName'}" node-key="id" check-strictly :render-after-expand="false"
               :disabled="formData.isOneLevel == '1'" filterable clearable/>
-          </el-form-item>
-          <el-form-item label="生产日期：" prop="makeDate">
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】生产日期 -->
+          <!-- <el-form-item label="生产日期：" prop="makeDate">
             <el-date-picker v-model="formData.makeDate" type="date" format="YYYY-MM-DD" value-format="x" placeholder="请选择生产日期" />
-          </el-form-item>
-          <el-form-item label="使用日期：" prop="useDate">
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】使用日期 -->
+          <!-- <el-form-item label="使用日期：" prop="useDate">
             <el-date-picker v-model="formData.useDate" type="date" format="YYYY-MM-DD" value-format="x" placeholder="请选择使用日期" />
-          </el-form-item>
-          <el-form-item label="生产厂家：" prop="maker">
+          </el-form-item> -->
+          <!-- 【2026-09 设备字典改造停用，如需恢复放开注释即可】生产厂家 -->
+          <!-- <el-form-item label="生产厂家：" prop="maker">
             <el-input v-model="formData.maker" placeholder="请输入生产厂家" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="是否有效：" prop="status">
             <el-select v-model="formData.status" placeholder="请选择是否有效" clearable>
               <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value">
@@ -58,7 +71,8 @@
 <script setup>
 import { statusArr } from '@/utils/dictionary'
 import { equipDictCreateModify } from '@/api/warehouse/equipDict'
-import { deptTree } from '@/api/base/dept'
+// 【2026-09 设备字典改造停用，如需恢复放开注释即可】配属部门树接口
+// import { deptTree } from '@/api/base/dept'
 const { proxy } = getCurrentInstance()
 
 const visible = ref(false)
@@ -66,44 +80,51 @@ const dialogType = ref('create')
 
 const data = reactive({
   formData: {
+    yearCode: String(new Date().getFullYear()),
     equipCode: '',
-    equipSpell: '',
+    quota: '',
     equipName: '',
     equipType: '',
-    parentCode: '',
-    originalValue: '',
-    deptId: '',
-    makeDate: '',
-    useDate: '',
-    maker: '',
+    // 【2026-09 设备字典改造停用，如需恢复放开注释即可】
+    // equipSpell: '',
+    // parentCode: '',
+    // originalValue: '',
+    // deptId: '',
+    // makeDate: '',
+    // useDate: '',
+    // maker: '',
     status: '1',
     comments: ''
   },
   rules: {
+    yearCode: [{ required: true, message: '请选择年度', trigger: ['blur', 'change'] }],
     equipCode: [{ required: true, message: '请输入设备编码', trigger: 'blur' }],
     equipName: [{ required: true, message: '请输入设备名称', trigger: 'blur' }],
+    quota: [{ required: true, message: '请输入定额（元）', trigger: 'blur' }],
     status: [{ required: true, message: '请选择是否启用', trigger: ['blur', 'change']}],
   },
-  deptTreeData: []
+  // 【2026-09 设备字典改造停用，如需恢复放开注释即可】配属部门树数据
+  // deptTreeData: []
 })
 
-const { formData, rules, deptTreeData } = toRefs(data)
+const { formData, rules } = toRefs(data)
 
 // 声明触发的事件（可选，增强类型校验）
 const emit = defineEmits(['createSuccess']);
 
-const getDeptTree = () => {
-  deptTree().then( ({data}) => {
-    deptTreeData.value = data || []
-  })
-}
+// 【2026-09 设备字典改造停用，如需恢复放开注释即可】配属部门树加载
+// const getDeptTree = () => {
+//   deptTree().then( ({data}) => {
+//     deptTreeData.value = data || []
+//   })
+// }
 
 // 显示弹框
 function show(type, row = {}) {
   visible.value = true
   dialogType.value = type
-  getDeptTree()
-	proxy.$nextTick(() => {
+  // getDeptTree() // 【2026-09 设备字典改造停用，如需恢复放开注释即可】
+proxy.$nextTick(() => {
     proxy.$refs.elForm && proxy.$refs.elForm.resetFields()
     formData.value = Object.assign({}, formData.value, row)
   })

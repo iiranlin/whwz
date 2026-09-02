@@ -5,7 +5,7 @@
         <el-input v-model="form.noticeTitle" maxlength="50" placeholder="请输入通知标题" />
       </el-form-item>
       <el-form-item label="通知内容：" prop="noticeMessage">
-        <Editor v-model="form.noticeMessage" :min-height="200" />
+        <Editor v-model="form.noticeMessage" :min-height="200" type="base64" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -70,6 +70,7 @@ function init(dialogType, rowId) {
   visible.value = true
   type.value = dialogType
   id.value = rowId || ''
+  resetForm() // 打开时先清空，避免残留上一条数据
   if (dialogType === 'update') {
     title.value = '修改通知'
     noticeDetail(rowId).then(({ data }) => {
