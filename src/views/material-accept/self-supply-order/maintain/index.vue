@@ -9,16 +9,12 @@
       action-width="300" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }" />
         </el-col>
     </el-row>
-    <self-order-add-or-revise ref="addOrReviseRef" @createSuccess="getList" />
-    <order-detail ref="orderDetailRef" @getList="getList" />
     <order-history ref="orderHistoryRef" />
     <order-tracking-dialog ref="orderTrackingRef" />
     <print-dialog ref="printDialogRef" />
   </div>
 </template>
 <script setup name="self-supply-order-maintain">
-import SelfOrderAddOrRevise from "./components/selfOrderAddOrRevise.vue"
-import OrderDetail from "./components/orderDetail.vue"
 import OrderHistory from "./components/orderHistory.vue"
 import OrderTrackingDialog from "./components/orderTrackingDialog.vue"
 import PrintDialog from "./components/printDialog.vue"
@@ -177,13 +173,13 @@ const toolbarConfig = {
 
 const onAction = ({ code, row, selectedRows }) => {
   const eventObj = {
-    // 新增
+    // 新增（跳转到编辑页面）
     create: () => {
-      proxy.$refs.addOrReviseRef.show('create')
+      proxy.$router.push({ path: '/material-accept/self-supply-order/maintain/edit', query: { type: 'create' } })
     },
-    // 修改
+    // 修改（跳转到编辑页面）
     modify: () => {
-      proxy.$refs.addOrReviseRef.show('modify', row)
+      proxy.$router.push({ path: '/material-accept/self-supply-order/maintain/edit', query: { type: 'modify', pdmId: row.pdmId } })
     },
     // 删除
     delete: () => {
@@ -201,13 +197,13 @@ const onAction = ({ code, row, selectedRows }) => {
     push: () => {
       handlePush(selectedRows)
     },
-    // 详情
+    // 详情（跳转到详情页面）
     detail: () => {
-      proxy.$refs.orderDetailRef.show(row, '1')
+      proxy.$router.push({ path: '/material-accept/self-supply-order/maintain/detail', query: { pdmId: row.pdmId } })
     },
-    // 采购订单号链接 -> 订单明细
+    // 采购订单号链接 -> 订单明细（跳转到详情页面）
     link: () => {
-      proxy.$refs.orderDetailRef.show(row, '1')
+      proxy.$router.push({ path: '/material-accept/self-supply-order/maintain/detail', query: { pdmId: row.pdmId } })
     },
     // 打印
     print: () => {
@@ -321,6 +317,9 @@ const init = async () => {
 }
 onMounted(() => {
   init()
+})
+// 每次激活（含首次挂载、从编辑/详情页返回）都刷新列表，保证保存/终止后数据最新
+onActivated(() => {
   getList()
 })
 </script>

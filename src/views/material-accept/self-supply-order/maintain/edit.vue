@@ -1,8 +1,7 @@
-<!-- 自采供货单 新增/修改 弹窗 -->
+<!-- 自采供货单 新增/修改 页面（由弹窗改为独立页面，路由 query 传 type=create|modify、pdmId） -->
 <template>
-  <ep-dialog :title="dialogType === 'create' ? '新增供货单' : '修改供货单'" iconTitle="form" v-model="visible" width="1100px"
-    top="5vh" append-to-body>
-    <div v-loading="loading" class="sso-front-table-container app-container">
+  <div class="app-container">
+    <div v-loading="loading" class="sso-front-table-container">
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="110px">
         <el-row :gutter="10">
           <el-col :span="8">
@@ -68,7 +67,7 @@
       <!-- 明细工具栏 -->
       <div class="detail-toolbar">
         <el-button type="primary" @click="handleSave">保存</el-button>
-        <el-button @click="close">返回</el-button>
+        <el-button @click="goBack">返回</el-button>
         <span class="flex1"></span>
         <el-button type="primary" @click="addDetail">新增</el-button>
         <el-button type="primary" @click="downloadTemplate">模板下载</el-button>
@@ -105,20 +104,14 @@
         </el-table>
       </div>
     </div>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="close" class="cancel-btn"><svg-icon icon-class="cancel" />&nbsp;关闭</el-button>
-        <el-button type="primary" class="determine-btn" @click="handleSave"><svg-icon
-            icon-class="determine" />&nbsp;保存</el-button>
-      </div>
-    </template>
     <select-matl ref="selectMatlRef" @saveSelect="saveSelectMatl" />
-  </ep-dialog>
+  </div>
 </template>
 
-<script setup name="self-supply-order-add-or-revise">
-import { detailConfig } from './table-config'
-import { purcTypeOptions, taxFlagOptions, planCycleOptions } from '../tableJson'
+<script setup name="self-supply-order-maintain-edit">
+import { useRoute } from 'vue-router'
+import { detailConfig } from './components/table-config'
+import { purcTypeOptions, taxFlagOptions, planCycleOptions } from './tableJson'
 import { uploadHaders } from '@/utils/auth'
 import { supplierList } from '@/api/base/supplier'
 import { plantDictListAll } from '@/api/warehouse/plantDict'
@@ -129,12 +122,13 @@ import {
   downloadOrderTemplate,
   uploadOrderDetail,
 } from '@/api/warehouse/selfSupplyOrder'
-import SelectMatl from './selectMatl.vue'
+import SelectMatl from './components/selectMatl.vue'
 const { proxy } = getCurrentInstance()
+const route = useRoute()
 
-const emit = defineEmits(['createSuccess'])
+// 列表页路径：返回/保存成功后关闭当前页签并跳回（本项目 tagsView.delView 无 lastPath，closePage 会跳工作台，故用 closeOpenPage）
+const LIST_PATH = '/material-accept/self-supply-order/maintain/index'
 
-const visible = ref(false)
 const loading = ref(false)
 const remoteLoading = ref(false)
 const dialogType = ref('create')
@@ -153,7 +147,7 @@ const taxRateOptions = [
   { label: '13%', value: '13' },
 ]
 
-const formData = ref({
+const emptyForm = () => ({
   pdmId: null,
   plantCode: '',
   plantName: '',
@@ -169,6 +163,7 @@ const formData = ref({
   comments: '',
   details: [],
 })
+const formData = ref(emptyForm())
 
 const rules = {
   suCode: [{ required: true, message: '请选择供应商！', trigger: 'change' }],
@@ -181,28 +176,12 @@ const rules = {
 const supplierOptions = ref([])
 const plantOptions = ref([])
 
-/** 打开弹窗：type = create/modify */
-function show(type, row = {}) {
-  dialogType.value = type
-  visible.value = true
-  formData.value = {
-    pdmId: null,
-    plantCode: '',
-    plantName: '',
-    purcTypeCode: '',
-    purcTypeName: '',
-    spdCode: '',
-    suCode: '',
-    suName: '',
-    rptAccptdtName: '',
-    rptAccptdtCode: '',
-    taxFlag: '0',
-    taxRate: '',
-    comments: '',
-    details: [],
-  }
-  if (type === 'modify' && row.pdmId) {
-    getDetail(row.pdmId)
+/** 按路由 query 初始化页面：type=create 新增；type=modify&pdmId=xxx 修改回显 */
+function initPage() {
+  dialogType.value = route.query.type === 'modify' ? 'modify' : 'create'
+  formData.value = emptyForm()
+  if (dialogType.value === 'modify' && route.query.pdmId) {
+    getDetail(route.query.pdmId)
   } else {
     proxy.$nextTick(() => formRef.value && formRef.value.clearValidate())
   }
@@ -300,7 +279,7 @@ function formatAmount(row) {
   return 0
 }
 
-/** 保存 */
+/** 保存：成功后关闭当前页签返回列表（列表 onActivated 自动刷新） */
 function handleSave() {
   formRef.value.validate(valid => {
     if (!valid) return
@@ -326,22 +305,26 @@ function handleSave() {
     const api = dialogType.value === 'modify' ? modifyPurchaseOrderMt : createPurchaseOrderMt
     api(formData.value).then(({ message }) => {
       proxy.$modal.msgSuccess(message)
-      emit('createSuccess')
-      close()
+      proxy.$tab.closeOpenPage({ path: LIST_PATH })
     }).finally(() => {
       loading.value = false
     })
   })
 }
 
-function close() {
-  visible.value = false
+/** 返回：关闭当前页签回到列表 */
+function goBack() {
+  proxy.$tab.closeOpenPage({ path: LIST_PATH })
 }
 
-getFormSelectList()
+// 页签未关闭时从列表再次进入（query 变化、组件复用），重新初始化表单
+watch(() => route.query, () => {
+  initPage()
+})
 
-defineExpose({
-  show,
+onMounted(() => {
+  getFormSelectList()
+  initPage()
 })
 </script>
 <style lang="scss" scoped>
@@ -355,6 +338,6 @@ defineExpose({
   padding: 4px 0 10px;
 }
 .detail-table {
-  height: 40vh;
+  height: calc(100vh - 350px);
 }
 </style>

@@ -9,7 +9,6 @@
       :grid-options="{ rowId: 'pdmId' }" :default-search-form="defaultSearchForm" @selection-change="onSelectionChange" />
         </el-col>
     </el-row>
-    <order-detail ref="orderDetailRef" />
     <order-history ref="orderHistoryRef" />
     <process-approval ref="processApprovalRef" @saveProcessApproval="saveProcessApproval" />
   </div>
@@ -17,7 +16,6 @@
 <script setup name="self-supply-order-approval">
 import { columns } from './tableJson'
 import { getAuditOrderMtList, auditPurchaseOrder } from '@/api/warehouse/selfSupplyOrder'
-import OrderDetail from '../maintain/components/orderDetail.vue'
 import OrderHistory from '../maintain/components/orderHistory.vue'
 import ProcessApproval from './components/processApproval.vue'
 const { proxy } = getCurrentInstance()
@@ -101,9 +99,9 @@ const onAction = ({ code, row, selectedRows }) => {
     print: () => {
       handlePrint(row)
     },
-    // 采购订单号链接 -> 订单明细
+    // 采购订单号链接 -> 订单明细（跳转到详情页面，from=approval 只读无终止，返回回审批列表）
     link: () => {
-      proxy.$refs.orderDetailRef.show(row, '2')
+      proxy.$router.push({ path: '/material-accept/self-supply-order/maintain/detail', query: { pdmId: row.pdmId, from: 'approval' } })
     },
   }
   eventObj[code] && eventObj[code]()

@@ -42,6 +42,26 @@ export const constantRoutes = [
     component: () => import('@/views/login/index.vue'),
     hidden: true
   },
+  // 自采供货单维护：新增/修改/详情独立页面（隐藏路由，不进菜单表，activeMenu 高亮维护菜单）
+  {
+    path: '/',
+    component: () => import('@/layout/index.vue'),
+    hidden: true,
+    children: [
+      {
+        path: 'material-accept/self-supply-order/maintain/edit',
+        name: 'self-supply-order-maintain-edit',
+        component: () => import('@/views/material-accept/self-supply-order/maintain/edit.vue'),
+        meta: { title: '供货单编辑', activeMenu: '/material-accept/self-supply-order/maintain/index' }
+      },
+      {
+        path: 'material-accept/self-supply-order/maintain/detail',
+        name: 'self-supply-order-maintain-detail',
+        component: () => import('@/views/material-accept/self-supply-order/maintain/detail.vue'),
+        meta: { title: '供货单详情', activeMenu: '/material-accept/self-supply-order/maintain/index' }
+      }
+    ]
+  },
   {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/error/404'),
