@@ -17,7 +17,7 @@
 <script setup name="supplierArchives">
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
-import { supplierList, supplierBatchRemove, supplierDisable } from '@/api/base/supplier'
+import { supplierList, supplierBatchRemove, supplierDisable, supplierDownloadTemplate, supplierImport } from '@/api/base/supplier'
 // 保存即生效后提交/撤回不再使用，需要时放开注释（import 中补回 supplierResetStatus, supplierSubmitAudit）
 
 const { proxy } = getCurrentInstance()
@@ -126,12 +126,25 @@ function handleDisable(row) {
 // }
 
 const onAction = (payload) => {
-  const { code, row } = payload
+  const { code, row, files } = payload
   const eventObj = {
     create: () => handleCreate(),
     update: () => handleUpdate(row),
     delete: () => handleDelete(row),
-    disableCooperate: () => handleDisable(row)
+    disableCooperate: () => handleDisable(row),
+    // 下载模板
+    download: () => {
+      proxy.$download.name(supplierDownloadTemplate)
+    },
+    // 模板导入
+    upload: () => {
+      supplierImport(files[0]).then(({ data }) => {
+        proxy.$modal.msgSuccess(`成功导入${data}条！`)
+        // 回到第一页刷新，确保新导入数据展示在列表最前
+        queryParams.value.pageNum = 1
+        getList()
+      })
+    }
     // 保存即生效后不再使用，需要时放开注释
     // withdraw: () => handleWithdraw(row),
     // submitAudit: () => handleSubmitAudit(row)

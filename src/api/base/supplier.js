@@ -11,6 +11,21 @@ export function supplierList(params) {
   })
 }
 
+// 供应商导入模板下载 URL
+export const supplierDownloadTemplate = `${BASE}/Pu/Su/downloadTemplate`
+
+// 供应商模板导入
+export function supplierImport(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request({
+    url: `${BASE}/Pu/Su/import`,
+    method: 'post',
+    headers: { 'Content-Type': undefined },
+    data: formData
+  })
+}
+
 // 供应商档案详情
 export function supplierDetail(id) {
   return request({

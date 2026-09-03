@@ -85,7 +85,7 @@ const toolbarConfig = {
 const visible = ref(false)
 const rowData = ref({})
 
-const onAction = ({ code, row, selectedRows }) => {
+const onAction = ({ code, row, selectedRows, files }) => {
     const eventObj = {
         add: () => {
             visible.value = true
@@ -108,7 +108,7 @@ const onAction = ({ code, row, selectedRows }) => {
         },
         cancelPublish: async () => {
             const formData = new FormData()
-            formData.append('file', options.file)
+            formData.append('file', files[0])
             const { code, message } = await normListImport(formData)
             if (code === 0) {
                 proxy.$modal.msgSuccess(message)

@@ -124,6 +124,8 @@ export const columns = [
 export const toolbarConfig = {
   buttons: [
     { code: 'create', name: '新增', type: 'primary' },
+    { code: 'download', name: '下载模板', type: 'primary' },
+    { code: 'upload', name: '模板导入', type: 'primary', upload: { multiple: false } },
     {
       code: 'update', name: '修改', showInTop: false, showInRow: true
       // 保存即生效后不再按审核状态限制（需要时放开注释）

@@ -350,6 +350,24 @@ function handleRowClick(row) {
 
 // 按钮事件
 function emitAction(code, row) {
+  // 配置了 upload 的按钮：弹出文件选择框，选中文件后携带 files（原生 File 数组）上抛
+  const btn = buttonList.value.find(item => item.code === code)
+  if (btn && btn.upload) {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = !!btn.upload.multiple
+    if (btn.upload.accept) input.accept = btn.upload.accept
+    input.onchange = () => {
+      emit('action', {
+        code,
+        row: {},
+        selectedRows: selectedRows.value,
+        files: Array.from(input.files || [])
+      })
+    }
+    input.click()
+    return
+  }
   emit('action', {
     code,
     row: row || {},
