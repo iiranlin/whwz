@@ -5,20 +5,21 @@
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="110px">
         <el-row :gutter="10">
           <el-col :span="8">
-            <el-form-item label="采购订单号" prop="spdCode">
+            <el-form-item label="采购订单号：" prop="spdCode">
               <el-input v-model="formData.spdCode" placeholder="自动生成采购订单号" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="供应商" prop="suCode">
-              <el-select v-model="formData.suCode" placeholder="请选择供应商" clearable filterable remote
+            <el-form-item label="供应商：" prop="suCode">
+              <!-- <el-select v-model="formData.suCode" placeholder="请选择供应商" clearable filterable remote
                 :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%">
                 <el-option v-for="item in supplierOptions" :key="item.suCode" :label="item.suName" :value="item.suCode" />
-              </el-select>
+              </el-select> -->
+              <el-input v-model="formData.suCode" placeholder="请输入供应商" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="采购方式" prop="purcTypeCode">
+            <el-form-item label="采购方式：" prop="purcTypeCode">
               <el-select v-model="formData.purcTypeCode" placeholder="请选择采购方式" clearable style="width: 100%">
                 <el-option v-for="item in purcTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
@@ -27,21 +28,21 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="8">
-            <el-form-item label="用料地区" prop="plantCode">
+            <el-form-item label="用料地区：" prop="plantCode">
               <el-select v-model="formData.plantCode" placeholder="请选择用料地区" clearable filterable style="width: 100%">
                 <el-option v-for="item in plantOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="计划周期" prop="rptAccptdtCode">
               <el-select v-model="formData.rptAccptdtCode" placeholder="请选择计划周期" clearable style="width: 100%">
                 <el-option v-for="item in planCycleOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
-            <el-form-item label="是否含税" prop="taxFlag">
+            <el-form-item label="是否含税：" prop="taxFlag">
               <el-radio-group v-model="formData.taxFlag">
                 <el-radio v-for="item in taxFlagOptions" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
               </el-radio-group>
@@ -50,14 +51,14 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="8">
-            <el-form-item label="税率" prop="taxRate">
+            <el-form-item label="税率：" prop="taxRate">
               <el-select v-model="formData.taxRate" placeholder="请选择税率" clearable style="width: 100%">
                 <el-option v-for="item in taxRateOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="16">
-            <el-form-item label="备注" prop="comments">
+            <el-form-item label="备注：" prop="comments">
               <el-input v-model="formData.comments" type="textarea" :rows="1" maxlength="100" placeholder="请输入备注" />
             </el-form-item>
           </el-col>
@@ -69,11 +70,11 @@
         <el-button type="primary" @click="handleSave">保存</el-button>
         <el-button @click="goBack">返回</el-button>
         <span class="flex1"></span>
-        <el-button type="primary" @click="addDetail">新增</el-button>
-        <el-button type="primary" @click="downloadTemplate">模板下载</el-button>
+        <el-button type="primary" @click="addDetail">添加明细</el-button>
+        <el-button  @click="downloadTemplate">模板下载</el-button>
         <el-upload :action="uploadUrl" :headers="uploadHeaders" :show-file-list="false" :before-upload="beforeUpload"
           :on-success="handleUploadSuccess" style="display: inline-block">
-          <el-button type="primary">模板导入</el-button>
+          <el-button >模板导入</el-button>
         </el-upload>
       </div>
       <!-- 明细表格 -->
@@ -83,7 +84,7 @@
           <el-table-column type="index" label="序号" width="55" align="center" />
           <template v-for="col in detailConfig" :key="col.field">
             <el-table-column :label="col.title" :min-width="col.minWidth" :align="col.align"
-              show-overflow-tooltip>
+              header-align="center" show-overflow-tooltip>
               <template #default="scope">
                 <span v-if="col.type === 'smatlType'">{{ scope.row.smatlType + (scope.row.smatlRaw ? '/' + scope.row.smatlRaw : '') + (scope.row.smatlPcode ? '/' + scope.row.smatlPcode : '') }}</span>
                 <el-input v-else-if="col.type === 'input'" v-model="scope.row[col.field]" maxlength="100"
@@ -166,11 +167,11 @@ const emptyForm = () => ({
 const formData = ref(emptyForm())
 
 const rules = {
-  suCode: [{ required: true, message: '请选择供应商！', trigger: 'change' }],
-  purcTypeCode: [{ required: true, message: '请选择采购方式', trigger: 'change' }],
-  plantCode: [{ required: true, message: '请选择用料地区', trigger: 'change' }],
-  taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
-  rptAccptdtCode: [{ required: true, message: '请选择计划周期', trigger: 'change' }],
+  // suCode: [{ required: true, message: '请选择供应商！', trigger: 'change' }],
+  // purcTypeCode: [{ required: true, message: '请选择采购方式', trigger: 'change' }],
+  // plantCode: [{ required: true, message: '请选择用料地区', trigger: 'change' }],
+  // taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
+  // rptAccptdtCode: [{ required: true, message: '请选择计划周期', trigger: 'change' }],
 }
 
 const supplierOptions = ref([])
