@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { login as loginApi, logout as logoutApi, info as infoApi } from '@/api/base/auth'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import usePermissionStore from '@/store/modules/permission'
+import useTagsViewStore from '@/store/modules/tagsView'
 
 const useUserStore = defineStore('user', {
   state: () => ({
@@ -39,7 +40,8 @@ const useUserStore = defineStore('user', {
           this.token = ''
           this.userInfo = {}
           removeToken()
-          // 清空动态路由，重新登录时强制重新拉取菜单
+          // 清空所有已打开的页签 + 动态路由，重新登录时只保留首页工作台
+          useTagsViewStore().delAllViews()
           usePermissionStore().resetRoutes()
           resolve()
         }).catch(error => reject(error))

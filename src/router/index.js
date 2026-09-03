@@ -44,21 +44,21 @@ export const constantRoutes = [
   },
   // 自采供货单维护：新增/修改/详情独立页面（隐藏路由，不进菜单表，activeMenu 高亮维护菜单）
   {
-    path: '/',
+    path: '/material-accept/self-supply-order/maintain',
     component: () => import('@/layout/index.vue'),
     hidden: true,
     children: [
       {
-        path: 'material-accept/self-supply-order/maintain/edit',
+        path: 'edit',
         name: 'self-supply-order-maintain-edit',
         component: () => import('@/views/material-accept/self-supply-order/maintain/edit.vue'),
-        meta: { title: '供货单编辑', activeMenu: '/material-accept/self-supply-order/maintain/index' }
+        meta: { title: '供货单编辑', activeMenu: '/material-accept/supply-order-manage' }
       },
       {
-        path: 'material-accept/self-supply-order/maintain/detail',
+        path: 'detail',
         name: 'self-supply-order-maintain-detail',
         component: () => import('@/views/material-accept/self-supply-order/maintain/detail.vue'),
-        meta: { title: '供货单详情', activeMenu: '/material-accept/self-supply-order/maintain/index' }
+        meta: { title: '供货单详情', activeMenu: '/material-accept/supply-order-manage' }
       }
     ]
   },
