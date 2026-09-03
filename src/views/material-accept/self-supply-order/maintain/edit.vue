@@ -134,8 +134,7 @@ const remoteLoading = ref(false)
 const dialogType = ref('create')
 const formRef = ref(null)
 const selectionData = ref([])
-
-const uploadUrl = uploadOrderDetail
+const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + import.meta.env.VITE_APP_BASE_WAREHOUSE + "/purchaseOrderDt/import")
 const uploadHeaders = uploadHaders()
 
 // TODO: 税率字典待与后端确认字典编码，此处静态占位，可改为 getListByParentCode('tax_rate')

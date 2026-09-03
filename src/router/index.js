@@ -52,7 +52,10 @@ export const constantRoutes = [
         path: 'edit',
         name: 'self-supply-order-maintain-edit',
         component: () => import('@/views/material-accept/self-supply-order/maintain/edit.vue'),
-        meta: { title: '供货单编辑', activeMenu: '/material-accept/supply-order-manage' }
+        meta: { title: '供货单编辑', activeMenu: '/material-accept/supply-order-manage' },
+        beforeEnter: (to) => {
+          to.meta.title = to.query.type === 'create' ? '供货单新增' : '供货单编辑'
+        }
       },
       {
         path: 'detail',
