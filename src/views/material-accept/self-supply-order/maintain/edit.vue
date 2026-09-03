@@ -11,11 +11,10 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="供应商：" prop="suCode">
-              <!-- <el-select v-model="formData.suCode" placeholder="请选择供应商" clearable filterable remote
+              <el-select v-model="formData.suCode" placeholder="请选择供应商" clearable filterable remote
                 :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%">
                 <el-option v-for="item in supplierOptions" :key="item.suCode" :label="item.suName" :value="item.suCode" />
-              </el-select> -->
-              <el-input v-model="formData.suCode" placeholder="请输入供应商" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -112,7 +111,7 @@
 <script setup name="self-supply-order-maintain-edit">
 import { useRoute } from 'vue-router'
 import { detailConfig } from './components/table-config'
-import { purcTypeOptions, taxFlagOptions, planCycleOptions } from './tableJson'
+import { purcTypeOptions as fetchPurcTypeOptions, taxFlagOptions, planCycleOptions } from './tableJson'
 import { uploadHaders } from '@/utils/auth'
 import { supplierList } from '@/api/base/supplier'
 import { plantDictListAll } from '@/api/warehouse/plantDict'
@@ -176,6 +175,7 @@ const rules = {
 
 const supplierOptions = ref([])
 const plantOptions = ref([])
+const purcTypeOptions = ref([])
 
 /** 按路由 query 初始化页面：type=create 新增；type=modify&pdmId=xxx 修改回显 */
 function initPage() {
@@ -215,6 +215,10 @@ function remoteMethod(query, force = false) {
 function getFormSelectList() {
   plantDictListAll().then(({ data }) => {
     plantOptions.value = (data || []).map(item => ({ label: item.plantName, value: item.plantCode }))
+  })
+  // 采购方式字典（异步获取）
+  fetchPurcTypeOptions().then(list => {
+    purcTypeOptions.value = list || []
   })
   // 供应商下拉预加载前 50 条，便于直接点选；输入关键词时仍走远程搜索
   remoteMethod('', true)
@@ -297,7 +301,7 @@ function handleSave() {
     const su = supplierOptions.value.find(item => item.suCode === formData.value.suCode)
     if (su) formData.value.suName = su.suName
     formData.value.plantName = plantOptions.value.find(item => item.value === formData.value.plantCode)?.label || ''
-    formData.value.purcTypeName = purcTypeOptions.find(item => item.value === formData.value.purcTypeCode)?.label || ''
+    formData.value.purcTypeName = purcTypeOptions.value.find(item => item.value === formData.value.purcTypeCode)?.label || ''
     formData.value.rptAccptdtName = planCycleOptions.find(item => item.value === formData.value.rptAccptdtCode)?.label || ''
     formData.value.details.forEach(item => {
       item.purAmount = formatAmount(item)

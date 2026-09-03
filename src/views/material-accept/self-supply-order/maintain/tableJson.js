@@ -1,5 +1,5 @@
 import { plantDictListAll } from '@/api/warehouse/plantDict'
-
+import { dictCateList } from "@/api/system/common";
 // 供货单状态
 export const statusOptions = [
   { label: '未提交', value: '1' },
@@ -19,11 +19,11 @@ export const taxFlagOptions = [
 ]
 
 // 采购方式（TODO：目标系统对应字典待确认，此处静态占位，后续可改 useDict('purc_type')）
-export const purcTypeOptions = [
-  { label: '自采', value: '1' },
-  { label: '集采', value: '2' },
-  { label: '联采', value: '3' },
-]
+// export const purcTypeOptions = [
+//   { label: '自采', value: '1' },
+//   { label: '集采', value: '2' },
+//   { label: '联采', value: '3' },
+// ]
 
 // 计划周期（TODO：目标系统暂无计划周期接口，此处静态占位，后续接 /warehouse/planCycle/list）
 export const planCycleOptions = [
@@ -31,8 +31,18 @@ export const planCycleOptions = [
   { label: '季度计划', value: '2' },
   { label: '年度计划', value: '3' },
 ]
+export const purcTypeOptions = async () => {
+  const res = await dictCateList({
+    code: "pur_type"
+  })
+  return res.data.map(item => {
+    return {...item, label: item.name, value: item.code}
+  })
+}
 
 async function createRichColumns() {
+  // 采购方式字典（异步获取）
+  const purcTypeList = await purcTypeOptions()
   // 用料地区
   let plantArr = []
   try {
@@ -82,7 +92,7 @@ async function createRichColumns() {
       hideInTable: true,
       searchable: true,
       searchType: 'select',
-      searchProps: { options: purcTypeOptions, clearable: true },
+      searchProps: { options: purcTypeList, clearable: true },
     },
     {
       field: 'purcTypeName',
