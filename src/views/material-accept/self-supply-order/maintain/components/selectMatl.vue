@@ -1,6 +1,6 @@
 <!-- 选择物资明细（自采供货单新增明细使用） -->
 <template>
-  <ep-dialog title="选择物资明细" iconTitle="form" v-model="visible" width="1100px" top="5vh" append-to-body>
+  <ep-dialog class="ep-dialog-list" title="选择物资明细" iconTitle="form" v-model="visible" width="70vw" top="5vh" append-to-body>
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" :data="tableData"
         :total="total" @search="onSearch" :show-checkbox="true" :grid-options="{ rowId: 'matlCode' }"

@@ -17,7 +17,8 @@
 <script setup name="supplierArchives">
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
-import { supplierList, supplierBatchRemove, supplierDisable, supplierResetStatus, supplierSubmitAudit } from '@/api/base/supplier'
+import { supplierList, supplierBatchRemove, supplierDisable } from '@/api/base/supplier'
+// 保存即生效后提交/撤回不再使用，需要时放开注释（import 中补回 supplierResetStatus, supplierSubmitAudit）
 
 const { proxy } = getCurrentInstance()
 
@@ -96,33 +97,33 @@ function handleDisable(row) {
   }).catch(() => {})
 }
 
-/** 撤回（撤审） */
-function handleWithdraw(row) {
-  proxy.$modal.confirm('是否确认撤回?').then(() => {
-    loading.value = true
-    return supplierResetStatus(row.suId)
-  }).then(({ message }) => {
-    proxy.$modal.msgSuccess(message || '撤回成功')
-    getList()
-  }).catch(() => {
-  }).finally(() => {
-    loading.value = false
-  })
-}
+/** 撤回（撤审）—— 保存即生效后不再使用，需要时放开注释 */
+// function handleWithdraw(row) {
+//   proxy.$modal.confirm('是否确认撤回?').then(() => {
+//     loading.value = true
+//     return supplierResetStatus(row.suId)
+//   }).then(({ message }) => {
+//     proxy.$modal.msgSuccess(message || '撤回成功')
+//     getList()
+//   }).catch(() => {
+//   }).finally(() => {
+//     loading.value = false
+//   })
+// }
 
-/** 提交审核（本地，不走工作流） */
-function handleSubmitAudit(row) {
-  proxy.$modal.confirm('是否确认提交审核?').then(() => {
-    loading.value = true
-    return supplierSubmitAudit(row.suId)
-  }).then(({ message }) => {
-    proxy.$modal.msgSuccess(message || '提交成功')
-    getList()
-  }).catch(() => {
-  }).finally(() => {
-    loading.value = false
-  })
-}
+/** 提交审核（本地，不走工作流）—— 保存即生效后不再使用，需要时放开注释 */
+// function handleSubmitAudit(row) {
+//   proxy.$modal.confirm('是否确认提交审核?').then(() => {
+//     loading.value = true
+//     return supplierSubmitAudit(row.suId)
+//   }).then(({ message }) => {
+//     proxy.$modal.msgSuccess(message || '提交成功')
+//     getList()
+//   }).catch(() => {
+//   }).finally(() => {
+//     loading.value = false
+//   })
+// }
 
 const onAction = (payload) => {
   const { code, row } = payload
@@ -130,9 +131,10 @@ const onAction = (payload) => {
     create: () => handleCreate(),
     update: () => handleUpdate(row),
     delete: () => handleDelete(row),
-    disableCooperate: () => handleDisable(row),
-    withdraw: () => handleWithdraw(row),
-    submitAudit: () => handleSubmitAudit(row)
+    disableCooperate: () => handleDisable(row)
+    // 保存即生效后不再使用，需要时放开注释
+    // withdraw: () => handleWithdraw(row),
+    // submitAudit: () => handleSubmitAudit(row)
   }
   eventObj[code] && eventObj[code]()
 }

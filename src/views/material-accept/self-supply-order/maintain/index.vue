@@ -314,13 +314,11 @@ const handlePush = (selectedRows) => {
 
 const init = async () => {
   columnsData.value = await columns()
+  // 挂载即查询：首次进菜单、从编辑/详情页返回（无keep-alive组件重建）均会触发
+  getList()
 }
 onMounted(() => {
   init()
-  getList()
-})
-// 每次激活（含首次挂载、从编辑/详情页返回）都刷新列表，保证保存/终止后数据最新
-onActivated(() => {
   getList()
 })
 </script>

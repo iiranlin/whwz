@@ -28,6 +28,8 @@
             <el-input v-model="form.owner" placeholder="请输入法定代表人" maxlength="50" />
           </el-form-item>
         </el-col>
+        <!-- 供应商类型（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="12">
           <el-form-item label="供应商类型：" prop="suType">
             <el-select v-model="form.suType" placeholder="请选择供应商类型" clearable style="width: 100%">
@@ -35,6 +37,7 @@
             </el-select>
           </el-form-item>
         </el-col>
+        -->
         <el-col :span="12">
           <el-form-item label="营业执照编号：" prop="suBizCode">
             <el-input v-model="form.suBizCode" placeholder="请输入营业执照编号" maxlength="50" />

@@ -113,7 +113,12 @@ watch(() => props.modelValue, (v) => {
     if (content.value) {
       content.value = ""
       nextTick(() => {
-        const quill = quillEditorRef.value && quillEditorRef.value.getQuill()
+        if (!quillEditorRef.value) return
+        // 通过 vue-quill 暴露的 setContents 清空，同步其内部 internalModel 缓存，
+        // 避免再次打开相同内容时被判定为"未变化"而跳过渲染
+        quillEditorRef.value.setContents('')
+        // 再用 quill API 以 silent 方式重置文档模型，保证空白状态与 placeholder 正常
+        const quill = quillEditorRef.value.getQuill()
         quill && quill.setText("", "silent")
       })
     }

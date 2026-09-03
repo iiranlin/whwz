@@ -34,16 +34,25 @@ export const columns = [
     minWidth: 140
   },
   {
-    field: "suType",
-    title: "供应商类型",
+    field: "suBizCodeExpire",
+    title: "营业执照有效期",
     minWidth: 120,
     align: "center",
-    searchable: true,
-    searchType: "select",
-    type: "dict",
-    requestOptions: getSuTypeOptions,
-    optionsCacheKey: "supplier:suType"
+    type: "date",
+    timeFormat: "{y}-{m}-{d}"
   },
+  // 供应商类型列（已隐藏，需要时放开注释）
+  // {
+  //   field: "suType",
+  //   title: "供应商类型",
+  //   minWidth: 120,
+  //   align: "center",
+  //   searchable: true,
+  //   searchType: "select",
+  //   type: "dict",
+  //   requestOptions: getSuTypeOptions,
+  //   optionsCacheKey: "supplier:suType"
+  // },
   // 联系信息列表列（已隐藏，需要时放开注释）
   // {
   //   field: "contactName",
@@ -71,22 +80,23 @@ export const columns = [
     ],
     optionsCacheKey: "supplier:banned"
   },
-  {
-    field: "status",
-    title: "审核状态",
-    minWidth: 100,
-    align: "center",
-    searchable: true,
-    searchType: "select",
-    type: "dict",
-    requestOptions: async () => [
-      { value: "0", label: "审核失败" },
-      { value: "1", label: "待审核" },
-      { value: "2", label: "审核中" },
-      { value: "3", label: "审核完成" }
-    ],
-    optionsCacheKey: "supplier:status"
-  },
+  // 审核状态列（已隐藏，需要时放开注释）
+  // {
+  //   field: "status",
+  //   title: "审核状态",
+  //   minWidth: 100,
+  //   align: "center",
+  //   searchable: true,
+  //   searchType: "select",
+  //   type: "dict",
+  //   requestOptions: async () => [
+  //     { value: "0", label: "审核失败" },
+  //     { value: "1", label: "待审核" },
+  //     { value: "2", label: "审核中" },
+  //     { value: "3", label: "审核完成" }
+  //   ],
+  //   optionsCacheKey: "supplier:status"
+  // },
   {
     field: "bizStatus",
     title: "业务状态",
@@ -115,39 +125,44 @@ export const toolbarConfig = {
   buttons: [
     { code: 'create', name: '新增', type: 'primary' },
     {
-      code: 'update', name: '修改', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const row = selectedRows[0] || {}
-        return ['2', '3'].includes(row.status)
-      }
+      code: 'update', name: '修改', showInTop: false, showInRow: true
+      // 保存即生效后不再按审核状态限制（需要时放开注释）
+      // disabled: (selectedRows) => {
+      //   const row = selectedRows[0] || {}
+      //   return ['2', '3'].includes(row.status)
+      // }
     },
     {
-      code: 'disableCooperate', name: '限制合作', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const row = selectedRows[0] || {}
-        return ['2', '3'].includes(row.status)
-      }
+      code: 'disableCooperate', name: '限制合作', showInTop: false, showInRow: true
+      // 保存即生效后不再按审核状态限制（需要时放开注释）
+      // disabled: (selectedRows) => {
+      //   const row = selectedRows[0] || {}
+      //   return ['2', '3'].includes(row.status)
+      // }
     },
+    // 撤回按钮（保存即生效后不再使用，需要时放开注释）
+    // {
+    //   code: 'withdraw', name: '撤回', showInTop: false, showInRow: true,
+    //   disabled: (selectedRows) => {
+    //     const row = selectedRows[0] || {}
+    //     return !['2', '3'].includes(row.status)
+    //   }
+    // },
+    // 提交按钮（保存即生效后不再使用，需要时放开注释）
+    // {
+    //   code: 'submitAudit', name: '提交', showInTop: false, showInRow: true,
+    //   disabled: (selectedRows) => {
+    //     const row = selectedRows[0] || {}
+    //     return row.status !== '1'
+    //   }
+    // },
     {
-      code: 'withdraw', name: '撤回', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const row = selectedRows[0] || {}
-        return !['2', '3'].includes(row.status)
-      }
-    },
-    {
-      code: 'submitAudit', name: '提交', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const row = selectedRows[0] || {}
-        return row.status !== '1'
-      }
-    },
-    {
-      code: 'delete', name: '删除', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const row = selectedRows[0] || {}
-        return ['2', '3'].includes(row.status)
-      }
+      code: 'delete', name: '删除', showInTop: false, showInRow: true
+      // 保存即生效后不再按审核状态限制（需要时放开注释）
+      // disabled: (selectedRows) => {
+      //   const row = selectedRows[0] || {}
+      //   return ['2', '3'].includes(row.status)
+      // }
     },
     { code: 'delete', name: '删除', type: 'primary' }
   ]

@@ -50,9 +50,9 @@ const initialForm = {
   noticeMessage: ''
 }
 
-/** 重置表单数据和校验 */
+/** 重置表单数据和校验（整体替换，丢弃修改时残留的 id 等字段） */
 function resetForm() {
-  Object.assign(form.value, initialForm)
+  form.value = { ...initialForm }
   proxy.$nextTick(() => {
     proxy.$refs.elFormRef && proxy.$refs.elFormRef.resetFields()
   })
