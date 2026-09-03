@@ -6,7 +6,7 @@
     <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
       :toolbar-config="toolbarConfig" @action="onAction" :data="tableData"
       :total="total" @search="onSearch" table-id="self-supply-order-maintain" :show-checkbox="true"
-      action-width="300" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }" />
+      action-width="100" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }" />
         </el-col>
     </el-row>
     <order-history ref="orderHistoryRef" />
@@ -110,26 +110,26 @@ const toolbarConfig = {
         return selectedRows.some(a => a.status !== '1')
       },
     },
-    {
-      code: 'submit',
-      name: '提交审批',
-      type: 'primary',
-      showInTop: true,
-      disabled: (selectedRows) => {
-        if (selectedRows.length === 0) return false
-        return selectedRows.some(a => !['1', '4', '7'].includes(a.status) || a.auditStatus === '1')
-      },
-    },
-    {
-      code: 'withdraw',
-      name: '撤回',
-      type: 'primary',
-      showInTop: true,
-      disabled: (selectedRows) => {
-        if (selectedRows.length === 0) return false
-        return selectedRows.some(a => !['2', '8'].includes(a.status))
-      },
-    },
+    // {
+    //   code: 'submit',
+    //   name: '提交审批',
+    //   type: 'primary',
+    //   showInTop: true,
+    //   disabled: (selectedRows) => {
+    //     if (selectedRows.length === 0) return false
+    //     return selectedRows.some(a => !['1', '4', '7'].includes(a.status) || a.auditStatus === '1')
+    //   },
+    // },
+    // {
+    //   code: 'withdraw',
+    //   name: '撤回',
+    //   type: 'primary',
+    //   showInTop: true,
+    //   disabled: (selectedRows) => {
+    //     if (selectedRows.length === 0) return false
+    //     return selectedRows.some(a => !['2', '8'].includes(a.status))
+    //   },
+    // },
     {
       code: 'push',
       name: '提交供货单',
@@ -140,34 +140,34 @@ const toolbarConfig = {
         return selectedRows.some(a => a.status !== '3')
       },
     },
-    {
-      code: 'detail',
-      name: '详情',
-      type: 'primary',
-      showInTop: false,
-      showInRow: true,
-    },
-    {
-      code: 'print',
-      name: '打印',
-      type: 'primary',
-      showInTop: false,
-      showInRow: true,
-    },
-    {
-      code: 'track',
-      name: '供货单追踪',
-      type: 'primary',
-      showInTop: false,
-      showInRow: true,
-    },
-    {
-      code: 'history',
-      name: '审核历史',
-      type: 'primary',
-      showInTop: false,
-      showInRow: true,
-    },
+    // {
+    //   code: 'detail',
+    //   name: '详情',
+    //   type: 'primary',
+    //   showInTop: false,
+    //   showInRow: true,
+    // },
+    // {
+    //   code: 'print',
+    //   name: '打印',
+    //   type: 'primary',
+    //   showInTop: false,
+    //   showInRow: true,
+    // },
+    // {
+    //   code: 'track',
+    //   name: '供货单追踪',
+    //   type: 'primary',
+    //   showInTop: false,
+    //   showInRow: true,
+    // },
+    // {
+    //   code: 'history',
+    //   name: '审核历史',
+    //   type: 'primary',
+    //   showInTop: false,
+    //   showInRow: true,
+    // },
   ]
 }
 
@@ -317,6 +317,7 @@ const init = async () => {
 }
 onMounted(() => {
   init()
+  getList()
 })
 // 每次激活（含首次挂载、从编辑/详情页返回）都刷新列表，保证保存/终止后数据最新
 onActivated(() => {
