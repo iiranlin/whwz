@@ -33,16 +33,27 @@ export const columnsFun = async () => {
         searchType: "input",
       },
       {
+        field: "suName",
+        title: "供应商",
+        minWidth: 140,
+        align: 'center',
+        searchable: true,
+        hideInTable: true,
+        searchType: "input",
+      },
+      {
         field: "bmName",
         title: "制单人",
         minWidth: 140,
-        searchable: true,
+        align: 'center',
+        searchable: false,
         searchType: "input",
       },
       {
         field: "plantName",
         title: "用料地区",
         minWidth: 140,
+        align: 'center',
       },
       {
         field: "plantCode",
@@ -59,18 +70,20 @@ export const columnsFun = async () => {
         field: "suName",
         title: "供应商",
         minWidth: 140,
-        searchable: true,
+        align: 'center',
+        searchable: false,
         searchType: "input",
       },
       {
         field: "logCode",
         title: "物流单号",
         minWidth: 140,
+        hideInTable: true,
         align: 'center',
       },
       {
         field: "matlCode",
-        title: "物资编码",
+        title: "物资编号",
         minWidth: 140,
         align: 'center',
         searchable: true,
@@ -80,6 +93,7 @@ export const columnsFun = async () => {
         field: "matlName",
         title: "物资名称",
         minWidth: 140,
+        align: 'center',
         searchable: true,
         searchType: "input",
       },
@@ -87,6 +101,7 @@ export const columnsFun = async () => {
         field: "matlTypeSlot",
         title: "规格型号/材质/图号",
         minWidth: 140,
+        align: 'center',
         slotName: 'matlTypeSlot',
       },
       {
@@ -95,6 +110,15 @@ export const columnsFun = async () => {
         minWidth: 140,
         hideInTable: true,
         searchable: true,
+        searchType: "input",
+      },
+      {
+        field: "bmName",
+        title: "制单人",
+        minWidth: 140,
+        align: 'center',
+        searchable: true,
+        hideInTable: true,
         searchType: "input",
       },
       {
@@ -107,18 +131,21 @@ export const columnsFun = async () => {
         field: "contPrice",
         title: "采购单价",
         minWidth: 140,
+        align: 'right',
         type: 'number'
       },
       {
         field: "purNum",
         title: "采购数量",
         minWidth: 140,
+        align: 'right',
         type: 'number'
       },
       {
         field: "deliverNum",
         title: "发货数量",
         minWidth: 140,
+        align: 'right',
         type: 'number'
       },
       {
@@ -140,32 +167,33 @@ export const columnsFun = async () => {
         minWidth: 140,
         align: 'center'
       },
-      {
-        field: "deliverDate",
-        title: "发货日期",
-        minWidth: 140,
-        type: 'date',
-        searchable: true,
-        searchType: "dateRange",
-      },
-      {
-        field: "arrName",
-        title: "到货地点",
-        minWidth: 140,
-      },
+      // {
+      //   field: "deliverDate",
+      //   title: "发货日期",
+      //   minWidth: 140,
+      //   type: 'date',
+      //   searchable: false,
+      //   searchType: "dateRange",
+      // },
+      // {
+      //   field: "arrName",
+      //   title: "到货地点",
+      //   minWidth: 140,
+      // },
       {
         field: "comments",
         title: "备注",
         minWidth: 140,
+        align: 'center',
       },
-      {
-        field: "noticed",
-        title: "补货状态",
-        minWidth: 140,
-        type: "dict",
-        requestOptions: async () => noticedFlagArr,
-        optionsCacheKey: "delivery-confirmation:noticed",
-      }
+      // {
+      //   field: "noticed",
+      //   title: "补货状态",
+      //   minWidth: 140,
+      //   type: "dict",
+      //   requestOptions: async () => noticedFlagArr,
+      //   optionsCacheKey: "delivery-confirmation:noticed",
+      // }
     ],
     // 国铁商城妥投订单
     smOrderColumns: [
@@ -364,14 +392,14 @@ export const toolbarConfig = {
   buttons: [
     {code: 'confirm', name: '确认', type: 'primary'},
     {code: 'revoke', name: '撤回', type: 'primary'},
-    {code: 'noticeRestock', name: '通知补货', showInTop: false, showInRow: true, disabled: (selectedRows) => {
-      const {arrivalNum, deliverNum, noticed, confirmFlag} = selectedRows[0] || {}
-      if(arrivalNum >= deliverNum || noticed == '1' || confirmFlag == '0'){
-        return true
-      }
-      return false
-    }},
-    {code: 'certificateView', name: '技术证书查看', showInTop: false, showInRow: true},
+    // {code: 'noticeRestock', name: '通知补货', showInTop: false, showInRow: true, disabled: (selectedRows) => {
+    //   const {arrivalNum, deliverNum, noticed, confirmFlag} = selectedRows[0] || {}
+    //   if(arrivalNum >= deliverNum || noticed == '1' || confirmFlag == '0'){
+    //     return true
+    //   }
+    //   return false
+    // }},
+    // {code: 'certificateView', name: '技术证书查看', showInTop: false, showInRow: true},
   ]
 }
 
