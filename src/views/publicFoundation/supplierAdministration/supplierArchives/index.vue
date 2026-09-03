@@ -17,8 +17,9 @@
 <script setup name="supplierArchives">
 import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
-import { supplierList, supplierBatchRemove, supplierDisable, supplierDownloadTemplate, supplierImport } from '@/api/base/supplier'
+import { supplierList, supplierBatchRemove, supplierDownloadTemplate, supplierImport } from '@/api/base/supplier'
 // 保存即生效后提交/撤回不再使用，需要时放开注释（import 中补回 supplierResetStatus, supplierSubmitAudit）
+// 限制合作按钮已隐藏，需要时放开注释（import 中补回 supplierDisable）
 
 const { proxy } = getCurrentInstance()
 
@@ -85,17 +86,17 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-/** 限制/取消限制合作 */
-function handleDisable(row) {
-  const isBanned = row.banned === '1'
-  const msg = isBanned ? '取消限制合作' : '限制合作'
-  proxy.$modal.confirm(`是否${msg}?`).then(() => {
-    return supplierDisable(row.suId, isBanned ? 'start' : 'stop')
-  }).then(({ message }) => {
-    proxy.$modal.msgSuccess(message || `${msg}成功`)
-    getList()
-  }).catch(() => {})
-}
+/** 限制/取消限制合作 —— 按钮已隐藏，需要时放开注释 */
+// function handleDisable(row) {
+//   const isBanned = row.banned === '1'
+//   const msg = isBanned ? '取消限制合作' : '限制合作'
+//   proxy.$modal.confirm(`是否${msg}?`).then(() => {
+//     return supplierDisable(row.suId, isBanned ? 'start' : 'stop')
+//   }).then(({ message }) => {
+//     proxy.$modal.msgSuccess(message || `${msg}成功`)
+//     getList()
+//   }).catch(() => {})
+// }
 
 /** 撤回（撤审）—— 保存即生效后不再使用，需要时放开注释 */
 // function handleWithdraw(row) {
@@ -131,7 +132,8 @@ const onAction = (payload) => {
     create: () => handleCreate(),
     update: () => handleUpdate(row),
     delete: () => handleDelete(row),
-    disableCooperate: () => handleDisable(row),
+    // 限制合作按钮已隐藏，需要时放开注释
+    // disableCooperate: () => handleDisable(row),
     // 下载模板
     download: () => {
       proxy.$download.name(supplierDownloadTemplate)

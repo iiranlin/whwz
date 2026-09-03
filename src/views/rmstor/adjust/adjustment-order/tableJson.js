@@ -170,18 +170,19 @@ async function createRichColumns() {
       searchable: true,
       searchType: 'dateRange',
     },
-    {
-      field: 'auditFlag',
-      title: '审核状态',
-      showOverflowTooltip: true,
-      searchable: false,
-      searchType: 'select',
-      options: [
-        { label: '未审批', value: '0' },
-        { label: '审批中', value: '1' },
-        { label: '已审批', value: '2' },
-      ],
-    },
+    // 调整单不走提交审核：隐藏"审核状态"列（保存即已审核），将来恢复审核时放开
+    // {
+    //   field: 'auditFlag',
+    //   title: '审核状态',
+    //   showOverflowTooltip: true,
+    //   searchable: false,
+    //   searchType: 'select',
+    //   options: [
+    //     { label: '未审批', value: '0' },
+    //     { label: '审批中', value: '1' },
+    //     { label: '已审批', value: '2' },
+    //   ],
+    // },
     {
       field: 'comments',
       title: '备注',
@@ -285,7 +286,7 @@ export const matlTableJson = [
     title: '调整后数量',
     showOverflowTooltip: true,
     searchable: false,
-    slotName: 'ptNum'
+    type: 'slot'
   },
   {
     field: 'ptAmount',

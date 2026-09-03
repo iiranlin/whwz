@@ -41,6 +41,18 @@ export const columns = [
     type: "date",
     timeFormat: "{y}-{m}-{d}"
   },
+  {
+    field: "suBizCode",
+    title: "营业执照编号",
+    minWidth: 140,
+    align: "center"
+  },
+  {
+    field: "suTaxCode",
+    title: "税务登记证编号",
+    minWidth: 140,
+    align: "center"
+  },
   // 供应商类型列（已隐藏，需要时放开注释）
   // {
   //   field: "suType",
@@ -66,20 +78,21 @@ export const columns = [
   //   minWidth: 120,
   //   align: "center"
   // },
-  {
-    field: "banned",
-    title: "是否限制",
-    minWidth: 90,
-    align: "center",
-    searchable: true,
-    searchType: "select",
-    type: "dict",
-    requestOptions: async () => [
-      { value: "0", label: "否" },
-      { value: "1", label: "是" }
-    ],
-    optionsCacheKey: "supplier:banned"
-  },
+  // 是否限制列（已隐藏，需要时放开注释）
+  // {
+  //   field: "banned",
+  //   title: "是否限制",
+  //   minWidth: 90,
+  //   align: "center",
+  //   searchable: true,
+  //   searchType: "select",
+  //   type: "dict",
+  //   requestOptions: async () => [
+  //     { value: "0", label: "否" },
+  //     { value: "1", label: "是" }
+  //   ],
+  //   optionsCacheKey: "supplier:banned"
+  // },
   // 审核状态列（已隐藏，需要时放开注释）
   // {
   //   field: "status",
@@ -134,14 +147,15 @@ export const toolbarConfig = {
       //   return ['2', '3'].includes(row.status)
       // }
     },
-    {
-      code: 'disableCooperate', name: '限制合作', showInTop: false, showInRow: true
-      // 保存即生效后不再按审核状态限制（需要时放开注释）
-      // disabled: (selectedRows) => {
-      //   const row = selectedRows[0] || {}
-      //   return ['2', '3'].includes(row.status)
-      // }
-    },
+    // 限制合作按钮（已隐藏，需要时放开注释）
+    // {
+    //   code: 'disableCooperate', name: '限制合作', showInTop: false, showInRow: true
+    //   // 保存即生效后不再按审核状态限制（需要时放开注释）
+    //   // disabled: (selectedRows) => {
+    //   //   const row = selectedRows[0] || {}
+    //   //   return ['2', '3'].includes(row.status)
+    //   // }
+    // },
     // 撤回按钮（保存即生效后不再使用，需要时放开注释）
     // {
     //   code: 'withdraw', name: '撤回', showInTop: false, showInRow: true,

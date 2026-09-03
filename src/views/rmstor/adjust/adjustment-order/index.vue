@@ -74,7 +74,7 @@ function getList() {
 }
 const onSearch = (params, pageConfig) => {
     const form = proTableRef.value?.getSearchForm?.()
-    const paramsObj = proxy.addDateRange({ ...params, ...pageConfig }, form.orderDate, 'orderDate')
+    const paramsObj = proxy.addDateRange({ ...params, ...pageConfig }, form?.orderDate, 'orderDate')
     queryParams.value = paramsObj
     getList()
 }
@@ -128,19 +128,20 @@ const toolbarConfig = {
                 }
             }
         },
-        {
-            code: 'report',
-            name: '报批',
-            type: 'primary',
-            showInTop: true,
-            disabled: (row) => {
-                if (isCloseFlag.value === '1') {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        },
+        // 调整单不走提交审核：隐藏"报批"按钮（保存即已审核），将来恢复审核时放开
+        // {
+        //     code: 'report',
+        //     name: '报批',
+        //     type: 'primary',
+        //     showInTop: true,
+        //     disabled: (row) => {
+        //         if (isCloseFlag.value === '1') {
+        //             return true
+        //         } else {
+        //             return false
+        //         }
+        //     }
+        // },
         {
             code: 'publish',
             name: '登卡',
@@ -280,7 +281,7 @@ const handleDelete = (row, selectedRows) => {
     }
     const isFlag = selectedRows.some(a => a.flag !== '0')
     if (isFlag) {
-        proxy.$modal.msgWarning('请选择未提交的数据')
+        proxy.$modal.msgWarning('请选择未登卡的数据')
         return
     }
     proxy.$refs.deleteDialog.show(selectedRows?.map(item => item.id))

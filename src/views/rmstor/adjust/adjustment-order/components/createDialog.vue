@@ -73,7 +73,7 @@
       </div>
       <div class="font_s" style="margin-bottom: 17px;">调整单明细信息</div>
       <div style="height:calc(100% - 240px)">
-        <el-pro-table ref="proTableRef" :columns="matlTableJson" :show-pagination="false"
+        <el-pro-table :columns="matlTableJson" :show-pagination="false"
           :toolbar-config="dialogType != 'details' ? toolbarConfig : {}" :search-collapse-threshold="5"
           @action="onAction" :data="tableData" table-id="price-adjustment" :show-checkbox="false"
           :grid-options="{ rowId: 'id' }" :show-action="dialogType != 'details' ? true : false">
@@ -91,10 +91,11 @@
         <el-button @click="visible = false" class="cancel-btn"><svg-icon icon-class="cancel" />&nbsp;返回</el-button>
         <el-button v-if="dialogType != 'details'" type="primary" class="determine-btn" @click="debounceClick"><svg-icon
             icon-class="determine" />&nbsp;保存</el-button>
-        <el-button v-if="formData.auditFlag == '1' && dialogType == 'details'" type="primary" class="determine-btn"
+        <!-- 调整单不走提交审核：隐藏"审批/驳回"按钮（保存即已审核），将来恢复审核时放开 -->
+        <!-- <el-button v-if="formData.auditFlag == '1' && dialogType == 'details'" type="primary" class="determine-btn"
           @click="handleApprove('1')"><svg-icon icon-class="determine" />&nbsp;审批</el-button>
         <el-button v-if="formData.auditFlag == '1' && dialogType == 'details'" type="primary" class="determine-btn"
-          @click="handleApprove('2')"><svg-icon icon-class="determine" />&nbsp;驳回</el-button>
+          @click="handleApprove('2')"><svg-icon icon-class="determine" />&nbsp;驳回</el-button> -->
       </div>
     </template>
     <rmstor-matl-dialog ref="rmstorMatlDialog" @selectChange="handleSelectChange" />
@@ -115,7 +116,6 @@ import { debounce } from '@/utils/generalMethod'
 import { getCookie } from '@/utils/auth'
 const warehouseGetYear = getCookie('warehouseGetYear') && JSON.parse(getCookie('warehouseGetYear'))
 const { proxy } = getCurrentInstance()
-const proTableRef = shallowRef(null)
 // 接收参数并指定类型（可选）
 const props = defineProps({
 
@@ -240,13 +240,17 @@ const onAction = ({ code, row, selectedRows }) => {
     },
     // 删除
     delete: () => {
-      proTableRef.value?.removeEditableRow(row)
+      // ElProTable 未实现 removeEditableRow，直接从本地 tableData 移除（重新赋值数组触发表格刷新）
+      const idx = tableData.value.findIndex(item => item === row || (item.id && item.id === row.id))
+      if (idx > -1) {
+        tableData.value = tableData.value.filter((_, i) => i !== idx)
+      }
       if (dialogType.value === 'modify' && tableData.value.length === 0) {
         isShow.value = false
       } else {
         isShow.value = true
       }
-      getSum(proTableRef.value?.getCurrentData())
+      getSum(tableData.value)
       if (tableData.value.length === 0) {
         profitAmountSum.value = 0
       }
@@ -255,15 +259,15 @@ const onAction = ({ code, row, selectedRows }) => {
   eventObj[code] && eventObj[code]()
 }
 const handleSelectChange = (data) => {
-  proTableRef.value?.addEditableRow(data.map(a => {
-    return {
-      defaultValue: {
-        ...a,
-        prNum: a.nowNum,
-        prAmount: a.nowAmount,
-      }
-    }
+  // ElProTable 未实现 addEditableRow，选中数据直接写入本地 tableData
+  // 注意：必须重新赋值数组（引用变化）表格才刷新；push 原地修改引用不变，el-table 不更新
+  const newRows = data.map(a => ({
+    ...a,
+    id: a.uid,
+    prNum: a.nowNum,
+    prAmount: a.nowAmount,
   }))
+  tableData.value = tableData.value.concat(newRows)
   if (dialogType.value === 'modify' && tableData.value.length === 0) {
     isShow.value = false
   } else {
@@ -281,12 +285,12 @@ const tsNumChange = (row) => {
     row.ptAmount = null
     row.profitAmount = null
   }
-  getSum(proTableRef.value?.getCurrentData())
+  getSum(tableData.value)
 }
 const saveBtn = () => {
   proxy.$refs.elForm.validate(valid => {
     if (valid) {
-      const newTableData = proTableRef.value?.getCurrentData()
+      const newTableData = tableData.value
       if (!newTableData.length) {
         proxy.$modal.msgWarning(`请先输入调拨单明细内容！`)
         return
@@ -348,7 +352,7 @@ const debounceClick = debounce(saveBtn, 500)
 const handleAdd = (type) => {
   let params = {
     ...formData.value,
-    rmstorAdjustDtSaveParamList: proTableRef.value?.getCurrentData(),
+    rmstorAdjustDtSaveParamList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
     type: type
   }
@@ -363,7 +367,7 @@ const handleAdd = (type) => {
 const handleEdit = (type) => {
   let params = {
     ...formData.value,
-    rmstorAdjustDtModifyParams: proTableRef.value?.getCurrentData(),
+    rmstorAdjustDtModifyParams: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
     type: type
   }

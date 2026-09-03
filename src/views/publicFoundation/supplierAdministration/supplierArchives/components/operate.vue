@@ -54,6 +54,7 @@
             <el-input v-model="form.suTaxCode" placeholder="请输入税务登记证编号" maxlength="50" />
           </el-form-item>
         </el-col>
+        <!-- 所属行业（已隐藏，需要时放开注释）
         <el-col :span="12">
           <el-form-item label="所属行业：" prop="suBizType">
             <el-select v-model="form.suBizType" placeholder="请选择所属行业" clearable filterable style="width: 100%">
@@ -61,6 +62,8 @@
             </el-select>
           </el-form-item>
         </el-col>
+        -->
+        <!-- 信用等级（已隐藏，需要时放开注释）
         <el-col :span="12">
           <el-form-item label="信用等级：" prop="creditLevel">
             <el-select v-model="form.creditLevel" placeholder="请选择信用等级" clearable style="width: 100%">
@@ -70,6 +73,7 @@
             </el-select>
           </el-form-item>
         </el-col>
+        -->
         <el-col :span="12">
           <el-form-item label="成立日期：" prop="suFoundingDate">
             <el-date-picker v-model="form.suFoundingDate" type="date" value-format="YYYY-MM-DD"
@@ -84,6 +88,14 @@
         <el-col :span="12">
           <el-form-item label="注册地址：" prop="suRegisterAddress">
             <el-input v-model="form.suRegisterAddress" placeholder="请输入注册地址" maxlength="200" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="业务状态：" prop="bizStatus">
+            <el-select v-model="form.bizStatus" placeholder="请选择业务状态" style="width: 100%">
+              <el-option label="启用" value="0" />
+              <el-option label="停用" value="1" />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -222,6 +234,7 @@ const data = reactive({
     suFoundingDate: '',
     suRegisterAccount: '',
     suRegisterAddress: '',
+    bizStatus: '0',
     suBizContent: '',
     contactName: '',
     contactPhone: '',
@@ -308,6 +321,7 @@ function init(dialogType, rowId) {
     suFoundingDate: '',
     suRegisterAccount: '',
     suRegisterAddress: '',
+    bizStatus: '0',
     suBizContent: '',
     contactName: '',
     contactPhone: '',
@@ -345,6 +359,7 @@ function init(dialogType, rowId) {
         suFoundingDate: pickDate(data.suFoundingDate),
         suRegisterAccount: data.suRegisterAccount || '',
         suRegisterAddress: data.suRegisterAddress || '',
+        bizStatus: data.bizStatus || '0',
         suBizContent: data.suBizContent || '',
         contactName: data.contactName || '',
         contactPhone: data.contactPhone || '',
