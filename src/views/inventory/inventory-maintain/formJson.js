@@ -10,11 +10,12 @@ export const formJson = [
     { value: "3", label: "已提交" },
     { value: "4", label: "已生成调整单" },
   ]},
-  { prop: "permFlag", label: "审核状态", type: "select", selectData: [
-    { value: "1", label: "未审核" },
-    { value: "2", label: "审核中" },
-    { value: "3", label: "审核通过" }
-  ]},
+  // 不走审核：报批即一步定稿，"审核状态"检索项隐藏，将来恢复审核放开
+  // { prop: "permFlag", label: "审核状态", type: "select", selectData: [
+  //   { value: "1", label: "未审核" },
+  //   { value: "2", label: "审核中" },
+  //   { value: "3", label: "审核通过" }
+  // ]},
 ];
 
 

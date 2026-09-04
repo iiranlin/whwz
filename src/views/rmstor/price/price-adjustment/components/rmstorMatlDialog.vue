@@ -4,7 +4,7 @@
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="rmstorMatlTableJson" :page-size="queryParams.pageSize"
         :search-collapse-threshold="5" :data="tableData" :total="total" @search="onSearch" :show-checkbox="true"
-        :grid-options="{ rowId: 'cardId' }" :default-search-form="defaultSearchForm"
+        selection-mode="multiple" :grid-options="{ rowId: 'cardId' }" :default-search-form="defaultSearchForm"
         @selection-change="handleSelectionChange" :show-action="false" />
     </div>
     <template #footer>
@@ -41,13 +41,16 @@ const queryParams = ref({
 
 const proTableRef = shallowRef(null)
 const emit = defineEmits(['selectChange']);
+// 已添加物料编码列表（打开弹窗时勾选回显用）
+const selectedCodes = ref([])
 
-
-// 显示弹框
-const show = async ({ partitionCode, depotCode }) => {
+// 显示弹框（selectedRows：调用方已添加的明细行，按物资编码回显勾选）
+const show = async ({ partitionCode, depotCode }, selectedRows = []) => {
   visible.value = true
   queryParams.value.partitionCode = partitionCode
   queryParams.value.depotCode = depotCode
+  selectedCodes.value = selectedRows.map(r => r.matlCode)
+  selectionData.value = []
   proTableRef.value?.reset?.()
   getList()
 }
@@ -58,6 +61,14 @@ function getList() {
   rmstorMatlSelectPageList(queryParams.value).then(({ data }) => {
     tableData.value = (data.list || []).map(a => { return { ...a, uid: generateUUID() } })
     total.value = data.total
+    // 勾选回显已添加的物料（按物资编码匹配，setSelectedRows 内部会先清空上次勾选）
+    nextTick(() => {
+      proTableRef.value?.clearSelection?.()
+      const rows = selectedCodes.value.length
+        ? tableData.value.filter(r => selectedCodes.value.includes(r.matlCode))
+        : []
+      if (rows.length) proTableRef.value?.setSelectedRows?.(rows)
+    })
   }).finally(() => {
     loading.value = false
   })

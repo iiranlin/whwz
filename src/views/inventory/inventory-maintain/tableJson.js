@@ -5,8 +5,9 @@ export const tableJson = [
   {isShow: true, fixed: false, key: "partitionCode", prop: "partitionCode", label: "仓库分区", align: "center", type: "slot"},
   {isShow: true, fixed: false, key: "csCode", prop: "csCode", label: "盘点单号", align: "center", type: "link"},
   {isShow: true, fixed: false, key: "operDate", prop: "operDate", label: "制表日期", align: "center", type: "slot"},
-  {isShow: true, fixed: false, key: "status", prop: "status", label: "单据状态", align: "center", type: "slot"},
-  {isShow: true, fixed: false, key: "permFlag", prop: "permFlag", label: "审核状态", align: "center", type: "slot"}
+  {isShow: true, fixed: false, key: "status", prop: "status", label: "单据状态", align: "center", type: "slot"}
+  // 不走审核：报批即一步定稿，"审核状态"列隐藏，将来恢复审核放开
+  // ,{isShow: true, fixed: false, key: "permFlag", prop: "permFlag", label: "审核状态", align: "center", type: "slot"}
 ];
 
 export const tableButtonJson = [

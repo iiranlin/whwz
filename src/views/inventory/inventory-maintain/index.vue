@@ -14,8 +14,8 @@
         </inventory-maintain-form>
         <el-row :gutter="10" class="mb8 integrated-manage-pane-form-button">
           <el-col :span="1.5">
-            <el-button v-if="submitBtnflag" key="sub" :disabled="!!!tableSelectedData.length" type="primary" class="tableButton" @click="handleSubmit">报批</el-button>
-            <el-button v-if="delBtnFlag" key="del" :disabled="!!!tableSelectedData.length" type="primary" class="tableButton" @click="handleDel">删除</el-button>
+            <el-button key="sub" :disabled="submitBtnDisabled" type="primary" class="tableButton" @click="handleSubmit">报批</el-button>
+            <el-button key="del" :disabled="delBtnDisabled" type="primary" class="tableButton" @click="handleDel">删除</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" :tableJson="tableJsonArr" @queryTable="getList" @tabConfigSuccess="tabConfigSuccess"></right-toolbar>
         </el-row>
@@ -122,8 +122,9 @@
     <detail-dialog key="detail" class="inventory-maintain-dialog" :visible="detailVisible" title="盘点单详情" width="90%" @detail-dialog-close="detailDialogClose">
       <template #footer>
         <el-button type="primary" @click="handleDetailTableExport">导出</el-button>
-        <el-button v-if="currentDetailData.permFlag == '2'" type="primary" class="determine-btn" @click="handleApprove('1')">审批</el-button>
-        <el-button v-if="currentDetailData.permFlag == '2'" type="primary" class="determine-btn" @click="handleApprove('2')">驳回</el-button>
+        <!-- 不走审核：报批即一步定稿（status=3+permFlag=3），审批/驳回入口隐藏，将来恢复审核放开 -->
+        <!-- <el-button v-if="currentDetailData.permFlag == '2'" type="primary" class="determine-btn" @click="handleApprove('1')">审批</el-button>
+        <el-button v-if="currentDetailData.permFlag == '2'" type="primary" class="determine-btn" @click="handleApprove('2')">驳回</el-button> -->
         <el-button @click="detailDialogClose">关闭</el-button>
       </template>
       <template #default>
@@ -255,8 +256,17 @@ const currentDetailData = ref({});
 const plantId = ref("");
 const whId = ref("");
 const partitionId = ref("");
-const delBtnFlag = ref(true);
-const submitBtnflag = ref(false);
+
+// 报批按钮禁用：未勾选，或勾选中含未维护(1)/已提交(3)/已生成调整单(4)的行时置灰（仅未提交(2)可报批）
+const submitBtnDisabled = computed(() => {
+  if (!tableSelectedData.value.length) return true;
+  return tableSelectedData.value.some(item => item.status !== '2');
+});
+// 删除按钮禁用：未勾选，或勾选中含已提交(3)/已生成调整单(4)的行时置灰（未维护(1)/未提交(2)可删除）
+const delBtnDisabled = computed(() => {
+  if (!tableSelectedData.value.length) return true;
+  return tableSelectedData.value.some(item => item.status === '3' || item.status === '4');
+});
 
 
 const permObj = computed(() => {
@@ -294,19 +304,6 @@ const getList = async () => {
     });
     tableData.value = res.data?.list || [];
     total.value = res.data?.total || 0;
-
-    if (formRef.value?.formData.status !== '3' && formRef.value?.formData.status !== '4' && formRef.value?.formData.permFlag !==  '2' && formRef.value?.formData.permFlag !== '3') {
-      delBtnFlag.value = true;
-    } else {
-      delBtnFlag.value = false;
-    }
-
-    if (formRef.value?.formData.status !== '1' && formRef.value?.formData.status !== '3' && formRef.value?.formData.status !== '4' && formRef.value?.formData.permFlag !== '2' && formRef.value?.formData.permFlag !== '3') {
-      submitBtnflag.value = true;
-    } else {
-      submitBtnflag.value = false;
-    }
-
   } catch (error) {
       console.log(error);
   }

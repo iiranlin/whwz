@@ -21,20 +21,71 @@ export const tableJsonArrroval = [
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '审批意见', align: 'center', },
 ]
 
-// 选择物资弹框字段
+// 物资选择弹窗列配置（pro-table 格式：field/title/searchable/searchType）
 export const rmstorMatlTableJson = [
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'batchNo', prop: 'batchNo', label: '批次号', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '库存数量', align: 'center', width: 160 },
-  // {isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价（元）', align: 'right', width: 160,},
-  // {isShow: true, fixed: false, type: '', key: 'prNum', prop: 'prNum', label: '调整前数量', align: 'right', width: 160},
-  // {isShow: true, fixed: false, type: '', key: 'prAmount', prop: 'prAmount', label: '调整前金额', align: 'right', width: 160},
-  // {isShow: true, fixed: false, type: '', key: 'ptNum', prop: 'ptNum', label: '调整后数量', align: 'right', width: 160,required: true},
-  // {isShow: true, fixed: false, type: '', key: 'ptAmount', prop: 'ptAmount', label: '调整后金额', align: 'right', width: 160},
-  // {isShow: true, fixed: false, type: '', key: 'profitAmount', prop: 'profitAmount', label: '盈亏金额（元）', align: 'right', width: 160},
+  {
+    field: 'matlCode',
+    title: '物资编码',
+    showOverflowTooltip: true,
+    searchable: true,
+    searchType: 'input',
+  },
+  {
+    field: 'matlName',
+    title: '物资名称',
+    showOverflowTooltip: true,
+    searchable: true,
+    searchType: 'input',
+  },
+  {
+    field: 'matlType',
+    title: '规格型号',
+    showOverflowTooltip: true,
+    searchable: true,
+    hideInTable: true,
+    searchType: 'input',
+  },
+  {
+    field: 'isRepertory',
+    title: '库存是否为0',
+    searchable: true,
+    hideInTable: true,
+    searchType: 'radio',
+    searchProps: {
+      options: [
+        { label: '是', value: '1' },
+        { label: '否', value: '0' },
+      ],
+    },
+  },
+  {
+    field: 'matlType',
+    title: '规格型号/材质/图号',
+    showOverflowTooltip: true,
+    searchable: false,
+    searchType: 'input',
+  },
+  {
+    field: 'batchNo',
+    title: '批次号',
+    showOverflowTooltip: true,
+    searchable: false,
+    searchType: 'input',
+  },
+  {
+    field: 'matlUnit',
+    title: '计量单位',
+    showOverflowTooltip: true,
+    searchable: false,
+    searchType: 'input',
+  },
+  {
+    field: 'nowNum',
+    title: '库存数量',
+    showOverflowTooltip: true,
+    searchable: false,
+    searchType: 'input',
+  },
 ]
 
 
@@ -279,14 +330,13 @@ export const matlTableJson = [
     title: '调整前金额',
     showOverflowTooltip: true,
     searchable: false,
-    slotName: 'ptPrice'
   },
   {
     field: 'ptNum',
     title: '调整后数量',
     showOverflowTooltip: true,
     searchable: false,
-    type: 'slot'
+    slotName: 'ptNum'
   },
   {
     field: 'ptAmount',

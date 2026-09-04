@@ -259,7 +259,7 @@ const publishClick = async (row, selectedRows) => {
         proxy.$modal.msgWarning('请选择至少一条数据')
         return
     }
-    rmstorInternaltoCard({ ids: selectedRows?.map(item => item.id) }).then(({ message }) => {
+    rmstorInternaltoCard(selectedRows?.map(item => item.id)).then(({ message }) => {
         proxy.$modal.msgSuccess(message)
         getList()
     })

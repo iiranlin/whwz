@@ -100,3 +100,83 @@
     outline: none;
   }
 }
+
+// 修复：定制版 element-plus 中 pro-table 单选列及部分场景的 ElRadio 渲染类名仍为 el- 前缀
+// （未随全局命名空间改为 ep-），而样式表仅含 .ep-radio 规则，导致单选框完全无样式不可见。
+// 此处按 .ep-radio 同款样式补全 .el-radio 系列（变量沿用 ep- 前缀）。
+.el-radio {
+  --ep-radio-input-height: 14px;
+  --ep-radio-input-width: 14px;
+  --ep-radio-input-border-radius: var(--ep-border-radius-circle);
+  --ep-radio-input-bg-color: var(--ep-fill-color-blank);
+  --ep-radio-input-border: var(--ep-border);
+  --ep-radio-input-border-color-hover: var(--ep-color-primary);
+
+  color: var(--ep-text-color-regular);
+  font-weight: var(--ep-font-weight-primary);
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  outline: none;
+  font-size: var(--ep-font-size-base);
+  user-select: none;
+  margin-right: 30px;
+  height: 32px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.el-radio__input {
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  position: relative;
+  vertical-align: middle;
+
+  &.is-checked {
+    .el-radio__inner {
+      border-color: var(--ep-color-primary);
+      background: var(--ep-color-primary);
+
+      &::after {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  }
+}
+
+.el-radio__inner {
+  border: var(--ep-radio-input-border);
+  border-radius: var(--ep-radio-input-border-radius);
+  width: var(--ep-radio-input-width);
+  height: var(--ep-radio-input-height);
+  background-color: var(--ep-radio-input-bg-color);
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  box-sizing: border-box;
+  transition: 0.3s;
+
+  &:hover {
+    border-color: var(--ep-radio-input-border-color-hover);
+  }
+
+  &::after {
+    box-sizing: content-box;
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.15s ease-in;
+  }
+}
