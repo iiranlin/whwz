@@ -3,7 +3,7 @@
     <div class="app-container app-container-splitpanes">
     <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
       <el-col class="app-container-col">
-        <el-pro-table ref="proTableRef" :columns="columns" :page-size="queryParams.pageSize" 
+        <el-pro-table ref="proTableRef" :columns="columns" :page-size="queryParams.pageSize" action-width="150"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch"  table-id="inspection-record" :show-checkbox="true"
             :grid-options="{ rowId: 'acId' }" />

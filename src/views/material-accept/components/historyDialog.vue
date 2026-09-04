@@ -15,7 +15,6 @@
       <div class="ep-pro-table__pagination">
         <el-pagination
           v-show="total > 0"
-          background
           :current-page="pageNum"
           :page-size="pageSize"
           :total="total"
@@ -138,5 +137,10 @@ defineExpose({
 .ep-pro-table__pagination {
   display: flex;
   justify-content: center;
+  margin-top: 6px;
+  :deep(.ep-pagination__total) {
+    font-size: 13px !important;
+    color: #909399 !important;
+  }
 }
 </style>

@@ -2,7 +2,7 @@
     <ep-dialog class="ep-dialog-list" :title="title" iconTitle="form" v-model="historyVisible" width="70vw" top="5vh"
         append-to-body :close-on-press-escape="false" :close-on-click-model="false">
         <div class="sso-front-table-container app-container">
-            <el-pro-table ref="proTableRef" :columns="historyColumns" :show-pagination="false"
+            <el-pro-table ref="proTableRef" :columns="historyColumns" :show-pagination="false" action-width="120"
                 :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
                 :total="total" @search="getList" table-id="inspection-record" :show-checkbox="false"
                 :grid-options="{ rowId: 'acId' }" />
