@@ -95,7 +95,8 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <!-- 81-退料单改造：隐藏"成本预算项目"字段，与新增弹窗保持一致，如需恢复取消注释 -->
+          <!-- <el-col :span="8">
             <el-form-item label="成本预算项目：" prop="natureValueName">
               <el-input
                 v-model.trim="formData.natureValueName"
@@ -103,7 +104,7 @@
                 :disabled="true"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="24">
             <el-form-item prop="comments" label="备注：">
               <el-input

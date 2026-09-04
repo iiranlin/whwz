@@ -23,9 +23,6 @@
     <!-- 右侧登录表单区 -->
     <div class="login-panel">
       <div class="login-box">
-        <div class="login-logo-wrap">
-          <img class="login-logo" :src="logoImg" alt="logo" />
-        </div>
         <h1 class="welcome-title">欢迎登录</h1>
         <p class="welcome-subtitle">请输入您的账号信息</p>
 
@@ -246,6 +243,10 @@ $brand-1: #0a1f3d;
 $brand-2: #1e3a8a;
 $brand-3: #2563eb;
 $brand-4: #1d4ed8;
+// 品牌区背景专用渐变（调亮一档；不改变 $brand-*，避免影响登录按钮与输入框用色）
+$brand-bg-1: #12305e;
+$brand-bg-2: #2a4db0;
+$brand-bg-3: #3b82f6;
 $text-primary: #1f2937;
 $text-secondary: #6b7280;
 
@@ -264,7 +265,7 @@ $text-secondary: #6b7280;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: linear-gradient(135deg, $brand-1 0%, $brand-2 55%, $brand-3 100%);
+    background: linear-gradient(135deg, $brand-bg-1 0%, $brand-bg-2 55%, $brand-bg-3 100%);
 
     // 漂浮光斑（低饱和，安静）
     .blob {
@@ -295,7 +296,8 @@ $text-secondary: #6b7280;
       height: 260px;
       top: 45%;
       left: 55%;
-      background: rgba(129, 140, 248, 0.4);
+      // 淡红光斑，蓝底中透暖色，与红徽呼应
+      background: rgba(239, 68, 68, 0.35);
       animation-delay: -12s;
     }
 
@@ -321,22 +323,25 @@ $text-secondary: #6b7280;
       padding: 0 40px;
 
       .brand-logo-wrap {
-        width: 96px;
-        height: 96px;
+        width: 116px;
+        height: 116px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(255, 255, 255, 0.12);
         border: 1px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        // 外发光 + 内高光，强化视觉中心
+        box-shadow:
+          0 0 40px rgba(255, 255, 255, 0.18),
+          0 8px 30px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.25);
         margin-bottom: 32px;
 
         .brand-logo {
-          width: 60px;
-          height: 60px;
+          width: 76px;
+          height: 76px;
           object-fit: contain;
-          border-radius: 12px;
         }
       }
 
@@ -370,16 +375,16 @@ $text-secondary: #6b7280;
       }
 
       .brand-subtitle {
-        color: rgba(255, 255, 255, 0.78);
+        color: rgba(255, 255, 255, 0.85);
         font-size: 16px;
         letter-spacing: 4px;
       }
 
       .brand-en {
         margin-top: 12px;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.55);
         font-size: 10px;
-        letter-spacing: 5px;
+        letter-spacing: 6px;
         text-transform: uppercase;
       }
     }
@@ -409,26 +414,6 @@ $text-secondary: #6b7280;
   .login-box {
     width: 100%;
     max-width: 400px;
-
-    .login-logo-wrap {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 16px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, $brand-3, $brand-4);
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
-
-      .login-logo {
-        width: 34px;
-        height: 34px;
-        object-fit: contain;
-        border-radius: 8px;
-        background: #fff;
-      }
-    }
 
     .welcome-title {
       margin: 0;
@@ -541,7 +526,7 @@ $text-secondary: #6b7280;
 // 响应式：窄屏隐藏品牌区，回退为居中卡片
 @media (max-width: 900px) {
   .login-container {
-    background: linear-gradient(135deg, $brand-1 0%, $brand-2 55%, $brand-3 100%);
+    background: linear-gradient(135deg, $brand-bg-1 0%, $brand-bg-2 55%, $brand-bg-3 100%);
 
     .brand-panel {
       display: none;

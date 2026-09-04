@@ -35,7 +35,7 @@
 
 <script setup name="material-maintain">
 import { formJson } from "./formJson";
-import { tableJson, tableButtonJson } from "./tableJson";
+import { tableJson, tableButtonJson, searchCache } from "./tableJson";
 import { getLocalStorage, getSessionStorage } from "@/utils/auth";
 import {
   getMaintainList,
@@ -285,16 +285,24 @@ const handleClickLink = (row) => {
 };
 
 // 获取地区列表
+// 81-退料单改造：恢复用料地区下拉时修复原有两个问题——按 field 查找替代写死索引 columns[12]、ptions 拼写修正为 options；
+// 选项 value 用 plantCode（与后端 PLANT_CODE 查询条件匹配），原始数据同步存入 searchCache 供仓库联动取 id；
+// 注意必须原地修改列对象：pro-table 搜索项是列对象的 reactive 代理，且列变化监听签名不含 searchProps.options，
+// 创建新列对象不会触发视图更新（下拉为空），只能直接改原对象的 searchProps.options
 const getPlantList = async () => {
   let { data } = await plantDictList();
   plantSelectList.value = data;
-  columns[12].searchProps.ptions = data.map((item) => {
-    return {
-      label: `${item.plantName}`,
-      value: item.id,
-      ...item,
-    };
-  });
+  searchCache.plantList = data || [];
+  const plantCol = tableJson.find((c) => c.field === "plantCode");
+  if (plantCol) {
+    plantCol.searchProps.options = (data || []).map((item) => {
+      return {
+        label: `${item.plantName}`,
+        value: item.plantCode,
+        ...item,
+      };
+    });
+  }
 };
 
 // // 获取仓库列表

@@ -157,7 +157,8 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="8">
+            <!-- 81-退料单改造：隐藏"成本预算项目"字段（财务共享版式文件用），如需恢复取消注释 -->
+            <!-- <el-col :span="8">
               <el-form-item prop="natureValueName" label="成本预算项目：">
                 <el-input
                   v-if="dialogType != 'details'"
@@ -167,7 +168,7 @@
                 />
                 <span v-else>{{ formData.natureValueName }}</span>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="24">
               <el-form-item prop="comments" label="备注：">
                 <el-input
@@ -274,9 +275,10 @@ const data = reactive({
       { required: true, message: "请输入用料地区", trigger: ["blur", "change"] },
     ],
     depotName: [{ required: true, message: "请输入仓库", trigger: ["blur", "change"] }],
-    natureValueName: [
-      { required: true, message: "请输入成本预算项目", trigger: ["blur", "change"] },
-    ],
+    // 81-退料单改造：隐藏"成本预算项目"字段，同步去掉必填校验，如需恢复取消注释
+    // natureValueName: [
+    //   { required: true, message: "请输入成本预算项目", trigger: ["blur", "change"] },
+    // ],
     partitionName: [
       { required: true, message: "请选择仓库分区", trigger: ["blur", "change"] },
     ],
