@@ -52,7 +52,7 @@ export const columns = [
     title: "业务类型",
     minWidth: 140,
     hideInTable: true,
-    searchable: false,
+    searchable: true,
     searchType: "select",
     searchProps: {clearable: false},
     requestOptions: async () => operationTypeArr,
