@@ -113,6 +113,11 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  // 是否设置一些文件内容限制
+  isLimit: {
+    type: Boolean,
+    default: true
+  },
 })
 
 const { proxy } = getCurrentInstance()
@@ -159,17 +164,17 @@ function handleBeforeUpload(file) {
     }
   }
   // 校检文件名长度
-  if (file.name.length > 30) {
+  if (props.isLimit && file.name.length > 30) {
     proxy.$modal.msgError('文件名长度，不能超过30个字符!')
     return false
   }
   // 校检文件名是否包含特殊字符
-  if (file.name.includes(',')) {
+  if (props.isLimit && file.name.includes(',')) {
     proxy.$modal.msgError('文件名不正确，不能包含英文逗号!')
     return false
   }
   // 校检文件大小
-  if (props.fileSize) {
+  if (props.isLimit && props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
       proxy.$modal.msgError(`上传文件大小不能超过 ${props.fileSize} MB!`)

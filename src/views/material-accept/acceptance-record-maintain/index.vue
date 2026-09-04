@@ -2,7 +2,7 @@
   <div class="app-container app-container-splitpanes">
     <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
       <el-col class="app-container-col">
-        <el-pro-table ref="proTableRef" v-loading="loading" action-width="250" :page-size="30" :data="tableData"
+        <el-pro-table ref="proTableRef" v-loading="loading" action-width="200" :page-size="30" :data="tableData"
           :editable="editableConfig" @cell-change="handleCellChange"
           :total="total" :columns="columns" show-checkbox click-row-to-toggle-selection :table-alert-render="false"
           :toolbar-config="toolbarConfig" :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch"
@@ -215,16 +215,16 @@ const handleSave = (pdmIds = []) => {
     proxy.$modal.msgWarning('请选择数据')
     return
   }
-  const conversionFlag1 = selectionData.value.some(a => a.conversionFlag == '1' && !a.conversionBasis)
-  if(conversionFlag1){
-    proxy.$modal.msgWarning('请填写换算依据')
-    return
-  }
-  const jointReceiver = selectionData.value.some(a => !a.jointReceiver)
-  if(jointReceiver){
-    proxy.$modal.msgWarning('请填写联合验收人员')
-    return
-  }
+  // const conversionFlag1 = selectionData.value.some(a => a.conversionFlag == '1' && !a.conversionBasis)
+  // if(conversionFlag1){
+  //   proxy.$modal.msgWarning('请填写换算依据')
+  //   return
+  // }
+  // const jointReceiver = selectionData.value.some(a => !a.jointReceiver)
+  // if(jointReceiver){
+  //   proxy.$modal.msgWarning('请填写联合验收人员')
+  //   return
+  // }
   const acceptanceFlag = selectionData.value.some(a => !a.acceptanceFlag)
   if(acceptanceFlag){
     proxy.$modal.msgWarning('请选择是否通过验收')
@@ -339,5 +339,8 @@ getList()
 <style lang="scss" scoped>
 .ep-icon-circle-close{
   cursor: pointer;
+}
+:deep(.ep-pro-table .ep-table__body-wrapper .ep-table__row.is-row-editing > td.ep-table__cell) {
+  background-color: #fff !important;
 }
 </style>

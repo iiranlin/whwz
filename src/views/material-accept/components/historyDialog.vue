@@ -1,4 +1,5 @@
 <template>
+  <div>
   <ep-dialog title="验收历史" iconTitle="form" v-model="visible" width="1000px" top="5vh" append-to-body>
     <div class="sso-front-table-container app-container">
       <!-- 表格数据 -->
@@ -10,8 +11,31 @@
           <el-link type="primary" @click.stop="viewAttachmentClick(scope)">查看</el-link>
         </template>
       </table-index>
+      <!-- 分页 -->
+      <div class="ep-pro-table__pagination">
+        <el-pagination
+          v-show="total > 0"
+          background
+          :current-page="pageNum"
+          :page-size="pageSize"
+          :total="total"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
-    <ep-dialog title="验收附件上传" iconTitle="form" v-model="visiblelist" width="800px" top="5vh" append-to-body>
+     <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="visible = false" class="cancel-btn"><svg-icon icon-class="cancel" />&nbsp;关闭</el-button>
+          <el-button type="primary" class="determine-btn" @click="visible = false"><svg-icon
+            icon-class="determine" />&nbsp;确定</el-button>
+        </div>
+      </template>
+    
+  </ep-dialog>
+  <ep-dialog title="验收附件上传" iconTitle="form" v-model="visiblelist" width="800px" top="5vh" append-to-body>
       <div class="sso-front-table-container app-container">
         <!-- 表格数据 -->
         <table-index class="table-index" :selectionShow="false" :tableJson="fileTableJson"
@@ -25,7 +49,7 @@
       </template>
       <PreviewAttachment ref="previewAttachment"></PreviewAttachment>
     </ep-dialog>
-  </ep-dialog>
+  </div>
 </template>
 
 <script setup>
@@ -41,24 +65,42 @@ const visiblelist = ref(false)
 const tableData = ref([])
 const fileList = ref([])
 const pdbIdVal = ref('')
+const pageNum = ref(1)
+const pageSize = ref(30)
+const total = ref(0)
+const currentPdbId = ref('')
 
 // 声明触发的事件（可选，增强类型校验）
 const emit = defineEmits(['createSuccess']);
 
-const getRecordList = (pdbId) => {
+const getRecordList = () => {
   proxy.$modal.loading()
-  recordList({pdbId, pageSize: -1}).then( ({data}) => {
+  recordList({ pdbId: currentPdbId.value, pageNum: pageNum.value, pageSize: pageSize.value }).then(({ data }) => {
     tableData.value = data?.list || []
-  }).finally( () => {
+    total.value = data?.total || 0
+  }).finally(() => {
     proxy.$modal.closeLoading()
   })
-
 }
 
 // 显示弹框
 function show(pdbId = '') {
+  currentPdbId.value = pdbId
+  pageNum.value = 1
+  pageSize.value = 30
   visible.value = true
-  getRecordList(pdbId)
+  getRecordList()
+}
+
+function handleSizeChange(size) {
+  pageSize.value = size
+  pageNum.value = 1
+  getRecordList()
+}
+
+function handleCurrentChange(current) {
+  pageNum.value = current
+  getRecordList()
 }
 
 const getFileList = () => {
@@ -93,4 +135,8 @@ defineExpose({
 })
 </script>
 <style lang="scss" scoped>
+.ep-pro-table__pagination {
+  display: flex;
+  justify-content: center;
+}
 </style>

@@ -9,31 +9,48 @@ export const columns = [
     searchable: true,
     searchType: "input",
   },
-  {
-    field: "scontCode",
-    title: "合同号",
-    minWidth: 140,
-    align: "center",
-    type: 'link',
-    searchable: true,
-    searchType: "input",
-  },
-  {
-    field: "matlPcodeImg",
-    title: "合同图片",
-    minWidth: 120,
-    slotName: 'matlPcodeImg',
-  },
+  // {
+  //   field: "scontCode",
+  //   title: "合同号",
+  //   minWidth: 140,
+  //   align: "center",
+  //   type: 'link',
+  //   searchable: true,
+  //   searchType: "input",
+  // },
+  // {
+  //   field: "matlPcodeImg",
+  //   title: "合同图片",
+  //   minWidth: 120,
+  //   slotName: 'matlPcodeImg',
+  // },
   {
     field: "suName",
     title: "供应商",
     minWidth: 130,
+    align: "center",
     searchable: true,
     searchType: "input",
   },
   {
+    field: "bmName",
+    title: "制单人",
+    minWidth: 100,
+    align: "center",
+    searchable: true,
+    searchType: "input",
+  },
+    {
+    field: "userName",
+    title: "到货确认人",
+    minWidth: 100,
+    searchable: true,
+    hideInTable: true,
+    searchType: "input",
+  },
+  {
     field: "matlCode",
-    title: "物资编码",
+    title: "物资编号",
     minWidth: 120,
     align: "center",
     searchable: true,
@@ -43,6 +60,7 @@ export const columns = [
     field: "matlName",
     title: "物资名称",
     minWidth: 130,
+    align: "center",
     searchable: true,
     searchType: "input",
   },
@@ -50,6 +68,7 @@ export const columns = [
     field: "matlTypeSlot",
     title: "规格型号/材质/图号",
     minWidth: 130,
+    align: "center",
     slotName: 'matlTypeSlot',
   },
   {
@@ -70,18 +89,22 @@ export const columns = [
     field: "contPrice",
     title: "采购单价",
     minWidth: 74,
+    align: "center",
     type: 'number'
   },
   {
     field: "purNum",
     title: "采购数量",
     minWidth: 74,
+    align: "center",
     type: 'number'
   },
   {
     field: "deliverNum",
     title: "发货数量",
     minWidth: 74,
+    align: "center",
+    hideInTable: true,
     type: 'number'
   },
   {
@@ -89,12 +112,22 @@ export const columns = [
     title: "发货批次号",
     minWidth: 86,
     align: "center",
+    hideInTable: true,
   },
   {
     field: "arrivalNum",
     title: "到货确认数量",
     minWidth: 100,
+    align: "center",
     type: 'number'
+  },
+  {
+    field: "facadeFlag",
+    title: "外观标志",
+    minWidth: 100,
+    type: "dict",
+    dict: facadeFlagArr,
+    slotName: 'facadeFlag',
   },
   {
     field: "acceptanceFlag",
@@ -118,9 +151,32 @@ export const columns = [
     slotName: 'comments',
   },
   {
+    field: "position",
+    title: "产地/品牌",
+    minWidth: 120,
+    align: "center",
+  },
+  {
+    field: "brandFlag",
+    title: "品牌是否相符",
+    minWidth: 120,
+    type: "dict",
+    dict: brandFlagArr,
+    slotName: 'brandFlag',
+    align: "center",
+  },
+  {
+    field: "brandAccount",
+    title: "品牌不符说明",
+    minWidth: 120,
+    align: "center",
+    slotName: 'brandAccount',
+  },
+  {
     field: "jointReceiver",
     title: "联合验收人员",
     minWidth: 160,
+    hideInTable: true,
     slotName: 'jointReceiver',
   },
   {
@@ -153,39 +209,14 @@ export const columns = [
     field: "conversionBasis",
     title: "换算依据",
     minWidth: 120,
+    hideInTable: true,
     slotName: 'conversionBasis',
-  },
-  {
-    field: "facadeFlag",
-    title: "外观标志",
-    minWidth: 100,
-    type: "dict",
-    dict: facadeFlagArr,
-    slotName: 'facadeFlag',
-  },
-  {
-    field: "position",
-    title: "产地/品牌",
-    minWidth: 120,
-  },
-  {
-    field: "brandFlag",
-    title: "品牌是否相符",
-    minWidth: 120,
-    type: "dict",
-    dict: brandFlagArr,
-    slotName: 'brandFlag',
-  },
-  {
-    field: "brandAccount",
-    title: "品牌不符说明",
-    minWidth: 120,
-    slotName: 'brandAccount',
   },
   {
     field: "credCode",
     title: "技证号",
     minWidth: 120,
+    hideInTable: true,
     slotName: 'credCode',
   },
   {
@@ -193,14 +224,7 @@ export const columns = [
     title: "到货地点",
     minWidth: 140,
     hideInTable: true,
-    searchable: true,
-    searchType: "input",
-  },
-  {
-    field: "bmName",
-    title: "制单人",
-    minWidth: 100,
-    searchable: true,
+    searchable: false,
     searchType: "input",
   },
   {
@@ -209,7 +233,7 @@ export const columns = [
     minWidth: 160,
     type: 'date',
     hideInTable: true,
-    searchable: true,
+    searchable: false,
     searchType: "dateRange",
   },
   {
@@ -217,20 +241,24 @@ export const columns = [
     title: "到货确认日期",
     minWidth: 100,
     type: 'date',
-    searchable: true,
+    searchable: false,
+    hideInTable: true,
     searchType: "dateRange",
   },
   {
     field: "userName",
     title: "到货确认人",
+    searchable: false,
     minWidth: 100,
+    align: "center",
   },
   {
     field: "acceptanceLevel",
     title: "验收级别",
     minWidth: 100,
     type: "dict",
-    searchable: true,
+    searchable: false,
+    hideInTable: true,
     searchType: "select",
     requestOptions: async () => acceptanceLevelArr,
     optionsCacheKey: "acceptance-record-maintain:acceptanceLevel",
@@ -241,7 +269,8 @@ export const columns = [
     title: "是否商城订单",
     minWidth: 100,
     type: "dict",
-    searchable: true,
+    searchable: false,
+    hideInTable: true,
     searchType: "select",
     requestOptions: async () => statusArr,
     optionsCacheKey: "acceptance-record-maintain:mallOrder",
@@ -252,15 +281,15 @@ export const toolbarConfig = {
   buttons: [
     { code: 'save', name: '保存', type: 'primary'},
     { code: 'upload', name: '上传验收附件', showInTop: false, showInRow: true},
-    { code: 'adjust', name: '商城订单调整', showInTop: false, showInRow: true,
-      disabled: (selectedRows) => {
-        const {mallOrder} = selectedRows[0] || {}
-        if(mallOrder == '0'){
-          return true
-        }
-        return false
-      }
-    },
+    // { code: 'adjust', name: '商城订单调整', showInTop: false, showInRow: true,
+    //   disabled: (selectedRows) => {
+    //     const {mallOrder} = selectedRows[0] || {}
+    //     if(mallOrder == '0'){
+    //       return true
+    //     }
+    //     return false
+    //   }
+    // },
     { code: 'history', name: '验收历史', showInTop: false, showInRow: true},
   ]
 }
@@ -277,25 +306,25 @@ export const fileTableButtonJson = [
 ]
 
 export const historyTableJson = [
-  {isShow: true, fixed: false, type: '', key: 'userName', prop: 'userName', label: '验收人', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'slot', key: 'acceptanceLevel', prop: 'acceptanceLevel', label: '验收级别', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'acceptanceNumber', prop: 'acceptanceNumber', label: '验收通过数量', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'conversionBasis', prop: 'conversionBasis', label: '换算依据', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: 'dict', key: 'facadeFlag', prop: 'facadeFlag', label: '外观标志', align: 'center', stats: facadeFlagObj, width: 150},
-  {isShow: true, fixed: false, type: '', key: 'comments', prop: 'comments', label: '验收说明', align: 'left', width: 160},
-  {isShow: true, fixed: false, type: 'dict', key: 'brandFlag', prop: 'brandFlag', label: '品牌是否相符', align: 'center', stats: brandFlagObj, width: 160},
-  {isShow: true, fixed: false, type: '', key: 'brandAccount', prop: 'brandAccount', label: '品牌不符说明', align: 'left', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'credCode', prop: 'credCode', label: '技证号', align: 'left', width: 160},
-  {isShow: true, fixed: false, type: 'date', key: 'productionDate', prop: 'productionDate', label: '生产日期', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'date', key: 'validityPeriod', prop: 'validityPeriod', label: '有效期', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'validityPeriodUnit', prop: 'validityPeriodUnit', label: '有效单位', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160},
-  {isShow: true, fixed: 'right', type: 'slot', key: 'viewAttachment', prop: 'viewAttachment', label: '查看附件', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'userName', prop: 'userName', label: '验收人', align: 'center', width: 120},
+  {isShow: false, fixed: false, type: 'slot', key: 'acceptanceLevel', prop: 'acceptanceLevel', label: '验收级别', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'acceptanceNumber', prop: 'acceptanceNumber', label: '验收通过数量', align: 'right', width: 120},
+  {isShow: false, fixed: false, type: '', key: 'conversionBasis', prop: 'conversionBasis', label: '换算依据', align: 'right', width: 120},
+  {isShow: true, fixed: false, type: 'dict', key: 'facadeFlag', prop: 'facadeFlag', label: '外观标志', align: 'center', stats: facadeFlagObj, width: 120},
+  {isShow: true, fixed: false, type: '', key: 'comments', prop: 'comments', label: '验收说明', align: 'center', width: 120},
+  {isShow: true, fixed: false, type: 'dict', key: 'brandFlag', prop: 'brandFlag', label: '品牌是否相符', align: 'center', stats: brandFlagObj, width: 120},
+  {isShow: true, fixed: false, type: '', key: 'brandAccount', prop: 'brandAccount', label: '品牌不符说明', align: 'center', width: 120},
+  {isShow: false, fixed: false, type: '', key: 'credCode', prop: 'credCode', label: '技证号', align: 'center', width: 120},
+  {isShow: true, fixed: false, type: 'date', key: 'productionDate', prop: 'productionDate', label: '生产日期', align: 'center', width: 120},
+  {isShow: true, fixed: false, type: 'date', key: 'validityPeriod', prop: 'validityPeriod', label: '有效期', align: 'center', width: 120},
+  {isShow: true, fixed: false, type: '', key: 'validityPeriodUnit', prop: 'validityPeriodUnit', label: '有效单位', align: 'center', width: 120},
+  {isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 120},
+  {isShow: true, fixed: 'right', type: 'slot', key: 'viewAttachment', prop: 'viewAttachment', label: '查看附件', align: 'center', width: 120},
 ]
 
 export const scontTableJson = [
   {isShow: true, fixed: false, type: 'slot', key: 'seffeFlag', prop: 'seffeFlag', label: '有效状态', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'smatlCode', prop: 'smatlCode', label: '物资编码', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'smatlCode', prop: 'smatlCode', label: '物资编号', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'smatlName', prop: 'smatlName', label: '物资名称', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'smatlType', prop: 'smatlType', label: '规格型号', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'smatlUnit', prop: 'smatlUnit', label: '计量单位', align: 'center', width: 160},

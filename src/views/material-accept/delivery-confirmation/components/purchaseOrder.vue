@@ -225,4 +225,7 @@ getList()
 .el-tabs-main{
   height: 100%;
 }
+:deep(.ep-pro-table .ep-table__body-wrapper .ep-table__row.is-row-editing > td.ep-table__cell) {
+  background-color: #fff !important;
+}
 </style>

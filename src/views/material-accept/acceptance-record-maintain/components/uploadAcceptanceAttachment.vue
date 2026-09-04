@@ -14,7 +14,7 @@
             </el-radio-group>
             <!-- <file-upload v-model="formData.fileList" :row="rowData" :isShowTip="false" :isShowUploadFile="false" :drag="false" :fileSize="10" :fileType="[]" :action="minioUpload"/> -->
             <file-upload v-show="formData.status == key" v-for="(item, key) in documentTypeObj" :key="key" v-model="fileData[`fileList${key}`]"
-              :row="rowData" :isShowTip="false" :isShowUploadFile="false" :drag="false" :fileSize="10" :fileType="[]" :action="minioUpload"
+              :row="rowData" :isShowTip="false" :isShowUploadFile="false" :drag="false" :fileSize="10" :fileType="[]" :action="minioUpload" :isLimit="false"
               :limitPrompt="documentTypeObj[formData.status]"/>
           </el-form-item>
         </div>
