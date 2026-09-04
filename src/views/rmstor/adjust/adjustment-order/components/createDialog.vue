@@ -267,11 +267,12 @@ const onAction = ({ code, row, selectedRows }) => {
 const handleSelectChange = (data) => {
   // ElProTable 未实现 addEditableRow，选中数据直接写入本地 tableData
   // 注意：必须重新赋值数组（引用变化）表格才刷新；push 原地修改引用不变，el-table 不更新
-  // 按物资编码去重：同一物资编码整单只允许添加一条
-  const existCodes = tableData.value.map(r => r.matlCode)
-  const addRows = data.filter(a => !existCodes.includes(a.matlCode))
+  // 按物资编码+批次号去重：同一物资同一批次整单只允许添加一条，不同批次可共存
+  const keyOf = r => r.matlCode + '|' + (r.batchNo || '')
+  const existKeys = tableData.value.map(keyOf)
+  const addRows = data.filter(a => !existKeys.includes(keyOf(a)))
   if (!addRows.length) {
-    proxy.$modal.msgWarning('该物资已添加，请勿重复选择')
+    proxy.$modal.msgWarning('该物资同批次已添加，请勿重复选择')
     return
   }
   const newRows = addRows.map(a => ({

@@ -41,15 +41,16 @@ const queryParams = ref({
 
 const proTableRef = shallowRef(null)
 const emit = defineEmits(['selectChange']);
-// 已添加物料编码列表（打开弹窗时勾选回显用）
-const selectedCodes = ref([])
+// 已添加物料key列表（打开弹窗时勾选回显用，key=物资编码+批次号）
+const selectedKeys = ref([])
+const keyOf = r => r.matlCode + '|' + (r.batchNo || '')
 
-// 显示弹框（selectedRows：调用方已添加的明细行，按物资编码回显勾选）
+// 显示弹框（selectedRows：调用方已添加的明细行，按物资编码+批次号回显勾选）
 const show = async ({ partitionCode, depotCode }, selectedRows = []) => {
   visible.value = true
   queryParams.value.partitionCode = partitionCode
   queryParams.value.depotCode = depotCode
-  selectedCodes.value = selectedRows.map(r => r.matlCode)
+  selectedKeys.value = selectedRows.map(keyOf)
   selectionData.value = []
   proTableRef.value?.reset?.()
   getList()
@@ -61,11 +62,11 @@ function getList() {
   rmstorMatlSelectPageList(queryParams.value).then(({ data }) => {
     tableData.value = (data.list || []).map(a => { return { ...a, uid: generateUUID() } })
     total.value = data.total
-    // 勾选回显已添加的物料（按物资编码匹配，setSelectedRows 内部会先清空上次勾选）
+    // 勾选回显已添加的物料（按物资编码+批次号匹配，setSelectedRows 内部会先清空上次勾选）
     nextTick(() => {
       proTableRef.value?.clearSelection?.()
-      const rows = selectedCodes.value.length
-        ? tableData.value.filter(r => selectedCodes.value.includes(r.matlCode))
+      const rows = selectedKeys.value.length
+        ? tableData.value.filter(r => selectedKeys.value.includes(keyOf(r)))
         : []
       if (rows.length) proTableRef.value?.setSelectedRows?.(rows)
     })
