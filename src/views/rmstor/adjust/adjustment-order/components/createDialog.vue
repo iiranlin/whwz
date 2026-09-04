@@ -73,7 +73,7 @@
       </div>
       <div class="font_s" style="margin-bottom: 17px;">调整单明细信息</div>
       <div style="height:calc(100% - 240px)">
-        <el-pro-table :columns="matlTableJson" :show-pagination="false"
+        <el-pro-table ref="proTableRef" :columns="matlTableJson" :show-pagination="false"
           :toolbar-config="dialogType != 'details' ? toolbarConfig : {}" :search-collapse-threshold="5"
           @action="onAction" :data="tableData" table-id="price-adjustment" :show-checkbox="false"
           :grid-options="{ rowId: 'id' }" :show-action="dialogType != 'details' ? true : false">
@@ -110,7 +110,7 @@ import {
   plantDictList, warehouseDict, warehouseplantDictList, rmstorInternalReview
 } from '@/api/rmstor/adjustment-order'
 import { matlTableJson } from "../tableJson"
-import RmstorMatlDialog from "@/views/rmstor/price/price-adjustment/components/rmstorMatlDialog"
+import RmstorMatlDialog from "./rmstorMatlDialog.vue"
 import UserDialog from "@/views/components/userDialog"
 import { debounce } from '@/utils/generalMethod'
 import { getCookie } from '@/utils/auth'
@@ -126,6 +126,9 @@ const visible = ref(false)
 const dialogType = ref('create')
 const tableData = ref([])
 const formData = ref({})
+// 明细表 ref：库 pro-table 内部对 data 逐行浅拷贝渲染，插槽编辑值只落在其 localData，
+// 校验/提交/合计须用 getCurrentData() 取编辑后的最新行，不能直接读 tableData
+const proTableRef = shallowRef(null)
 
 const data = reactive({
   rules: {
@@ -191,6 +194,9 @@ function show(type = 'create', row = {}) {
   tableData.value = []
   isShow.value = false
   proxy.$nextTick(async () => {
+    // 打开即清空 formData：防止 modify/details 叠入的整行字段（modifyFlag/id/flag 等）残留到新增，
+    // 否则 modifyFlag=1 穿透入库后，新单会被误判为"盘点生成数据"而禁止修改/删除
+    formData.value = {}
     proxy.$refs.elForm && proxy.$refs.elForm.resetFields()
     await plantList()
     if (type === 'create') {
@@ -200,7 +206,7 @@ function show(type = 'create', row = {}) {
       partitionLists.value = []
       trackNumber()
     } else {
-      formData.value = Object.assign({}, formData.value, row)
+      formData.value = Object.assign({}, row)
       // 明细详情
       getRmstorInternalGetMatls(row.id)
       if (type === 'modify' || type === 'details') {
@@ -236,7 +242,7 @@ const onAction = ({ code, row, selectedRows }) => {
         proxy.$modal.msgWarning(preWhHint)
         return
       }
-      proxy.$refs.rmstorMatlDialog.show({ partitionCode: formData.value.partitionCode, depotCode: formData.value.depotCode })
+      proxy.$refs.rmstorMatlDialog.show({ partitionCode: formData.value.partitionCode, depotCode: formData.value.depotCode }, tableData.value)
     },
     // 删除
     delete: () => {
@@ -261,7 +267,14 @@ const onAction = ({ code, row, selectedRows }) => {
 const handleSelectChange = (data) => {
   // ElProTable 未实现 addEditableRow，选中数据直接写入本地 tableData
   // 注意：必须重新赋值数组（引用变化）表格才刷新；push 原地修改引用不变，el-table 不更新
-  const newRows = data.map(a => ({
+  // 按物资编码去重：同一物资编码整单只允许添加一条
+  const existCodes = tableData.value.map(r => r.matlCode)
+  const addRows = data.filter(a => !existCodes.includes(a.matlCode))
+  if (!addRows.length) {
+    proxy.$modal.msgWarning('该物资已添加，请勿重复选择')
+    return
+  }
+  const newRows = addRows.map(a => ({
     ...a,
     id: a.uid,
     prNum: a.nowNum,
@@ -285,12 +298,12 @@ const tsNumChange = (row) => {
     row.ptAmount = null
     row.profitAmount = null
   }
-  getSum(tableData.value)
+  getSum(proTableRef.value?.getCurrentData() || tableData.value)
 }
 const saveBtn = () => {
   proxy.$refs.elForm.validate(valid => {
     if (valid) {
-      const newTableData = tableData.value
+      const newTableData = proTableRef.value?.getCurrentData() || tableData.value
       if (!newTableData.length) {
         proxy.$modal.msgWarning(`请先输入调拨单明细内容！`)
         return
@@ -352,7 +365,7 @@ const debounceClick = debounce(saveBtn, 500)
 const handleAdd = (type) => {
   let params = {
     ...formData.value,
-    rmstorAdjustDtSaveParamList: tableData.value,
+    rmstorAdjustDtSaveParamList: proTableRef.value?.getCurrentData() || tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
     type: type
   }
@@ -367,7 +380,7 @@ const handleAdd = (type) => {
 const handleEdit = (type) => {
   let params = {
     ...formData.value,
-    rmstorAdjustDtModifyParams: tableData.value,
+    rmstorAdjustDtModifyParams: proTableRef.value?.getCurrentData() || tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
     type: type
   }
@@ -432,7 +445,8 @@ const handlepartition = (val) => {
 }
 
 const approverClick = () => {
-  proxy.$refs.userDialog.show()
+  // 传入表单当前审批人，弹窗按 userName 回显选中
+  proxy.$refs.userDialog.show(formData.value.approver ? [{ userName: formData.value.approver }] : [])
 }
 const userSelectChange = (data) => {
   formData.value.approver = data[0].userName

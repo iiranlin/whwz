@@ -176,7 +176,7 @@ export const toolbarConfig = async () => {
     buttons: [
       { code: 'denka', name: '登卡', type: 'primary',
         disabled: (selectedRows) => {
-          if(closeFlag.value == '1' || stopnoteFlag.value == '1'){
+          if(closeFlag == '1' || stopnoteFlag == '1'){
             return true
           }
           return false
@@ -184,7 +184,7 @@ export const toolbarConfig = async () => {
       },
       { code: 'revokeDenka', name: '撤销登卡', type: 'primary',
         disabled: (selectedRows) => {
-          if(closeFlag.value == '1' || stopnoteFlag.value == '1'){
+          if(closeFlag == '1' || stopnoteFlag == '1'){
             return true
           }
           return false
@@ -192,7 +192,7 @@ export const toolbarConfig = async () => {
       },
       { code: 'rollback', name: '回退', type: 'primary',
         disabled: (selectedRows) => {
-          if(closeFlag.value == '1' || stopnoteFlag.value == '1'){
+          if(closeFlag == '1' || stopnoteFlag == '1'){
             return true
           }
           return false
