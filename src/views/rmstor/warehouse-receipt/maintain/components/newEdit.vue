@@ -28,14 +28,14 @@
           <el-form-item label="应税用途：" prop="taxFlagName">
             <span>{{ detailData.taxFlagName || '--' }}</span>
           </el-form-item>
-          <!-- <el-form-item v-if="detailData.ibSource === '0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+          <!-- <el-form-item label="供货单位：" prop="supUnitName" class="entry-form-item-dialog">
             <span>{{ detailData.supUnitName || '--' }}</span>
           </el-form-item> -->
-          <el-form-item label="供货单位：" prop="supUnitName" class="entry-form-item-dialog">
-            <span>{{ detailData.supUnitName || '--' }}</span>
-          </el-form-item>
           <el-form-item label="采购订单：" prop="refBillCode" class="entry-form-item-dialog">
             <span>{{ detailData.refBillCode || '--' }}</span>
+          </el-form-item>
+          <el-form-item v-if="detailData.ibSource === '0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+            <span>{{ detailData.supUnitName || '--' }}</span>
           </el-form-item>
           <el-form-item v-if="detailData.ibSource === '0'" label="采购方式：" prop="buyTypeName">
             <span>{{ detailData.buyTypeName || '--' }}</span>

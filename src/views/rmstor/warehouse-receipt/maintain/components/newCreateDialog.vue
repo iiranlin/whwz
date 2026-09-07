@@ -36,14 +36,6 @@
           <el-form-item label="应税用途：" prop="taxFlagName">
             <el-input v-model="createForm.taxFlagName" ></el-input>
           </el-form-item>
-          <el-form-item v-if="createForm.ibSource === '0'" label="供货单位：" prop="supUnitName" class="entry-form-item-dialog" :class="{'warehouse-receipt-supplier-form-item': createForm.ibSource === '8'}">
-            <el-input v-model="createForm.supUnitName" readonly>
-              <template #append>
-                <el-button :icon="Search" @click="toFindSupplier" />
-                <el-button v-if="createForm.ibSource === '8'" :icon="CircleClose" @click="clearSupplier" />
-              </template>
-            </el-input>
-          </el-form-item>
           <el-form-item v-if="createForm.ibSource === '0'" label="采购订单：" prop="refBillCode" class="entry-form-item-dialog">
             <el-input v-model="createForm.refBillCode" readonly>
                <template #append>
@@ -51,10 +43,10 @@
               </template>
             </el-input>
           </el-form-item>
-          <!-- <el-form-item v-if="createForm.ibSource ==='0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+          <el-form-item v-if="createForm.ibSource ==='0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
             <el-input v-model="createForm.supUnitName" readonly disabled>
             </el-input>
-          </el-form-item> -->
+          </el-form-item>
           <el-form-item v-if="createForm.ibSource === '2'" label="引用单据：" prop="refBillCode" class="entry-form-item-dialog">
             <el-input v-model="createForm.refBillCode" readonly>
                <template #append>
@@ -63,7 +55,7 @@
             </el-input>
           </el-form-item>
           <el-form-item v-if="createForm.ibSource === '0'" label="采购方式：">
-            <el-select v-model="createForm.buyTypeCode" value-key="value" placeholder="" >
+            <el-select v-model="createForm.buyTypeCode" value-key="value" placeholder="" :disabled="createForm.ibSource === '0'">
               <el-option v-for="item in buyTypesData" :key="item.value" :label="item.label" :value="item"></el-option>
             </el-select>
           </el-form-item>
@@ -133,10 +125,12 @@
             :show-pagination="false"
             :grid-options="{rowId: cTableKey}"
             :edit-config="{enabled: true}"
+            :toolbar-config="tableToolbarConfig"
             ref="tableRef"
             @edit-save="editSave"
             @edit-cancel="editCancel"
             @cell-change="cellChange"
+            @action="handleTableAction"
           >
             <template #contractPic="{row}">
               <el-link type="primary" @click="clickLink('contractPic', row)">合同照片</el-link>
@@ -177,7 +171,6 @@
       width="90%"
       @dialog-close="purchasedDialogClose"
       @return-data="returnPurchaseData"
-      :tax-flag-code="createForm.taxFlagCode"
       :plantCode="createForm.plantId?.plantCode"
     />
     <outsale-dialog title="调拨单选择" :key="outsaleKey" :visible="outsaleVisible" width="90%" @dialog-close="outsaleDialogClose" @return-data="returnOutsaleData" :refBillCode="createForm.refBillCode" :already-table-data="_tableData" :unit-name="createForm.supUnitName" :unit-code="createForm.supUnitCode" />
@@ -306,6 +299,12 @@ const ibBillCode = ref("");
 const tableKey = ref(1);
 const tableData = ref([]);
 const _tableData = ref([]);
+
+const tableToolbarConfig = {
+  buttons: [
+    { code: 'deleteRow', name: "删除", type: "danger", showInRow: true, showInTop: false },
+  ]
+};
 
 const supUnitTypeObj = {
   "局内单位": "1",
@@ -439,9 +438,9 @@ const createFormRules = ref({
   partitionId: [
     { required: true, message: "请选择仓库分区", trigger: ["blur", "change"] },
   ],
-  supUnitName: [
-    { required: suCodeRequiredFlag, message: "请选择供货单位", trigger: ["blur", "change"] },
-  ],
+  // supUnitName: [
+ //   { required: suCodeRequiredFlag, message: "请选择供货单位", trigger: ["blur", "change"] },
+  // ],
   // freightAmount: [
   //   { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
   //   { required: true, message: "请填写", trigger: ["blur"] },
@@ -1484,6 +1483,16 @@ const cellChange = ({editedData, row, rowId}) => {
   if (Object.hasOwn(editedData, "validityPeriodUnit")) {
     if (!!row.validityPeriod && !!row.validityPeriodUnit && !!row.productionDate) {
       row.expirationDate = computedExpirationDate(row.productionDate, row.validityPeriod, row.validityPeriodUnit);
+    }
+  }
+}
+
+const handleTableAction = ({code, row}) => {
+  if (code === "deleteRow") {
+    const idx = tableData.value.findIndex(item => item[cTableKey.value] === row[cTableKey.value]);
+    if (idx !== -1) {
+      tableData.value.splice(idx, 1);
+      ElMessage.success("删除成功");
     }
   }
 }

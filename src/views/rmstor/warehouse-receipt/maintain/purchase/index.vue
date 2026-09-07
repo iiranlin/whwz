@@ -10,6 +10,7 @@
           action-width="160"
           :total="total"
           :toolbar-config="toolBarConfig"
+          :max-visible-buttons="99"
           :search-collapse-threshold="12"
           :show-checkbox="true"
           :keep-selection="true"
@@ -265,7 +266,8 @@ const toolBarConfig = {
     { code: 'del', name: "删除", type: "primary", showInRow: false, showInTop: true, },
     { code: 'board', name: "登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
     { code: 'revoke', name: "撤销登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
-    { code: 'redReversal', name: "红冲", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2" },
+    { code: 'redReversalTop', name: "红冲", type: "primary", showInRow: false, showInTop: true },
+    { code: 'redReversal', name: "红冲", type: "primary", showInRow: true, showInTop: false },
     { code: 'edit', name: "修改", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.flag === "2" },
     { code: 'print1', name: "打印", type: "primary", showInRow: false, showInTop: true, },
     // { code: 'print2', name: "打印", type: "primary", showInRow: true, showInTop: false },
@@ -709,7 +711,20 @@ const handleAction = ({code, name, row}) => {
     handleExport()
   }
 
+  if (code === "redReversalTop") {
+    if (!!!tableSelectedData.value.length || tableSelectedData.value.length > 1) {
+      ElMessage.error("请选择一条数据！");
+      return;
+    }
+    currentData.value = {...tableSelectedData.value[0]};
+    redReversalVisible.value = true;
+  }
+
   if (code === "redReversal") {
+    if (row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2") {
+      ElMessage.error("当前数据不满足红冲条件！");
+      return;
+    }
     currentData.value = {...row};
     redReversalVisible.value = true;
   }
