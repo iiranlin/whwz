@@ -188,21 +188,23 @@ export const purchasedDialogTableJson = [
   { isShow: true, fixed: false, key: "matlName", prop: "matlName", label: "物资名称", align: "center", width: 220, },
   { isShow: true, fixed: false, key: "matlType", prop: "matlType", label: "规格型号/图号/材质", align: "center", width: 180, type: "slot" },
   { isShow: true, fixed: false, key: "matlUnit", prop: "matlUnit", label: "计量单位", align: "center", width: 120 },
-  { isShow: true, fixed: false, key: "sfiniFlag", prop: "sfiniFlag", label: "是否完成", align: "center", width: 100, type: "slot"},
-  { isShow: true, fixed: false, key: "productionDate", prop: "productionDate", label: "生产日期", align: "center", width: 180, type: "slot"},
+  // { isShow: true, fixed: false, key: "sfiniFlag", prop: "sfiniFlag", label: "是否完成", align: "center", width: 100, type: "slot"},
+  { isShow: true, fixed: false, key: "productionDate", prop: "productionDate", label: "生产日期", align: "center", width: 120, type: "slot"},
   { isShow: true, fixed: false, key: "validityPeriod", prop: "validityPeriod", label: "有效期", align: "center", width: 120, },
   { isShow: true, fixed: false, key: "validityPeriodUnit", prop: "validityPeriodUnit", label: "有效期单位", align: "center", width: 120, },
-  { isShow: true, fixed: false, key: "expirationDate", prop: "expirationDate", label: "到期日期", align: "center", width: 180, type: "slot"},
-  { isShow: true, fixed: false, key: "taxFlag", prop: "taxFlag", label: "是否含税", align: "center", width: 180, type: "slot"},
-  { isShow: true, fixed: false, key: "taxRate", prop: "taxRate", label: "税率", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "stkPrice", prop: "stkPrice", label: "采购单价（元）", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "signInNum", prop: "signInNum", label: "签认数量", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "compNum", prop: "compNum", label: "已完成数量", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "stkAmound", prop: "stkAmound", label: "采购金额（元）", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "zycType", prop: "zycType", label: "是否配件中心资源", align: "center", width: 180, type: "slot"},
-  { isShow: true, fixed: false, key: "signInName", prop: "signInName", label: "签认人", align: "center", width: 180,},
-  { isShow: true, fixed: false, key: "signInDetail", prop: "signInDetail", label: "签认信息", align: "center", width: 220,},
-  { isShow: true, fixed: false, key: "comments", prop: "comments", label: "备注", align: "center", width: 220,},
+  { isShow: true, fixed: false, key: "expirationDate", prop: "expirationDate", label: "到期日期", align: "center", width: 120, type: "slot"},
+  { isShow: true, fixed: false, key: "taxFlagName", prop: "taxFlagName", label: "应税用途", align: "center", width: 120, },
+  { isShow: true, fixed: false, key: "taxFlag", prop: "taxFlag", label: "是否含税", align: "center", width: 100, type: "slot"},
+  { isShow: true, fixed: false, key: "taxRate", prop: "taxRate", label: "税率", align: "center", width: 100,},
+  { isShow: true, fixed: false, key: "stkPrice", prop: "stkPrice", label: "采购单价（元）", align: "right", width: 130, formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : ''},
+  // { isShow: true, fixed: false, key: "signInNum", prop: "signInNum", label: "签认数量", align: "center", width: 180,},
+  { isShow: true, fixed: false, key: "acceptanceNumber", prop: "acceptanceNumber", label: "验收通过数量", align: "right", width: 120, formatter: (val) => val != null && val !== '' ? Number(val).toFixed(4) : ''},
+  { isShow: true, fixed: false, key: "compNum", prop: "compNum", label: "已完成数量", align: "right", width: 120, formatter: (val) => val != null && val !== '' ? Number(val).toFixed(4) : ''},
+  { isShow: true, fixed: false, key: "stkAmound", prop: "stkAmound", label: "采购金额（元）", align: "right", width: 130, formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : ''},
+  // { isShow: true, fixed: false, key: "zycType", prop: "zycType", label: "是否配件中心资源", align: "center", width: 180, type: "slot"},
+  // { isShow: true, fixed: false, key: "signInName", prop: "signInName", label: "签认人", align: "center", width: 180,},
+  // { isShow: true, fixed: false, key: "signInDetail", prop: "signInDetail", label: "签认信息", align: "center", width: 220,},
+  // { isShow: true, fixed: false, key: "comments", prop: "comments", label: "备注", align: "center", width: 220,},
   
 ];
 
@@ -265,7 +267,7 @@ export const detailDialogTableJson = [
   { isShow: true, fixed: false, key: "expirationDate", prop: "expirationDate", label: "到期日期", align: "center", width: 180, type: "slot"},
   { isShow: true, fixed: false, key: "batchNo", prop: "batchNo", label: "批次号", align: "center", width: 160, },
   { isShow: true, fixed: false, key: "accPic", prop: "accPic", label: "验收照片", align: "center", width: 180, type: "link" },
-  { isShow: true, fixed: false, key: "contractPic", prop: "contractPic", label: "合同照片", align: "center", width: 180, type: "link" },
+  // { isShow: true, fixed: false, key: "contractPic", prop: "contractPic", label: "合同照片", align: "center", width: 180, type: "link" },
 ];
 
 export const npdetailDialogTableJson = [
@@ -395,11 +397,12 @@ export const npredReversalTableJson = [
 ];
 
 export const printMatlTableJson = [
-  { key: "matlCode", prop: "matlCode", label: "物资编码" },
+  { key: "matlCode", prop: "matlCode", label: "物资编号" },
   { key: "matlName", prop: "matlName", label: "物资名称/规格型号" },
-  { key: "paNum", prop: "paNum", label: "数量" },
-  { key: "stkPrice", prop: "stkPrice", label: "采购单价" },
-  { key: "stkAmount", prop: "stkAmount", label: "采购金额" },
-  { key: "cardPrice", prop: "cardPrice", label: "库存单价" },
-  { key: "standardAmount", prop: "standardAmount", label: "入库金额" },
+  { key: "matlUnit", prop: "matlUnit", label: "单位" },
+  { key: "paNum", prop: "paNum", label: "数量", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(4) : '' },
+  { key: "stkPrice", prop: "stkPrice", label: "采购单价", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "stkAmount", prop: "stkAmount", label: "采购金额", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "cardPrice", prop: "cardPrice", label: "库存单价", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "standardAmount", prop: "standardAmount", label: "入库金额", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
 ];

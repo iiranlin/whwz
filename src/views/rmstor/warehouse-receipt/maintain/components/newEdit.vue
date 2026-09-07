@@ -28,22 +28,22 @@
           <el-form-item label="应税用途：" prop="taxFlagName">
             <span>{{ detailData.taxFlagName || '--' }}</span>
           </el-form-item>
-          <el-form-item v-if="detailData.ibSource === '0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+          <!-- <el-form-item v-if="detailData.ibSource === '0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+            <span>{{ detailData.supUnitName || '--' }}</span>
+          </el-form-item> -->
+          <el-form-item label="供货单位：" prop="supUnitName" class="entry-form-item-dialog">
             <span>{{ detailData.supUnitName || '--' }}</span>
           </el-form-item>
-          <el-form-item v-if="detailData.ibSource !== '0' && detailData.ibSource !== '1' && detailData.ibSource !== '4' && detailData.ibSource !== '9'" label="供货单位：" prop="supUnitName" class="entry-form-item-dialog">
-            <span>{{ detailData.supUnitName || '--' }}</span>
-          </el-form-item>
-          <el-form-item v-if="detailData.ibSource === '0' || detailData.ibSource === '2'" :label="detailData.ibSource === '0' ? '采购订单：' : '引用单据：'" prop="refBillCode" class="entry-form-item-dialog">
+          <el-form-item label="采购订单：" prop="refBillCode" class="entry-form-item-dialog">
             <span>{{ detailData.refBillCode || '--' }}</span>
           </el-form-item>
-          <el-form-item v-if="detailData.ibSource === '0'" label="采购方式（发起）：" prop="buyTypeName">
+          <el-form-item v-if="detailData.ibSource === '0'" label="采购方式：" prop="buyTypeName">
             <span>{{ detailData.buyTypeName || '--' }}</span>
           </el-form-item>
           <!-- <el-form-item label="一收一支：" prop="inOutFlag">
             <el-checkbox v-model="detailData.inOutFlag" true-value="1" false-value="0" disabled></el-checkbox>
           </el-form-item> -->
-          <el-form-item label="一收一移库：" prop="allotFlag">
+          <!-- <el-form-item label="一收一移库：" prop="allotFlag">
             <el-checkbox v-model="detailData.allotFlag" true-value="1" false-value="0" disabled></el-checkbox>
           </el-form-item>
           <el-form-item v-if="detailData.allotFlag === '1'" label="移库地区：" prop="ptPlantName">
@@ -54,7 +54,7 @@
           </el-form-item>
           <el-form-item v-if="detailData.allotFlag === '1'" label="移入库区：" prop="ptPartitionName">
             <span>{{ detailData.ptPartitionName || '--' }}</span>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="发票号：" prop="invoiceCode">
             <span>{{ detailData.invoiceCode || '--' }}</span>
           </el-form-item>
@@ -71,13 +71,13 @@
             <el-input v-model="detailData.incotaxAmount" @blur="(val) => basicPriceBlur(val, 'incotaxAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="料款：" prop="matlAmount">
-            <span>{{ detailData.matlAmount || 0 }}</span>
+            <el-input v-model="detailData.matlAmount" @blur="(val) => basicPriceBlur(val, 'matlAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="税额+料款：" prop="taxMatlAmount">
-            <span>{{ detailData.taxMatlAmount || 0 }}</span>
+            <el-input v-model="detailData.taxMatlAmount" readonly></el-input>
           </el-form-item>
           <el-form-item label="总金额：" prop="totalAmount">
-            <span>{{ detailData.totalAmount || 0 }}</span>
+            <el-input v-model="detailData.totalAmount" readonly></el-input>
           </el-form-item>
           <div class="entry-comments-form-row">
             <el-form-item label="备注：" prop="comments" class="entry-comments-form-item">
@@ -110,7 +110,7 @@
             </template>
           </el-pro-table>
 
-          <div style="margin-top: 16px;">采购金额合计：{{ tableData.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0 }}</div>
+          <div style="margin-top: 16px;">采购金额合计：{{ (tableData.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0).toFixed(2) }}</div>
         </div>
       </div>
       <template #footer>
@@ -214,32 +214,31 @@ const toolbarConfig = {
 }
 
 const columns = computed(() => [
-  { field: "matlCode", title: "物资编码", minWidth: 180, align: "center" },
+  { field: "matlCode", title: "物资编号", minWidth: 180, align: "center", required: true, headerClassName: "required-col-header" },
   { field: "matlName", title: "物资名称", minWidth: 200, align: "center" },
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
-  { field: "paNum", title: "入库数量", minWidth: 120, align: "center" },
-  { field: "stkPrice", title: "采购单价（元）", minWidth: 140, align: "center" },
-  { field: "orderPrice", title: "订单单价（元）", minWidth: 140, align: "center" },
-  { field: "stkAmount", title: "采购金额（元）", minWidth: 140, align: "center" },
-  { field: "cardPrice", title: "库存单价（元）", minWidth: 140, align: "center" },
-  { field: "standardAmount", title: "入库金额（元）", minWidth: 140, align: "center" },
+  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '' },
+  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' },
+  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '' },
+  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '' },
+  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' },
+  { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", render: (row) => row.standardAmount != null && row.standardAmount !== '' ? Number(row.standardAmount).toFixed(2) : '' },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center", editRender: { name: "el-input" } },
   { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date" },
   { field: "validityPeriod", title: "有效期", minWidth: 120, align: "center" },
   { field: "validityPeriodUnit", title: "有效期单位", minWidth: 120, align: "center" },
   { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center", type: "date" },
-  { field: "batchNo", title: "批次号", minWidth: 180, align: "center", visible: detailData.value.flag === "2", },
-  { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: detailData.value.ibSource !== "0"},
-  { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: detailData.value.ibSource !== "0" }
+  // { field: "batchNo", title: "批次号", minWidth: 180, align: "center", visible: detailData.value.flag === "2", },
+  // { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: detailData.value.ibSource !== "0"},
+  // { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: detailData.value.ibSource !== "0" }
 ]);
 
 const basicPriceBlur = (val, prop) => {
-  if (checkDecimalPlaces(detailData.value[prop]) > 2) {
-    detailData.value[prop] = _formatDecimal(detailData.value[prop], "2")
-  } else {
-    detailData.value[prop] = _formatDecimal(detailData.value[prop], checkDecimalPlaces(detailData.value[prop]));
-  }
+  const num = checkDecimalPlaces(detailData.value[prop]) > 2
+    ? _formatDecimal(detailData.value[prop], 2)
+    : _formatDecimal(detailData.value[prop], checkDecimalPlaces(detailData.value[prop]));
+  detailData.value[prop] = Number(num).toFixed(2);
 }
 
 watch(() => [detailData.value.incotaxAmount, detailData.value.matlAmount], (nval) => {
@@ -310,6 +309,13 @@ const getDetail = async () => {
   try {
     const res = await inboundDetail({ibmtId: props.currentData.ibmtId});
     detailData.value = res.data || {};
+    // 金额字段默认两位小数
+    const amountFields = ['freightAmount', 'extrasAmount', 'otherAmount', 'incotaxAmount', 'matlAmount', 'taxMatlAmount', 'totalAmount'];
+    amountFields.forEach(field => {
+      if (detailData.value[field] != null && detailData.value[field] !== '') {
+        detailData.value[field] = Number(_formatDecimal(detailData.value[field], 2)).toFixed(2);
+      }
+    });
     tableData.value = detailData.value.inBoundDts || [];
     if (detailData.value.ibSource === "0") {
       for (const item of tableData.value) {
@@ -420,5 +426,12 @@ const dialogOpen = async () => {
     }
   }
 
+}
+</style>
+<style lang="scss">
+/* 入库单明细表头必填列红色 * 标识（仅表头 th，排除表体 td） */
+th.required-col-header .cell::after {
+  content: ' *';
+  color: #f56c6c;
 }
 </style>

@@ -24,6 +24,7 @@
             </el-icon>{{ scope.row[item.prop] }}</el-link>
           <el-switch v-else-if="item.type === 'switch'" v-model="scope.row[item.prop]" active-value="1"
             inactive-value="0" @change="switchChange(item.prop, scope.row)"></el-switch>
+          <span v-else-if="item.formatter">{{ item.formatter(scope.row[item.prop], scope.row) }}</span>
           <span v-else>{{ scope.row[item.prop] }}</span>
         </template>
       </el-table-column>

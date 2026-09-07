@@ -9,6 +9,7 @@
           <el-col class="app-container-col">
             <form-data
               :showSearch="true"
+              :inputWidth="160"
               :formJson="purchaseFormJson"
               @handle-query="handleQuery"
               @reset-query="resetQuery"
@@ -353,7 +354,7 @@ const handleRevokeSignDone = async () => {
     .purchase-order-form-item {
       margin-bottom: 0;
       .ep-select {
-        width: 480px;
+        width: 524px;
       }
     }
     .pagination-container {

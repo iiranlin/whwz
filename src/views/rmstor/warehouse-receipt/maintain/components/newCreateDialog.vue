@@ -34,7 +34,15 @@
             </el-select>
           </el-form-item>
           <el-form-item label="应税用途：" prop="taxFlagName">
-            <el-input v-model="createForm.taxFlagName" disabled></el-input>
+            <el-input v-model="createForm.taxFlagName" ></el-input>
+          </el-form-item>
+          <el-form-item v-if="createForm.ibSource === '0'" label="供货单位：" prop="supUnitName" class="entry-form-item-dialog" :class="{'warehouse-receipt-supplier-form-item': createForm.ibSource === '8'}">
+            <el-input v-model="createForm.supUnitName" readonly>
+              <template #append>
+                <el-button :icon="Search" @click="toFindSupplier" />
+                <el-button v-if="createForm.ibSource === '8'" :icon="CircleClose" @click="clearSupplier" />
+              </template>
+            </el-input>
           </el-form-item>
           <el-form-item v-if="createForm.ibSource === '0'" label="采购订单：" prop="refBillCode" class="entry-form-item-dialog">
             <el-input v-model="createForm.refBillCode" readonly>
@@ -43,18 +51,10 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item v-if="createForm.ibSource ==='0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
+          <!-- <el-form-item v-if="createForm.ibSource ==='0'" label="供应商：" prop="supUnitName" class="entry-form-item-dialog">
             <el-input v-model="createForm.supUnitName" readonly disabled>
             </el-input>
-          </el-form-item>
-          <el-form-item v-if="createForm.ibSource !== '0' && createForm.ibSource !== '1' && createForm.ibSource !== '4' && createForm.ibSource !== '9'" label="供货单位：" prop="supUnitName" class="entry-form-item-dialog" :class="{'warehouse-receipt-supplier-form-item': createForm.ibSource === '8'}">
-            <el-input v-model="createForm.supUnitName" readonly>
-              <template #append>
-                <el-button :icon="Search" @click="toFindSupplier" />
-                <el-button v-if="createForm.ibSource === '8'" :icon="CircleClose" @click="clearSupplier" />
-              </template>
-            </el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item v-if="createForm.ibSource === '2'" label="引用单据：" prop="refBillCode" class="entry-form-item-dialog">
             <el-input v-model="createForm.refBillCode" readonly>
                <template #append>
@@ -62,15 +62,15 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item v-if="createForm.ibSource === '0'" label="采购方式（发起）：">
-            <el-select v-model="createForm.buyTypeCode" value-key="value" placeholder="" :disabled="createForm.ibSource === '0'">
+          <el-form-item v-if="createForm.ibSource === '0'" label="采购方式：">
+            <el-select v-model="createForm.buyTypeCode" value-key="value" placeholder="" >
               <el-option v-for="item in buyTypesData" :key="item.value" :label="item.label" :value="item"></el-option>
             </el-select>
           </el-form-item>
           <!-- <el-form-item label="一收一支：" prop="inOutFlag">
             <el-checkbox disabled v-model="createForm.inOutFlag" true-value="1" false-value="0"></el-checkbox>
           </el-form-item> -->
-          <el-form-item label="一收一移库：" prop="allotFlag">
+          <!-- <el-form-item label="一收一移库：" prop="allotFlag">
             <el-checkbox v-model="createForm.allotFlag" true-value="1" false-value="0" @change="movementTypeChange"></el-checkbox>
           </el-form-item>
           <el-form-item label="移库地区：" prop="ptPlantId">
@@ -87,7 +87,7 @@
             <el-select v-model="createForm.ptPartitionId" :disabled="createForm.allotFlag !== '1'" value-key="id" clearable placeholder="请选择">
               <el-option v-for="item in ptPartitionOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="发票号：" prop="invoiceCode">
             <el-input v-model="createForm.invoiceCode" placeholder="请输入"></el-input>
           </el-form-item>
@@ -104,7 +104,7 @@
             <el-input v-model="createForm.incotaxAmount" @blur="(val) => basicPriceBlur(val, 'incotaxAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="料款：" prop="matlAmount">
-            <el-input v-model="createForm.matlAmount" placeholder="请输入"></el-input>
+            <el-input v-model="createForm.matlAmount" @blur="(val) => basicPriceBlur(val, 'matlAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="税额+料款：" prop="taxMatlAmount">
             <el-input v-model="createForm.taxMatlAmount" readonly></el-input>
@@ -148,7 +148,7 @@
              {{ getStandardAmount(row)}}
             </template>
           </el-pro-table>
-          <div style="margin-top: 16px;">采购金额合计：{{ tableData.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0 }}</div>
+          <div style="margin-top: 16px;">采购金额合计：{{ (tableData.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0).toFixed(2) }}</div>
         </div>
       </div>
       <template #footer>
@@ -321,23 +321,23 @@ const currentData = ref({});
 const tableRef = ref(null);
 
 const columns = computed(() => [
-  { field: "matlCode", title: "物资编码", minWidth: 180, align: "center" },
-  { field: "matlName", title: "物资名称", minWidth: 200, align: "center" },
+  { field: "matlCode", title: "物资编号", minWidth: 180, align: "center", required: true, headerClassName: "required-col-header" },
+  { field: "matlName", title: "物资名称", minWidth: 200, align: "center"},
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
-  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
-  { field: "stkPrice", title: "采购单价（元）", minWidth: 140, align: "center", editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
-  { field: "orderPrice", title: "订单单价（元）", minWidth: 140, align: "center", visible: createForm.value.ibSource === "0" },
-  { field: "stkAmount", title: "采购金额（元）", minWidth: 140, align: "center", editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
-  { field: "cardPrice", title: "库存单价（元）", minWidth: 140, align: "center", editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
-  { field: "standardAmount", title: "入库金额（元）", minWidth: 140, align: "center", type: "slot", slotName: "standardAmount" },
+  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '', editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
+  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '', editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
+  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '', visible: createForm.value.ibSource === "0" },
+  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '', editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
+  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '', editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
+  { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", type: "slot", slotName: "standardAmount" },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center", editRender: { name: "el-input", props: { placeholder: "请输入" } }},
   { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date", editRender: {name: "el-date-picker", props: { valueFormat: "x", editable: false, placeholder: "请选择"}}},
   { field: "validityPeriod", title: "有效期", minWidth: 120, align: "center", editRender: { name: "el-input", props: { placeholder: "请输入" } } },
   { field: "validityPeriodUnit", title: "有效期单位", minWidth: 120, align: "center", editRender: { name: "el-select", props: { placeholder: "请选择", options: validityPeriodUnitArr } } },
   { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center", type: "date", editRender: { name: "el-date-picker", props: { placeholder: "自动计算", readonly: true, } } },
-  { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: createForm.value.ibSource !== "0"},
-  { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: createForm.value.ibSource !== "0" }
+  // { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: createForm.value.ibSource !== "0"},
+  // { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: createForm.value.ibSource !== "0" }
 ]);
 
 const suCodeRequiredFlag = computed(() => {
@@ -355,7 +355,7 @@ const manifestCodeRequiredFlag = computed(() => {
     return false;
   }
 });
-
+// 移除一收一移库规则后，默认值是0
 const allotRuleFlag = computed(() => {
   if (createForm.value.allotFlag === "1") {
     return true;
@@ -442,41 +442,41 @@ const createFormRules = ref({
   supUnitName: [
     { required: suCodeRequiredFlag, message: "请选择供货单位", trigger: ["blur", "change"] },
   ],
-  freightAmount: [
-    { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
-    { required: true, message: "请填写", trigger: ["blur"] },
-  ],
-  extrasAmount: [
-    { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
-    { required: true, message: "请填写", trigger: ["blur"] },
-  ],
-  otherAmount: [
-    { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
-    { required: true, message: "请填写", trigger: ["blur"] },
-  ],
-  incotaxAmount: [
-    { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
-    { required: true, message: "请填写", trigger: ["blur"] },
-  ],
-  matlAmount: [
-    { pattern: /^(?:[1-9]\d*|0)(?:\.\d+)?$/, message: "请输入非负数字", trigger: ["blur",] },
-    { required: true, message: "请填写", trigger: ["blur"] },
-  ],
+  // freightAmount: [
+  //   { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
+  //   { required: true, message: "请填写", trigger: ["blur"] },
+  // ],
+  // extrasAmount: [
+  //   { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
+  //   { required: true, message: "请填写", trigger: ["blur"] },
+  // ],
+  // otherAmount: [
+  //   { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
+  //   { required: true, message: "请填写", trigger: ["blur"] },
+  // ],
+  // incotaxAmount: [
+  //   { pattern: amountRegex, message: "请输入非负数字", trigger: ["blur",] },
+  //   { required: true, message: "请填写", trigger: ["blur"] },
+  // ],
+  // matlAmount: [
+  //   { pattern: /^(?:[1-9]\d*|0)(?:\.\d+)?$/, message: "请输入非负数字", trigger: ["blur",] },
+  //   { required: true, message: "请填写", trigger: ["blur"] },
+  // ],
   otherTypeCode: [
     { required: true, message: "请选择来源类别", trigger: ["blur",] }
   ],
   refBillCode: [
     { required: manifestCodeRequiredFlag, message: "请选择引用单据", trigger: ["blur", "change"] }
   ],
-  ptPlantId: [
-    { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
-  ],
-  ptWhId: [
-    { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
-  ],
-  ptPartitionId: [
-    { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
-  ]
+  // ptPlantId: [
+  //   { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
+  // ],
+  // ptWhId: [
+  //   { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
+  // ],
+  // ptPartitionId: [
+  //   { required: allotRuleFlag, message: "请选择", trigger: ["blur"] }
+  // ]
 });
 
 const detailPriceformat = (val, decimal = "2") => {
@@ -488,11 +488,10 @@ const detailPriceformat = (val, decimal = "2") => {
 }
 
 const detailPriceformat2 = (val, decimal = "2") => {
-  if (checkDecimalPlaces(val) > 2) {
-    return _formatDecimal2(val, decimal);
-  } else {
-    return  _formatDecimal2(val, checkDecimalPlaces(val));
-  }
+  const num = checkDecimalPlaces(val) > 2
+    ? _formatDecimal2(val, decimal)
+    : _formatDecimal2(val, checkDecimalPlaces(val));
+  return Number(num).toFixed(decimal);
 }
 
 const basicPriceBlur = (val, prop) => {
@@ -509,7 +508,7 @@ watch(() => [createForm.value.incotaxAmount, createForm.value.matlAmount], (nval
       total += Math.round(item * 100);
     }
   }
-  createForm.value.taxMatlAmount = total / 100;
+  createForm.value.taxMatlAmount = (total / 100).toFixed(2);
 });
 
 watch(() => [createForm.value.incotaxAmount, createForm.value.freightAmount, createForm.value.extrasAmount, createForm.value.otherAmount, createForm.value.matlAmount], (nval) => {
@@ -522,7 +521,7 @@ watch(() => [createForm.value.incotaxAmount, createForm.value.freightAmount, cre
       total += Math.round(item * 100);
     }
   }
-  createForm.value.totalAmount = total / 100;
+  createForm.value.totalAmount = (total / 100).toFixed(2);
 })
 
 // 供货单位列表数据
@@ -620,12 +619,12 @@ const goBack = () => {
 const toSave = () => {
   createFormRef.value.validate(async (valid) => {
     if (valid) {
-      if (createForm.value.allotFlag === "1") {
-        if (createForm.value.partitionId.stockattr !== createForm.value.ptPartitionId.stockattr) {
-          ElMessage.error("移入与移出仓库存货属性不一致，请检查！")
-          return;
-        }
-      }
+      // if (createForm.value.allotFlag === "1") {
+      //   if (createForm.value.partitionId.stockattr !== createForm.value.ptPartitionId.stockattr) {
+      //     ElMessage.error("移入与移出仓库存货属性不一致，请检查！")
+      //     return;
+      //   }
+      // }
 
       if (createForm.value.ibSource === "0" || createForm.value.ibSource === "1") {
         const scrapData = stockAttrsData.value.find(item => item.code === createForm.value.partitionId.stockattr);
@@ -647,21 +646,21 @@ const toSave = () => {
         const arr = [];
         if (!!!item.matlCode) {
           periodFlag = false;
-          arr.push("物资编码");
+          arr.push("物资编号");
         }
-        if (!!!item.paNum) {
+        if (!!!item.paNum || Number(item.paNum) === 0) {
           periodFlag = false;
           arr.push("入库数量");
         }
-        if (!!!item.stkPrice && item.stkPrice !== 0) {
+        if (!!!item.stkPrice || Number(item.stkPrice) === 0) {
           periodFlag = false;
           arr.push("采购单价");
         }
-        if (!!!item.stkAmount && item.stkAmount !== 0) {
+        if (!!!item.stkAmount || Number(item.stkAmount) === 0) {
           periodFlag = false;
           arr.push("采购金额");
         }
-        if (!!!item.cardPrice && item.cardPrice !== 0) {
+        if (!!!item.cardPrice || Number(item.cardPrice) === 0) {
           periodFlag = false;
           arr.push("库存单价");
         }
@@ -693,11 +692,11 @@ const toSave = () => {
       tableData.value.forEach((item, index) => {
         const arr2 = [];
         if (createForm.value.ibSource === "0") {
-          if (item.paNum > item.arrivalNum) {
+          if (Number(item.paNum) > Number(item.arrivalNum)) {
             periodFlag2 = false;
             arr2.push(`输入的入库数量大于可入库数量${item.arrivalNum}！`);
           }
-          if (stkPriceRange && item._stkPrice && item.stkPrice - item._stkPrice < stkPriceRange.value.split(",")[0] || item.stkPrice - item._stkPrice > stkPriceRange.value.split(",")[1]) {
+          if (stkPriceRange && item._stkPrice && Number(item.stkPrice) - Number(item._stkPrice) < stkPriceRange.value.split(",")[0] || Number(item.stkPrice) - Number(item._stkPrice) > stkPriceRange.value.split(",")[1]) {
             periodFlag2 = false;
             arr2.push(`采购单价与订单单价差异超出系统参数配置值！`)
           }
@@ -705,9 +704,9 @@ const toSave = () => {
              ElMessage.error(`第${index + 1}行${arr2.join("、")}`);
           }
         }
-        if (createForm.value.ibSource === "2" && item.paNum > item.outsaleNum - item.outQuantity) {
+        if (createForm.value.ibSource === "2" && Number(item.paNum) > Number(item.outsaleNum) - Number(item.outQuantity)) {
           periodFlag2 = false;
-          ElMessage.error(`第${index + 1}行输入的入库数量大于可入库数量${item.outsaleNum - item.outQuantity}！`);
+          ElMessage.error(`第${index + 1}行输入的入库数量大于可入库数量${Number(item.outsaleNum) - Number(item.outQuantity)}！`);
         }
       });
       if (!periodFlag2) return;
@@ -741,17 +740,17 @@ const toSave = () => {
           supUnitName: createForm.value.supUnitName || null,
           supUnitType: createForm.value.supUnitType || null,
           // supplierName: createForm.value.supplierName || null,
-          freightAmount: createForm.value.freightAmount || 0,
-          extrasAmount: createForm.value.extrasAmount || 0,
-          otherAmount: createForm.value.otherAmount || 0,
-          incotaxAmount: createForm.value.incotaxAmount || 0,
-          matlAmount: createForm.value.matlAmount || 0,
+          freightAmount: createForm.value.freightAmount || '0.00',
+          extrasAmount: createForm.value.extrasAmount || '0.00',
+          otherAmount: createForm.value.otherAmount || '0.00',
+          incotaxAmount: createForm.value.incotaxAmount || '0.00',
+          matlAmount: createForm.value.matlAmount || '0.00',
           otherTypeCode: createForm.value.ibSource === '8' ? createForm.value.otherTypeCode : null,
           otherTypeName: createForm.value.ibSource === '8' ? (whReceiptSourceTypeObj[createForm.value.otherTypeCode] || null) : null,
           comments: createForm.value.comments,
           refBillMid: createForm.value.refBillMid || null,
           refBillCode: createForm.value.refBillCode || null,
-          taxMatlAmount: createForm.value.taxMatlAmount || 0,
+          taxMatlAmount: createForm.value.taxMatlAmount || '0.00',
           inBoundDts: tableData.value.map(item => {
             if (item.periodManage === "1" || item.isPeriodManage === "1") {
               return {
@@ -783,7 +782,7 @@ const toSave = () => {
           loginDate,
           orderDate: loginDate,
         };
-        console.log(createData); return;
+        console.log(createData);
         if(createForm.value.ibSource === "4") {
           const pre_res = await checkOldProductPrice({
             ...createData,
@@ -1216,7 +1215,7 @@ const getStandardAmount = (data = {}) => {
   if (!!data.paNum && !!data.cardPrice && data.paNum !== "0" && data.cardPrice !== "0") {
     const res = data.paNum * data.cardPrice;
     // return res;
-    return detailPriceformat(res) || 0;
+    return detailPriceformat(res)?.toFixed(2) || '0.00';
   } else {
     return 0;
   }
@@ -1432,7 +1431,7 @@ const pictureCarouselClose = () => {
 const editSave = ({editedData, row, rowId}) => {
   const res = tableData.value.find(item => item[cTableKey.value] === rowId);
 
-  res.paNum = row.paNum = detailPriceformat2(row.paNum);
+  res.paNum = row.paNum = detailPriceformat2(row.paNum, "4");
   res.stkAmount = row.stkAmount = detailPriceformat2(row.stkAmount);
   res.stkPrice = row.stkPrice;
   res.cardPrice = row.cardPrice;
@@ -1577,5 +1576,13 @@ const dialogClose = () => {
     }
   }
 
+}
+</style>
+
+<style lang="scss">
+/* 入库单明细表头必填列红色 * 标识（仅表头 th，排除表体 td） */
+th.required-col-header .cell::after {
+  content: ' *';
+  color: #f56c6c;
 }
 </style>

@@ -29,6 +29,7 @@
     <create-dialog :key="createKey" ibSource="0" @dialogClose="createDialogClose" title="外购入库单新增" :visible="createDialogVisible" width="90%"  />
     <detail-dialog @dialogClose="detailDialogClose" title="外购入库单详情" :visible="detailVisible" :currentData="currentData" width="90%" />
     <edit-dialog :key="editKey" @dialogClose="editDialogClose" title="外购入库单修改" :visible="editVisible" :currentData="currentData" width="90%" />
+    <add-invoice-code-dialog :key="addInvoiceCodeKey" @dialogClose="addInvoiceCodeClose" title="外购入库单补充发票号" :visible="addInvoiceCodeVisible" :currentData="currentData" width="90%" />
     <red-reversal-dialog :key="redReversalKey" @dialogClose="redReversalClose" title="外购入库单红冲" :visible="redReversalVisible" :currentData="currentData" width="90%" />
     <print-dialog ref="printRef"/>
     <ep-dialog title="删除" class="receipt-del-dialog" v-model="delVisible" destory-on-close width="45%" @close="delDialogClose">
@@ -54,6 +55,7 @@ import { pTableJson, tableButtonJson, topTableButtonJson } from "../tableJson";
 import createDialog from "../components/newCreateDialog.vue";
 import detailDialog from "../components/newDetail.vue";
 import editDialog from "../components/newEdit.vue";
+import addInvoiceCodeDialog from "../components/addInvoiceCodeDialog.vue";
 import redReversalDialog from "../components/newRedReversalDialog.vue";
 import printDialog from "../components/printDialog";
 import { selectPlantDict } from "@/api/warehouse/plantDict.js";
@@ -101,10 +103,12 @@ const createDialogVisible = ref(false);
 const detailVisible = ref(false);
 const editVisible = ref(false);
 const redReversalVisible = ref(false);
+const addInvoiceCodeVisible = ref(false);
 const printRef = ref(null);
 const redReversalKey = ref(1);
 const createKey = ref(1);
 const editKey = ref(1);
+const addInvoiceCodeKey = ref(1);
 const delVisible = ref(false);
 const delForm = ref({
   delReason: "",
@@ -212,9 +216,12 @@ const getSupplyData = async () => {
 }
 
 const columns = computed(() => [
+  { field: "flag", title: "单据状态", minWidth: 140, align: "center", searchable: true, hideInTable: true, searchType: "select", searchProps: 
+    { options: whReceiptStatusArr,}, render: (row) => row.flag === "2" ? "已登卡" : "未登卡"},
   { field: "ibBillCode", title: "入库单号", minWidth: 200, align: "center", type: "link", sortable: true, searchable: true, searchType: "input", },
   { field: "invoiceCode", title: "发票号", minWidth: 200, align: "center", searchable: false, },
-  { field: "supUnitName", title: "供应商", minWidth: 240, align: "center", searchable: true,  searchType: "tableSelect", searchProps: {
+  { field: "supUnitName", title: "供应商", searchable: true, searchType: "input", hideInTable: true },
+  { field: "supUnitName", title: "供应商", minWidth: 240, align: "center", searchable: false,  searchType: "tableSelect", searchProps: {
     placeholder: "请选择 供货单位",
     columns: [
       { prop: "unitCode", label: "往来单位编码", minWidth: 200, align: "center",},
@@ -225,7 +232,7 @@ const columns = computed(() => [
     labelKey: "unitName",
     data: supplierData.value,
   },},
-  { field: "taxFlagCode", title: "应税用途", minWidth: 140, align: "center", searchable: true, searchType: "select", searchProps: {}, requestOptions: getTaxFlags, render: (row) => row.taxFlagName},
+  { field: "taxFlagCode", title: "应税用途", minWidth: 140, align: "center", searchable: false, searchType: "select", searchProps: {}, requestOptions: getTaxFlags, render: (row) => row.taxFlagName},
   { field: "bmName", title: "业务员", minWidth: 140, align: "center", searchable: false, },
   { field: "plantCode", title: "用料地区", minWidth: 200, align: "center", searchable: true, searchType: "select", requestOptions: getPlantData, searchProps: {
     valueKey: "id",
@@ -238,12 +245,13 @@ const columns = computed(() => [
     options: [],
     valueKey: "id",
   }, dependsOn: ["depotCode"], onDependencyChange: getPartitionWHData, render: (row) => row.partitionName},
-  { field: "flag", title: "单据状态", minWidth: 140, align: "center", searchable: true, searchType: "select", searchProps: {
+  { field: "flag", title: "状态", minWidth: 140, align: "center", searchable: false, searchType: "select", searchProps: {
     options: whReceiptStatusArr,
   }, render: (row) => row.flag === "2" ? "已登卡" : "未登卡"},
   { field: "matlCode", title: "物资编码", searchable: true, searchType: "input", hideInTable: true },
   { field: "matlName", title: "物资名称", searchable: true, searchType: "inpt", hideInTable: true },
-  { field: "matlType", title: "规格类型", searchable: true, searchType: "input", hideInTable: true },
+  { field: "invoiceCode", title: "发票号", minWidth: 200, align: "center", searchable: true, hideInTable: true },
+  { field: "matlType", title: "规格类型", searchable: false, searchType: "input", hideInTable: true },
   { field: "orderDate", title: "下单日期", minWidth: 140, align: "center", type: "date", searchable: true, searchType: "dateRange",},
   { field: "noteDate", title: "登卡日期", minWidth: 140, align: "center", type: "date", searchable: false, },
   { field: "matlAmount", title: "料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
@@ -260,8 +268,9 @@ const toolBarConfig = {
     { code: 'redReversal', name: "红冲", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2" },
     { code: 'edit', name: "修改", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.flag === "2" },
     { code: 'print1', name: "打印", type: "primary", showInRow: false, showInTop: true, },
-    { code: 'print2', name: "打印", type: "primary", showInRow: true, showInTop: false },
+    // { code: 'print2', name: "打印", type: "primary", showInRow: true, showInTop: false },
     { code: 'export', name: "导出", type: "primary", showInRow: false, showInTop: true },
+    { code: 'addInvoiceCode', name: "补充发票号", type: "primary", showInTop: false, showInRow: true, disabled: ([row]) => row.flag !== "2" || !!row.invoiceCode },
   ]
 }
 
@@ -562,6 +571,15 @@ const redReversalClose = (flag) => {
   }
 }
 
+const addInvoiceCodeClose = (flag) => {
+  currentData.value = {};
+  addInvoiceCodeVisible.value = false;
+  addInvoiceCodeKey.value++;
+  if (flag === "confirm") {
+    getList({...tableRef.value.getSearchForm()});
+  }
+}
+
 const getBoardFlag = async () => {
   _loading.value = true;
 
@@ -699,6 +717,11 @@ const handleAction = ({code, name, row}) => {
   if (code === "edit") {
     currentData.value = {...row};
     editVisible.value = true;
+  }
+
+  if (code === "addInvoiceCode") {
+    currentData.value = {...row};
+    addInvoiceCodeVisible.value = true;
   }
 
   if (code === "print2") {

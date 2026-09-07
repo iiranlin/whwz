@@ -93,10 +93,10 @@ export const addMatlDialogFormJson = [
 
 export const purchasedDialogFormJson = [
   // { prop: "unitCode", label: "供货单位编号", type: "input", labelWidth: "116", disabled: false, },
-  { prop: "spdCode", label: "采购订单/商城订单号", type: "input", labelWidth: "160" },
+  { prop: "spdCode", label: "采购订单号", type: "input", labelWidth: "160" },
   { prop: "unitName", label: "供应商", type: "input", labelWidth: "160", disabled: false, },
   { prop: "bmName", label: "制单人", type: "input", labelWidth: "160" },
-  { prop: "matlCode", label: "物资编码", type: "input", labelWidth: "160" },
+  { prop: "matlCode", label: "物资编号", type: "input", labelWidth: "160" },
   { prop: "matlName", label: "物资名称", type: "input", labelWidth: "160" },
   { prop: "matlType", label: "规格型号", type: "input", labelWidth: "160" },
   // { prop: "_spdCode", label: "商城订单号", type: "input", labelWidth: "116" },

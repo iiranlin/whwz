@@ -19,14 +19,14 @@
             </tr>
             <tr>
               <td class="td" colspan="2">库位名称：{{ item.depotName }}</td>
-              <td class="td" colspan="2">收料类别：{{ whReceiptSourceObj[item.ibSource] }}</td>
-              <td class="td" colspan="2">运费：{{ item.freightAmount }}</td>
-              <td class="td" colspan="2">杂费：{{ item.extrasAmount }}</td>
-              <td class="td" colspan="2">税额：{{ item.incotaxAmount }}</td>
+              <!-- <td class="td" colspan="2">收料类别：{{ whReceiptSourceObj[item.ibSource] }}</td> -->
+              <td class="td" colspan="2">运费：{{ item.freightAmount != null ? Number(item.freightAmount).toFixed(2) : '' }}</td>
+              <td class="td" colspan="2">杂费：{{ item.extrasAmount != null ? Number(item.extrasAmount).toFixed(2) : '' }}</td>
+              <td class="td" colspan="2">税额：{{ item.incotaxAmount != null ? Number(item.incotaxAmount).toFixed(2) : '' }}</td>
             </tr>
             <tr>
-              <td class="td" colspan="5">供应单位：{{ item.supUnitName }}</td>
-              <td class="td" colspan="5">供货单号/订单号：{{ item.refBillCode }}</td>
+              <td class="td" colspan="5">供应商：{{ item.supUnitName }}</td>
+              <td class="td" colspan="5">供货单号：{{ item.refBillCode }}</td>
             </tr>
             <tr>
               <td colspan="10">备注：{{ item.comments }}</td>
@@ -45,15 +45,15 @@
               <tr v-for="(d, index) in item.inBoundDts" :key="d.ibdtId">
                 <td class="td" key="index" style="text-align: center; width: 6%;" >{{ index + 1 }}</td>
                 <td class="td" v-for="val in printMatlTableJson" :key="val.key" style="text-align: center;">
-                  {{ val.prop === 'matlName'?`${d.matlName}${d.matlType?'/'+d.matlType:''}` : d[val.prop]}}
+                  {{ val.prop === 'matlName' ? `${d.matlName}${d.matlType ? '/' + d.matlType : ''}` : val.formatter ? val.formatter(d[val.prop]) : d[val.prop] }}
                 </td>
               </tr>
               <tr key="sum">
-                <td style="text-align: center;" colspan="4"></td>
+                <td style="text-align: center;" colspan="5"></td>
                 <td style="text-align: center;">采购金额</td>
-                <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'stkAmount') }}</td>
+                <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'stkAmount').toFixed(2) }}</td>
                 <td style="text-align: center;">入库金额</td>
-                <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'standardAmount') }}</td>
+                <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'standardAmount').toFixed(2) }}</td>
               </tr>
             </tbody>
           </table>
