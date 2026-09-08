@@ -15,6 +15,7 @@
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
+      @selectionChange="handleSelectionChange"
     >
       <template #code-cell="{ row }">
         <el-link type="primary" @click="handleClickLink(row)">{{
@@ -172,14 +173,15 @@ const getList = async () => {
 //   return true;
 // };
 
-// function handleSelectionChange(selection) {
-//   selectionData.value = selection;
-//   ids.value = selection.map((item) => item[idName.value]);
-//   single.value = selection.length != 1;
-//   multiple.value = !selection.length;
-//   const hasCard = selection.some((item) => item.flag == "1");
-//   isStopnoteFlag.value = hasCard ? "1" : "0";
-// }
+// table项选择变化
+function handleSelectionChange(selection) {
+  selectionData.value = selection;
+  ids.value = selection.map((item) => item[idName.value]);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+  const hasCard = selection.some((item) => item.flag == "1");
+  isStopnoteFlag.value = hasCard ? "1" : "0";
+}
 
 const isIdsFun = () => {
   if (!ids.value.length) {

@@ -4,19 +4,20 @@
     <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
       <el-col class="app-container-col">
     <el-pro-table
-      ref="proTableRef" 
+      ref="proTableRef"
       :columns="columns"
       :page-size="queryParams.pageSize"
       :toolbar-config="toolbarConfig"
       :search-collapse-threshold="3"
+      :default-search-form="defaultSearchForm"
       @action="onAction"
       :data="tableData"
       :total="total"
-      @search="getList"
-      @reset="getList"
+      @search="handleQuery"
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
+      @selectionChange="handleSelectionChange"
     >
       <template #code-cell="{ row }">
         <el-link type="primary" @click="handleClickLink(row)">{{
@@ -90,6 +91,11 @@ const data = reactive({
 
 const { queryParams, formSelectData } = toRefs(data);
 
+// 86-检索修复：搜索表单默认值（组件挂载时初始化 + 重置时恢复），setup 顶层同步赋值保证子组件挂载前就有值
+const defaultSearchForm = ref({ orderDate: [] });
+// 与 tableJson 检索项一一对应，handleQuery 时先清旧值再合并
+const searchKeys = ["flag","returnCode","obCode","plantCode","depotCode","partitionCode","deptName","matlCode","matlName"];
+
 //按钮配置项
 const toolbarConfig = {
   buttons: [
@@ -107,6 +113,8 @@ const toolbarConfig = {
       showInTop: false,
       showInRow: true,
       tooltip: "编辑",
+      // 93-退料单改造：已登卡（flag=1）单据不允许修改，按钮置灰；如需修改请先撤销登卡
+      disabled: (row) => String(row[0]?.flag) === "1",
     },
     {
       code: "delete",
@@ -160,25 +168,38 @@ const getList = async () => {
     });
 };
 
-// /** 搜索按钮操作 */
-// const handleQuery = (data) => {
-//   const [start, end] = data.orderDate || [];
-//   let res = { ...data };
-//   delete res.orderDate;
-//   res.orderDateBegin = start;
-//   res.orderDateEnd = end;
+// 86-检索修复：合并组件上抛的搜索参数（原 @search="getList" 丢参数导致检索/分页不生效）。
+// 注意：运行时 pro-table 组件对 dateRange 不拆分，直接以字段名 orderDate 上抛数组 [开始,结束]，
+// 必须显式取首/尾，避免数组被 tansParams 序列化成 orderDateBegin[0]=... 导致后端绑定异常（见 ai-worker/88）。
+const handleQuery = (searchParams = {}, pageInfo = {}) => {
+  const { orderDate, orderDateStart, orderDateEnd, ...rest } = searchParams;
+  searchKeys.forEach((key) => {
+    queryParams.value[key] = rest[key] ?? "";
+  });
+  let start = "";
+  let end = "";
+  if (Array.isArray(orderDate) && orderDate.length) {
+    start = orderDate[0];
+    end = orderDate[1];
+  } else {
+    // 兼容个别已拆分场景及单日选择器单值（单值则起止同日）
+    start = orderDateStart || orderDate || "";
+    end = orderDateEnd || orderDate || "";
+  }
+  queryParams.value.orderDateBegin = start;
+  queryParams.value.orderDateEnd = end;
+  queryParams.value.pageNum = pageInfo.pageNum || 1;
+  queryParams.value.pageSize = pageInfo.pageSize || queryParams.value.pageSize;
+  getList();
+};
 
-//   queryParams.value.pageNum = 1;
-//   queryParams.value = Object.assign({}, queryParams.value, res);
-//   getList();
-// };
-
-// /** 重置按钮操作 */
-// const resetQuery = (data) => {
-//   setDefaultMonthDate();
-//   handleQuery(data);
-//   // proxy.$refs.formdataRef.formData.rtmtSource = 0;
-// };
+// table项选择变化
+const handleSelectionChange = (selection) => {
+  selectionData.value = selection;
+  ids.value = selection.map((item) => item[idName.value]);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+};
 
 const isIdsFun = () => {
   if (!ids.value.length) {
@@ -258,14 +279,9 @@ const onAction = (payload) => {
       handlePrint();
     },
     // 导出
+    // 86-检索修复：删掉失效的 addDateRange（queryParams 无 orderDate 字段属空调用），queryParams 已由 handleQuery 同步好全部条件
     export: () => {
-      const params = proxy.addDateRange(
-        queryParams.value,
-        queryParams.value.orderDate,
-        "orderDate"
-      );
-      delete params.orderDate;
-      proxy.$download.name(maintainExport, params);
+      proxy.$download.name(maintainExport, queryParams.value);
     },
     // 登卡
     denka: () => {
@@ -355,7 +371,7 @@ const getPlantList = async () => {
 //   }
 // };
 
-// 初始化制单日期
+// 初始化制单日期：当月范围同步写入 queryParams（首次查询）和 defaultSearchForm（搜索框显示 + 重置恢复）
 const setDefaultMonthDate = () => {
   let date = new Date(getCookie("warehouseYearMonth") || Date.now());
   // cookie 缺失或格式非法时回退到当前月份，避免生成 NaN-NaN-NaN
@@ -376,19 +392,17 @@ const setDefaultMonthDate = () => {
     return `${y}-${m}-${d}`;
   };
 
-  // proxy.$refs.formdataRef.formData.orderDate = [
-  //   formatDate(firstDay),
-  //   formatDate(lastDay),
-  // ];
-  queryParams.value.orderDateBegin = formatDate(firstDay);
-  queryParams.value.orderDateEnd = formatDate(lastDay);
+  const begin = formatDate(firstDay);
+  const end = formatDate(lastDay);
+  queryParams.value.orderDateBegin = begin;
+  queryParams.value.orderDateEnd = end;
+  defaultSearchForm.value.orderDate = [begin, end];
 };
+setDefaultMonthDate();
 
 onMounted(() => {
-  setDefaultMonthDate();
   getList();
   getPlantList();
-  // proxy.$refs.formdataRef.formData.rtmtSource = 0;
 });
 </script>
 <style lang="scss"></style>

@@ -105,7 +105,8 @@ export const tableJson = [
   {field: 'matlName', title: '物资名称', searchType: 'input',searchable: true,hideInTable:true},
   // 81-退料单改造：按需求图隐藏"规格型号"检索项，如需恢复取消注释
   // {field: 'matlType', title: '规格型号', searchType: 'input',searchable: true,hideInTable:true},
-  {field: 'orderDate', title: '下单日期', searchType: 'date',searchable: true,hideInTable:true},
+  // 86-检索修复：下单日期改时间段（dateRange 自动拆 orderDateStart/orderDateEnd，handleQuery 映射为后端 orderDateBegin/orderDateEnd）
+  {field: 'orderDate', title: '下单日期', searchType: 'dateRange',searchable: true,hideInTable:true},
 ]
 
 export const tableButtonJson = [
@@ -146,12 +147,14 @@ export const printMatlTableJson = [
 ]
 
 // 详情
+// 85-退料单详情改造：matlType/rmNum 改普通文本列（原 slot 无插槽导致整列空白）；补批次号列（与新增弹窗对齐，后端 DTO 同步补 batchNo）
 export const tableJsonDetail = [
   {isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'slot', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'slot', key: 'rmNum', prop: 'rmNum', label: '退料数量', align: 'right', width: 160, required: true},
+  {isShow: true, fixed: false, type: '', key: 'batchNo', prop: 'batchNo', label: '批次号', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'rmNum', prop: 'rmNum', label: '退料数量', align: 'right', width: 160, required: true},
   {isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'right', width: 160},
   {isShow: true, fixed: false, type: '', key: 'rmAmount', prop: 'rmAmount', label: '退料金额（元）', align: 'right', width: 160},
   // {isShow: true, fixed: false, type: '', key: 'stockNum', prop: 'stockNum', label: '出库数量', align: 'right', width: 160},

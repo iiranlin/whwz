@@ -32,6 +32,7 @@
                     v-model="searchValue"
                     :loading="searchLoading"
                     clearable
+                    filterable
                     @change="spdChange"
                   >
                     <el-option
@@ -45,26 +46,30 @@
               </el-col>
             </el-row>
             <!-- 表格数据 -->
+            <!-- 91-明细分页：:key 切换出库单时整体重建表格，清空上一单勾选；reserve-selection 支持跨页勾选记忆 -->
             <table-index
               ref="tableRef"
+              :key="reloadKey"
               class="table-index"
               :loading="loading"
               :idName="idName"
               :queryParams="queryParams"
               :tableJson="tableJsonArr"
               :selectionShow="true"
+              :reserve-selection="true"
               :tableData="tableData"
               @handleSelectionChange="handleSelectionChange"
               operationWidth="150"
             >
             </table-index>
-
+            <!-- 91-明细分页：本地分页条，翻页仅前端切片，不重新请求 -->
             <pagination
-              v-show="total > 0"
-              :total="total"
+              v-show="detailTotal > 0"
+              :total="detailTotal"
               v-model:page="queryParams.pageNum"
               v-model:limit="queryParams.pageSize"
-              @pagination="getList"
+              :auto-scroll="false"
+              @pagination="handlePageChange"
             />
           </el-col>
         </el-row>
@@ -120,16 +125,23 @@ watch(groupVisible, (newVal) => {
 });
 
 const tableData = ref([]);
+// 91-明细分页：当前出库单全量可退料明细（tableData 为其按页切片）
+const allRows = ref([]);
+// 91-明细分页：明细表格 key，切换出库单时自增以重建表格清空勾选
+const reloadKey = ref(0);
+const detailTotal = computed(() => allRows.value.length);
 const loading = ref(false);
-const total = ref(0);
 const tableRef = ref();
 const idName = ref("obdtId");
 const selectData = ref({});
+// 91-跨页勾选：累计已选明细集合（按 obdtId 记忆），翻页不丢
+const selectedMap = new Map();
 
 const title = ref("出库单号");
 
 const data = reactive({
   queryParams: {
+    // 91-明细分页：默认每页 30 条，翻页本地切片
     pageNum: 1,
     pageSize: 30,
   },
@@ -141,33 +153,58 @@ const { queryParams, formSelectData } = toRefs(data);
 const emit = defineEmits(["createSuccess", "selectData"]);
 const dialogType = ref("");
 
-// 出库单明细
+// 出库单明细（91-明细分页：全量加载后按页切片展示）
 const spdListPage = async (val) => {
   await maintainListByObCode(val).then(({ data }) => {
-    tableData.value = data || [];
+    allRows.value = data || [];
+    queryParams.value.pageNum = 1;
+    refreshDetailPage();
   });
+};
+// 91-明细分页：按当前页码/页大小切分明细
+const refreshDetailPage = () => {
+  const pageNum = queryParams.value.pageNum || 1;
+  const pageSize = queryParams.value.pageSize || 30;
+  const start = (pageNum - 1) * pageSize;
+  tableData.value = allRows.value.slice(start, start + pageSize);
+};
+// 91-明细分页：分页条翻页/改每页条数（本地切片，不重新请求）
+const handlePageChange = ({ page, limit }) => {
+  queryParams.value.pageNum = page;
+  queryParams.value.pageSize = limit;
+  refreshDetailPage();
 };
 const obSearchList = ref();
 const spdChange = (val) => {
   if (!val) {
+    allRows.value = [];
     tableData.value = [];
+    selectData.value = {};
+    selectedMap.clear();
+    reloadKey.value++;
     return getList();
   }
 
-  obSearchList.value = searchOptions.value.find((item) => val === item.obCode);
-
   let res = searchOptions.value.find((item) => val === item.obCode);
+  obSearchList.value = res;
+  selectData.value = {};
+  selectedMap.clear();
+  allRows.value = [];
+  tableData.value = [];
+  reloadKey.value++;
   spdListPage({ obmtId: res.obmtId });
 };
 
-const getList = async (val) => {
+const getList = async (val = {}) => {
   loading.value = true;
   await maintainListMtObCode(queryParams.value)
     .then(({ data }) => {
       searchOptions.value = data || [];
-      total.value = data.length;
-      if (val.obCode) {
+      if (val.obCode && searchOptions.value.length) {
         searchValue.value = data[0].obCode;
+        selectData.value = {};
+        selectedMap.clear();
+        reloadKey.value++;
         spdListPage({ obmtId: data[0].obmtId });
       }
     })
@@ -175,15 +212,17 @@ const getList = async (val) => {
       loading.value = false;
       if (searchOptions.value.length < 1) {
         searchValue.value = "";
+        allRows.value = [];
         tableData.value = [];
+        selectData.value = {};
+        selectedMap.clear();
+        reloadKey.value++;
       }
     });
 };
 
 /** 查询按钮操作 */
 const handleQuery = (data) => {
-  queryParams.value.pageNum = 1;
-
   queryParams.value = Object.assign({}, queryParams.value, data);
   getList(data);
 };
@@ -191,17 +230,30 @@ const handleQuery = (data) => {
 function resetQuery(data = {}) {
   handleQuery(data);
   searchValue.value = "";
+  allRows.value = [];
   tableData.value = [];
+  selectData.value = {};
+  selectedMap.clear();
+  reloadKey.value++;
+  queryParams.value.pageNum = 1;
   formSelectData.value = {};
 }
 
-const handleSelectionChange = (selection, row) => {
-  if (selection) {
-    selectData.value = {
-      searchOptions: obSearchList.value,
-      selection,
-    };
-  }
+const handleSelectionChange = (selection) => {
+  // 91-跨页勾选：以当前页明细做差集，把被取消勾选的行从累计集合移除，同时把其它页已选行保留
+  const rows = selection || [];
+  const pageKeys = new Set(tableData.value.map((item) => item[idName.value]));
+  const selKeys = new Set(rows.map((item) => item[idName.value]));
+  pageKeys.forEach((key) => {
+    if (!selKeys.has(key)) {
+      selectedMap.delete(key);
+    }
+  });
+  rows.forEach((item) => selectedMap.set(item[idName.value], item));
+  selectData.value = {
+    searchOptions: obSearchList.value,
+    selection: Array.from(selectedMap.values()),
+  };
 };
 const saveBtn = () => {
   groupVisible.value = false;
