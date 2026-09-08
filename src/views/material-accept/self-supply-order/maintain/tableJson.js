@@ -3,12 +3,12 @@ import { dictCateList } from "@/api/system/common";
 // 供货单状态
 export const statusOptions = [
   { label: '未提交', value: '1' },
-  { label: '已提交', value: '2' },
-  { label: '已审批', value: '3' },
-  { label: '已驳回', value: '4' },
-  { label: '已终止', value: '5' },
-  { label: '处理中', value: '6' },
-  { label: '已处理', value: '7' },
+  // { label: '已提交', value: '2' },
+  // { label: '已审批', value: '3' },
+  // { label: '已驳回', value: '4' },
+  // { label: '已终止', value: '5' },
+  // { label: '处理中', value: '6' },
+  // { label: '已处理', value: '7' },
   { label: '已推送', value: '8' },
 ]
 
