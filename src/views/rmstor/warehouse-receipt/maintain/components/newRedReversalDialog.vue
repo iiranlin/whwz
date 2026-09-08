@@ -181,15 +181,15 @@ watch(() => [detailData.value.incotaxAmount, detailData.value.matlAmount], (nval
 });
 
 const columns = computed(() => [
-  { field: "matlCode", title: "物资编号", minWidth: 180, align: "center" },
+  { field: "matlCode", title: "物资编号", minWidth: 180, align: "center", required: true, headerClassName: "required-col-header", },
   { field: "matlName", title: "物资名称", minWidth: 200, align: "center" },
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
-  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '' },
-  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' },
+  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '' },
+  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' },
   { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '' },
-  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '' },
-  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' },
+  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '' },
+  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header",render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' },
   { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", render: (row) => row.standardAmount != null && row.standardAmount !== '' ? Number(row.standardAmount).toFixed(2) : '' },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center" },
   { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date" },
@@ -352,5 +352,12 @@ const handleSelectionChange = (data) => {
     }
   }
 
+}
+</style>
+<style lang="scss">
+/* 入库单明细表头必填列红色 * 标识（仅表头 th，排除表体 td） */
+th.required-col-header .cell::after {
+  content: ' *';
+  color: #f56c6c;
 }
 </style>

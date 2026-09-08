@@ -14,19 +14,19 @@
             </tr>
             <tr>
               <td class="td" colspan="3">用料地区：{{ item.plantName }}</td>
-              <td class="td" colspan="3">制单日期：{{ parseTime(item.orderDate, "{y}-{m}-{d}") }}</td>
-              <td class="td" colspan="3">发票号：{{ item.invoiceCode }}</td>
+              <td class="td" colspan="2">制单日期：{{ parseTime(item.orderDate, "{y}-{m}-{d}") }}</td>
+              <td class="td" colspan="2">发票号：{{ item.invoiceCode }}</td>
             </tr>
             <tr>
-              <td class="td" colspan="2">库位名称：{{ item.depotName }}</td>
+              <td class="td" colspan="3">仓库：{{ item.depotName }}</td>
               <!-- <td class="td" colspan="2">收料类别：{{ whReceiptSourceObj[item.ibSource] }}</td> -->
               <td class="td" colspan="2">运费：{{ item.freightAmount != null ? Number(item.freightAmount).toFixed(2) : '' }}</td>
-              <td class="td" colspan="2">杂费：{{ item.extrasAmount != null ? Number(item.extrasAmount).toFixed(2) : '' }}</td>
-              <td class="td" colspan="2">税额：{{ item.incotaxAmount != null ? Number(item.incotaxAmount).toFixed(2) : '' }}</td>
+              <td class="td" colspan="1">杂费：{{ item.extrasAmount != null ? Number(item.extrasAmount).toFixed(2) : '' }}</td>
+              <td class="td" colspan="1">税额：{{ item.incotaxAmount != null ? Number(item.incotaxAmount).toFixed(2) : '' }}</td>
             </tr>
             <tr>
-              <td class="td" colspan="5">供应商：{{ item.supUnitName }}</td>
-              <td class="td" colspan="5">供货单号：{{ item.refBillCode }}</td>
+              <td class="td" colspan="3">供应商：{{ item.supUnitName }}</td>
+              <td class="td" colspan="3">供货单号：{{ item.refBillCode }}</td>
             </tr>
             <tr>
               <td colspan="10">备注：{{ item.comments }}</td>
@@ -37,20 +37,21 @@
           <table cellpadding="10" cellspacing="0" width="100%" show-summary>
             <thead>
               <tr>
-                <th class="th" key="index">序号</th>
-                <th class="th" v-for="j in printMatlTableJson" :key="j.key">{{ j.label }}</th>
+                <th class="th" key="index" style="width: 6%;">序号</th>
+                <th class="th" v-for="j in printMatlTableJson" :key="j.key" :style="{ width: j.width }">{{ j.label }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(d, index) in item.inBoundDts" :key="d.ibdtId">
                 <td class="td" key="index" style="text-align: center; width: 6%;" >{{ index + 1 }}</td>
-                <td class="td" v-for="val in printMatlTableJson" :key="val.key" style="text-align: center;">
+                <td class="td" v-for="val in printMatlTableJson" :key="val.key" :style="{ textAlign: 'center', width: val.width }">
                   {{ val.prop === 'matlName' ? `${d.matlName}${d.matlType ? '/' + d.matlType : ''}` : val.formatter ? val.formatter(d[val.prop]) : d[val.prop] }}
                 </td>
               </tr>
               <tr key="sum">
-                <td style="text-align: center;" colspan="5"></td>
-                <td style="text-align: center;">采购金额</td>
+                <td style="text-align: center;" colspan="2"></td>
+                <td style="text-align: center;" colspan="3">采购金额</td>
+                <td style="text-align: center;"></td>
                 <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'stkAmount').toFixed(2) }}</td>
                 <td style="text-align: center;">入库金额</td>
                 <td style="text-align: center;">{{ sumCount(item.inBoundDts || [], 'standardAmount').toFixed(2) }}</td>
@@ -161,18 +162,17 @@ defineExpose({
   width: 100%;
 
   table {
+    table-layout: fixed;
+    width: 100%;
     border-top: 1px solid #000;
     border-left: 1px solid #000;
-
-    .td {
-      width: 14%;
-    }
 
     th,
     td {
       border-right: 1px solid #000;
       border-bottom: 1px solid #000;
       color: #000;
+      word-break: break-all;
     }
   }
 }

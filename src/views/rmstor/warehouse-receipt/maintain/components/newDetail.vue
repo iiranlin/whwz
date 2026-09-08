@@ -59,25 +59,25 @@
             <span>{{ detailData.invoiceCode || '--' }}</span>
           </el-form-item>
           <el-form-item label="运费：" prop="freightAmount">
-            <span>{{ detailData.freightAmount || 0 }}</span>
+            <span>{{ detailData.freightAmount != null ? Number(detailData.freightAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="杂费：" prop="extrasAmount">
-            <span>{{ detailData.extrasAmount || 0 }}</span>
+            <span>{{ detailData.extrasAmount != null ? Number(detailData.extrasAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="其他费：" prop="otherAmount">
-            <span>{{ detailData.otherAmount || 0 }}</span>
+            <span>{{ detailData.otherAmount != null ? Number(detailData.otherAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="税额：" prop="incotaxAmount">
-            <span>{{ detailData.incotaxAmount || 0 }}</span>
+            <span>{{ detailData.incotaxAmount != null ? Number(detailData.incotaxAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="料款：" prop="matlAmount">
-            <span>{{ detailData.matlAmount || 0 }}</span>
+            <span>{{ detailData.matlAmount != null ? Number(detailData.matlAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="税额+料款：" prop="taxMatlAmount">
-            <span>{{ detailData.taxMatlAmount || 0 }}</span>
+            <span>{{ detailData.taxMatlAmount != null ? Number(detailData.taxMatlAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <el-form-item label="总金额：" prop="totalAmount">
-            <span>{{ detailData.totalAmount || 0 }}</span>
+            <span>{{ detailData.totalAmount != null ? Number(detailData.totalAmount).toFixed(2) : '0.00' }}</span>
           </el-form-item>
           <div class="entry-comments-form-row">
             <el-form-item label="备注：" prop="comments">
@@ -158,12 +158,12 @@ const columns = computed(() => [
   { field: "matlName", title: "物资名称", minWidth: 200, align: "center" },
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
-  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header" },
-  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header" },
-  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center" },
-  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header" },
-  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header" },
-  { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center" },
+  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '' },
+  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' },
+  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '' },
+  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '' },
+  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header",  render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' },
+  { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", render: (row) => row.standardAmount != null && row.standardAmount !== '' ? Number(row.standardAmount).toFixed(2) : '' },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center" },
   { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date" },
   { field: "validityPeriod", title: "有效期", minWidth: 120, align: "center" },
@@ -313,5 +313,12 @@ const dialogOpen = async () => {
     }
   }
 
+}
+</style>
+<style lang="scss">
+/* 入库单明细表头必填列红色 * 标识（仅表头 th，排除表体 td） */
+th.required-col-header .cell::after {
+  content: ' *';
+  color: #f56c6c;
 }
 </style>

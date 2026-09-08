@@ -397,12 +397,12 @@ export const npredReversalTableJson = [
 ];
 
 export const printMatlTableJson = [
-  { key: "matlCode", prop: "matlCode", label: "物资编号" },
-  { key: "matlName", prop: "matlName", label: "物资名称/规格型号" },
-  { key: "matlUnit", prop: "matlUnit", label: "单位" },
-  { key: "paNum", prop: "paNum", label: "数量", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(4) : '' },
-  { key: "stkPrice", prop: "stkPrice", label: "采购单价", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
-  { key: "stkAmount", prop: "stkAmount", label: "采购金额", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
-  { key: "cardPrice", prop: "cardPrice", label: "库存单价", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
-  { key: "standardAmount", prop: "standardAmount", label: "入库金额", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "matlCode", prop: "matlCode", label: "物资编号", width: "12%" },
+  { key: "matlName", prop: "matlName", label: "物资名称/规格型号", width: "16%" },
+  { key: "matlUnit", prop: "matlUnit", label: "单位", width: "8%" },
+  { key: "paNum", prop: "paNum", label: "数量", width: "10%", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(4) : '' },
+  { key: "stkPrice", prop: "stkPrice", label: "采购单价", width: "12%", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "stkAmount", prop: "stkAmount", label: "采购金额", width: "12%", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "cardPrice", prop: "cardPrice", label: "库存单价", width: "12%", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
+  { key: "standardAmount", prop: "standardAmount", label: "入库金额", width: "12%", formatter: (val) => val != null && val !== '' ? Number(val).toFixed(2) : '' },
 ];

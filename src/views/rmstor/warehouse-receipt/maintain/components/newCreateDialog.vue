@@ -300,11 +300,11 @@ const tableKey = ref(1);
 const tableData = ref([]);
 const _tableData = ref([]);
 
-const tableToolbarConfig = {
-  buttons: [
-    { code: 'deleteRow', name: "删除", type: "danger", showInRow: true, showInTop: false },
-  ]
-};
+// const tableToolbarConfig = {
+//   buttons: [
+//     { code: 'deleteRow', name: "删除", type: "danger", showInRow: true, showInTop: false },
+//   ]
+// };
 
 const supUnitTypeObj = {
   "局内单位": "1",
@@ -1082,8 +1082,8 @@ const returnOutsaleData = ([arr, data]) => {
 
 const returnPurchaseData = ([arr, data]) => {
   for (const item of arr) {
-    if(!!item.productionDate) item.productionDate.includes("-") ? item.productionDate = new Date(item.productionDate).getTime() : item.productionDate = Number(item.productionDate);
-    if(!!item.expirationDate) item.expirationDate.includes("-") ? item.expirationDate = new Date(item.expirationDate).getTime() : item.expirationDate = Number(item.expirationDate);
+    if(!!item.productionDate && typeof item.productionDate === 'string') item.productionDate.includes("-") ? item.productionDate = new Date(item.productionDate).getTime() : item.productionDate = Number(item.productionDate);
+    if(!!item.expirationDate && typeof item.expirationDate === 'string') item.expirationDate.includes("-") ? item.expirationDate = new Date(item.expirationDate).getTime() : item.expirationDate = Number(item.expirationDate);
     item.stkPrice = detailPriceformat(item.stkPrice) || 0;
     item.paNum = detailPriceformat(item.paNum) || 0;
     item._stkPrice = item.stkPrice;
@@ -1491,7 +1491,8 @@ const handleTableAction = ({code, row}) => {
   if (code === "deleteRow") {
     const idx = tableData.value.findIndex(item => item[cTableKey.value] === row[cTableKey.value]);
     if (idx !== -1) {
-      tableData.value.splice(idx, 1);
+      tableData.value = tableData.value.filter((_, i) => i !== idx);
+      _tableData.value = _tableData.value.filter((_, i) => i !== idx);
       ElMessage.success("删除成功");
     }
   }

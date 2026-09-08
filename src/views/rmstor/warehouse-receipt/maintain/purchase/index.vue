@@ -7,6 +7,7 @@
           :data="tableData"
           :pagination="pagination"
           :pagerConfig="pagerConfig"
+          :show-action="false"
           action-width="160"
           :total="total"
           :toolbar-config="toolBarConfig"
@@ -24,6 +25,11 @@
           @selectionChange="handleSelectionChange"
           @sortChange="sortChange"
         >
+          <template #action="{ row }">
+            <el-button type="primary" link :disabled="row.flag === '2'" @click="handleAction({code: 'edit', row})">修改</el-button>
+            <el-button type="primary" link @click="handleAction({code: 'redReversal', row})">红冲</el-button>
+            <el-button v-if="row.flag === '2' && !row.invoiceCode" type="primary" link @click="handleAction({code: 'addInvoiceCode', row})">补充发票号</el-button>
+          </template>
         </el-pro-table>
       </el-col>
     </el-row>
@@ -258,6 +264,7 @@ const columns = computed(() => [
   { field: "matlAmount", title: "料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
   { field: "incotaxAmount", title: "税额（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
   { field: "taxMatlAmount", title: "含税料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
+  { field: "action", title: "操作", slotName: "action", width: 180, align: "center", fixed: "right" },
 ]);
 
 const toolBarConfig = {
@@ -272,7 +279,7 @@ const toolBarConfig = {
     { code: 'print1', name: "打印", type: "primary", showInRow: false, showInTop: true, },
     // { code: 'print2', name: "打印", type: "primary", showInRow: true, showInTop: false },
     { code: 'export', name: "导出", type: "primary", showInRow: false, showInTop: true },
-    { code: 'addInvoiceCode', name: "补充发票号", type: "primary", showInTop: false, showInRow: true, disabled: ([row]) => row.flag !== "2" || !!row.invoiceCode },
+    { code: 'addInvoiceCode', name: "补充发票号", type: "primary", showInTop: false, showInRow: ([row]) => row.flag === "2" && !row.invoiceCode },
   ]
 }
 
