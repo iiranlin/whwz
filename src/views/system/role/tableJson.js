@@ -13,11 +13,12 @@ export const columns = [
     searchable: true,
     searchType: "input"
   },
-  {
-    field: "unitName",
-    title: "所属单位",
-    minWidth: 160
-  },
+  // 所属单位：当前仅一个单位，暂隐藏该列；如需恢复请取消注释
+  // {
+  //   field: "unitName",
+  //   title: "所属单位",
+  //   minWidth: 160
+  // },
   {
     field: "status",
     title: "状态",

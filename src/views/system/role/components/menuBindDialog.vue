@@ -21,7 +21,7 @@
 
 <script setup>
 import { menuTree } from '@/api/base/menu'
-import { roleMenuList, roleBindMenu } from '@/api/base/role'
+import { roleMenuTree, roleBindMenu } from '@/api/base/role'
 
 const { proxy } = getCurrentInstance()
 
@@ -34,6 +34,19 @@ const checkedKeys = ref([])
 
 const emit = defineEmits(['createSuccess'])
 
+/** 收集树中叶子节点 id（角色已绑定菜单的回显勾选用，父级由 el-tree 自动半选/全选） */
+function collectLeafIds(list) {
+  const ids = []
+  ;(list || []).forEach(item => {
+    if (item.children && item.children.length) {
+      ids.push(...collectLeafIds(item.children))
+    } else {
+      ids.push(item.id)
+    }
+  })
+  return ids
+}
+
 /** 打开弹窗 */
 function init(row) {
   visible.value = true
@@ -41,13 +54,15 @@ function init(row) {
   roleName.value = row.roleName || row.roleCode
   checkedKeys.value = []
   loading.value = true
-  menuTree().then(({ data }) => {
+  // 只加载生效(status=0)菜单，接口 /menu/tree 支持 status 过滤
+  menuTree({ status: 0 }).then(({ data }) => {
     menuTreeData.value = data || []
   }).finally(() => {
     loading.value = false
   })
-  roleMenuList(row.id).then(({ data }) => {
-    checkedKeys.value = (data || []).map(item => item.id)
+  // 回显：只取该角色已绑定的菜单（role/menuTree），避免全量接口导致默认全勾
+  roleMenuTree(row.id).then(({ data }) => {
+    checkedKeys.value = collectLeafIds(data || [])
   })
 }
 
@@ -55,7 +70,7 @@ function init(row) {
 function submit() {
   const checkedIds = proxy.$refs.menuTreeRef.getCheckedKeys().concat(proxy.$refs.menuTreeRef.getHalfCheckedKeys())
   loading.value = true
-  roleBindMenu({ ids: checkedIds }, roleId.value).then(({ message }) => {
+  roleBindMenu({ menuIds: checkedIds }, roleId.value).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
     emit('createSuccess')

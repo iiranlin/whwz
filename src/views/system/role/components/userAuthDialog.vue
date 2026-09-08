@@ -84,7 +84,7 @@ function handleAuthUser() {
     return
   }
   const ids = unallocatedSelection.value.map(item => item.id)
-  authUser(roleId.value, { ids }).then(({ message }) => {
+  authUser(roleId.value, ids).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     getUnallocatedList()
     getAllocatedList()
@@ -98,7 +98,7 @@ function handleCancelAuth() {
     return
   }
   const ids = allocatedSelection.value.map(item => item.id)
-  authUserCancel(roleId.value, { ids }).then(({ message }) => {
+  authUserCancel(roleId.value, ids).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     getUnallocatedList()
     getAllocatedList()

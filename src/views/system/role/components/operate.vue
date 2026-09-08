@@ -1,6 +1,8 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="560px" top="8vh" append-to-body v-loading="loading">
     <el-form ref="elFormRef" :model="form" :rules="rules" label-width="85px">
+      <!-- 所属单位：当前仅一个单位，暂隐藏选择（新增由后端自动回填登录人单位，见 SysRoleServiceImpl.insertRole）；如需恢复可取消注释 -->
+      <!--
       <el-form-item label="所属单位：" prop="unitId">
         <el-tree-select
           v-model="form.unitId"
@@ -13,6 +15,7 @@
           style="width: 100%"
         />
       </el-form-item>
+      -->
       <el-form-item label="角色编号：" prop="roleCode">
         <el-input v-model="form.roleCode" maxlength="20" placeholder="请输入角色编号" :disabled="type === 'update'" />
       </el-form-item>
@@ -37,7 +40,8 @@
 
 <script setup>
 import { roleCreate, roleDetail, roleModify } from '@/api/base/role'
-import { getUnitTree } from '@/api/base/dept'
+// 所属单位选择暂隐藏（单位树接口），如需恢复请取消注释
+// import { getUnitTree } from '@/api/base/dept'
 
 const { proxy } = getCurrentInstance()
 
@@ -46,17 +50,17 @@ const loading = ref(false)
 const title = ref('新增角色')
 const type = ref('create')
 const id = ref('')
-const unitTreeData = ref([])
+// const unitTreeData = ref([])
 
 const data = reactive({
   form: {
-    unitId: undefined,
+    // unitId: undefined,
     roleCode: '',
     roleName: '',
     status: 0
   },
   rules: {
-    unitId: [{ required: true, message: '请选择单位', trigger: 'change' }],
+    // unitId: [{ required: true, message: '请选择单位', trigger: 'change' }],
     roleCode: [
       { required: true, message: '角色编号不能为空', trigger: 'blur' },
       {
@@ -73,16 +77,16 @@ const { form, rules } = toRefs(data)
 
 const emit = defineEmits(['createSuccess'])
 
-// 单位树
-function getUnitTreeData() {
-  getUnitTree().then(({ data }) => {
-    unitTreeData.value = data || []
-  })
-}
+// 单位树（所属单位选择暂隐藏），如需恢复请取消注释
+// function getUnitTreeData() {
+//   getUnitTree().then(({ data }) => {
+//     unitTreeData.value = data || []
+//   })
+// }
 
 /** 表单初始值 */
 const initialForm = {
-  unitId: undefined,
+  // unitId: undefined,
   roleCode: '',
   roleName: '',
   status: 0,
@@ -108,7 +112,7 @@ function init(dialogType, rowId) {
   visible.value = true
   type.value = dialogType
   id.value = rowId || ''
-  getUnitTreeData()
+  // getUnitTreeData()
   if (dialogType === 'update') {
     title.value = '修改角色'
     roleDetail(rowId).then(({ data }) => {
