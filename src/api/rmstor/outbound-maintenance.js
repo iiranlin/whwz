@@ -156,3 +156,13 @@ export function generateCode(data) {
     data
   })
 }
+
+//出库单查询物资目录列表
+// 选物资弹框场景，未显式传 enableState 时默认只查启用状态物料（ENABLE_STATE='1'）
+export function paramMaltList(params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstor/matl/list`,
+    method: 'get',
+    params: { ...params }
+  })
+}

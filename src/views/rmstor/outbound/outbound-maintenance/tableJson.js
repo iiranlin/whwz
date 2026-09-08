@@ -36,7 +36,7 @@ export const tableButtonJson = [
 
 // 新增弹框明细字段
 export const matlTableJson = [
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160 },
@@ -44,12 +44,12 @@ export const matlTableJson = [
   { isShow: true, fixed: false, type: '', key: 'batchNo', prop: 'batchNo', label: '批次号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: 'date', key: 'productionDate', prop: 'productionDate', label: '生产日期', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160, },
-  { isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, required: true },
-  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'noOutNum', prop: 'noOutNum', label: '未登卡数量', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'templateName', prop: 'templateName', label: '报账模板', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: 'slot', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, required: true, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
+  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(2) : '' },
+  { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(2) : '' },
+  { isShow: true, fixed: false, type: '', key: 'noOutNum', prop: 'noOutNum', label: '未登卡数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
+  { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
+  // { isShow: true, fixed: false, type: '', key: 'templateName', prop: 'templateName', label: '报账模板', align: 'center', width: 160 },
 ]
 
 export const matlTableButtonJson = [
@@ -60,7 +60,7 @@ export const matlTableButtonJson = [
 // 打印字段
 export const printMatlTableJson = [
   { isShow: true, fixed: false, type: '', key: 'typeIndex', prop: 'typeIndex', label: '序号', align: 'center', width: 50 },
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称/规格型号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '单位', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '数量', align: 'center', width: 160 },
@@ -80,7 +80,7 @@ export const rmstorMatlTableJson = [
   { isShow: true, fixed: false, type: '', key: 'teamName', prop: 'teamName', label: '请领班组', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: '', key: 'pickmatlName', prop: 'pickmatlName', label: '请领人', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'natureValueName', prop: 'natureValueName', label: '成本预算项目', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160 },
@@ -102,7 +102,7 @@ export const rmstorProduceTableJson = [
   { isShow: true, fixed: false, type: '', key: 'teamName', prop: 'teamName', label: '请领班组', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: '', key: 'pickmatlName', prop: 'pickmatlName', label: '请领人', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'natureValueName', prop: 'natureValueName', label: '成本预算项目', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160 },
@@ -114,7 +114,7 @@ export const rmstorProduceTableJson = [
 ]
 //红冲
 export const rmstorRedReversalTableJson = [
-  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160 },
@@ -133,10 +133,19 @@ export const rmstorRedReversalTableJson = [
 
 
 const plantData = async () => {
-  const res = await plantDictList()
-  return res.data.map(item => {
-    return { ...item, label: item.plantName, value: item.plantCode }
-  })
+  try {
+    await plantDictList().then(res => {
+    if (res.code === 200) {
+      return res.data.map(item => {
+        return { ...item, label: item.plantName, value: item.plantCode }
+      })
+    } else {
+      return []
+    }
+  }) 
+  } catch (error) {
+    return []
+  }
 }
 
 async function createRichColumns() {
@@ -162,26 +171,42 @@ async function createRichColumns() {
       searchType: 'input',
       type: 'link',
     },
-    {
-      field: 'planCode',
-      title: '请领单编号',
-      showOverflowTooltip: true,
-      searchType: 'input',
-      searchable: true,
-    },
+    // {
+    //   field: 'planCode',
+    //   title: '请领单编号',
+    //   showOverflowTooltip: true,
+    //   searchType: 'input',
+    //   searchable: true,
+    // },
+    // {
+    //   field: 'deptName',
+    //   title: '请领车间',
+    //   showOverflowTooltip: true,
+    //   searchable: true,
+    //   searchType: 'input',
+    // },
+    // {
+    //   field: 'teamName',
+    //   title: '请领班组',
+    //   showOverflowTooltip: true,
+    //   searchable: true,
+    //   searchType: 'input',
+    // },
     {
       field: 'deptName',
-      title: '请领车间',
+      title: '领料部门',
       showOverflowTooltip: true,
       searchable: true,
       searchType: 'input',
+      hideInTable: true,
     },
     {
-      field: 'teamName',
-      title: '请领班组',
+      field: 'pickmatlName',
+      title: '领料人',
       showOverflowTooltip: true,
       searchable: true,
       searchType: 'input',
+      hideInTable: true,
     },
     {
       field: "plantName",
@@ -257,10 +282,37 @@ async function createRichColumns() {
       showOverflowTooltip: true,
       searchable: false,
       searchType: 'input',
+      align: 'center',
+    },
+    {
+      field: 'deptName',
+      title: '领料部门',
+      showOverflowTooltip: true,
+      align: 'center',
+    },
+    {
+      field: 'receiveName',
+      title: '收料人',
+      showOverflowTooltip: true,
+      align: 'center',
+    },
+    {
+      field: 'idsCode',
+      title: '单台设备',
+      showOverflowTooltip: true,
+      searchable: true,
+      searchType: 'input',
+      align: 'center',
+    },
+    {
+      field: 'iddCode',
+      title: '设备部件',
+      showOverflowTooltip: true,
+      align: 'center',
     },
     {
       field: 'matlCode',
-      title: '物资编码',
+      title: '物资编号',
       showOverflowTooltip: true,
       searchable: true,
       hideInTable: true,
@@ -282,50 +334,52 @@ async function createRichColumns() {
       searchable: true,
       searchType: 'input',
     },
-    {
-      field: 'pickmatlName',
-      title: '请领人',
-      showOverflowTooltip: true,
-      searchable: true,
-      searchType: 'input',
-    },
+    // {
+    //   field: 'pickmatlName',
+    //   title: '请领人',
+    //   showOverflowTooltip: true,
+    //   searchable: true,
+    //   searchType: 'input',
+    // },
 
-    {
-      field: 'natureValueName',
-      title: '成本预算项目',
-      showOverflowTooltip: true,
-    },
+    // {
+    //   field: 'natureValueName',
+    //   title: '成本预算项目',
+    //   showOverflowTooltip: true,
+    // },
 
-    {
-      field: 'carType',
-      title: '车型',
-      showOverflowTooltip: true,
-    },
+    // {
+    //   field: 'carType',
+    //   title: '车型',
+    //   showOverflowTooltip: true,
+    // },
 
-    {
-      field: 'trainsetName',
-      title: '车组号',
-      showOverflowTooltip: true,
-    },
-    {
-      field: 'trainNo',
-      title: '车号',
-      showOverflowTooltip: true,
-    },
-    {
-      field: 'templateName',
-      title: '报账模板',
-      showOverflowTooltip: true,
-    },
+    // {
+    //   field: 'trainsetName',
+    //   title: '车组号',
+    //   showOverflowTooltip: true,
+    // },
+    // {
+    //   field: 'trainNo',
+    //   title: '车号',
+    //   showOverflowTooltip: true,
+    // },
+    // {
+    //   field: 'templateName',
+    //   title: '报账模板',
+    //   showOverflowTooltip: true,
+    // },
     {
       field: 'orderDateStr',
       title: '下单日期',
       showOverflowTooltip: true,
+      align: 'center',
     },
     {
       field: 'noteDateStr',
       title: '登卡日期',
       showOverflowTooltip: true,
+      align: 'center',
     },
     {
       field: 'orderDate',
@@ -334,8 +388,9 @@ async function createRichColumns() {
       hideInTable: true,
       type: 'date',
       dateFormat: 'YYYY-MM-DD',
-      searchable: true,
+      searchable: false,
       searchType: 'dateRange',
+      align: 'center',
     },
     {
       field: 'amount',
@@ -343,6 +398,8 @@ async function createRichColumns() {
       showOverflowTooltip: true,
       searchable: false,
       searchType: 'input',
+      minWidth: 140,
+      align: 'center',
     },
   ]
 

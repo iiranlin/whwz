@@ -9,8 +9,8 @@
       <el-table-column v-if="item.isShow" :key="item.key" :type="item.type" :prop="item.prop" :fixed="item.fixed"
         :label="item.label" :min-width="item.width" show-overflow-tooltip :align="item.align || align" :sortable="item.sortable || false">
         <template #header v-if="item.required && required">
-          <span class="span-red">*&nbsp;</span>
           <span>{{ item.label }}</span>
+          <span class="span-red">*&nbsp;</span>
         </template>
         <template #default="scope">
           <slot v-if="item.type === 'slot'" :name="item.prop" :scope="{$index: scope.$index, row: scope.row, stats: item.stats }"></slot>

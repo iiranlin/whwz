@@ -15,9 +15,9 @@
                 &nbsp;&nbsp;号</td>
             </tr>
             <tr>
-              <td class="td" colspan="4" style="margin-left: 15px;">领料地区：{{ item.plantName }}</td>
+              <td class="td" colspan="4" style="margin-left: 15px;">用料地区：{{ item.plantName }}</td>
               <td class="td" colspan="4" style="margin-left: 15px;">单台设备：{{ item.idsName }}</td>
-              <td class="td" colspan="4" style="margin-left: 15px;">发料日期：{{ parseTime(item.noteDateStr, "{y}-{m}-{d}") }}
+              <td class="td" colspan="4" style="margin-left: 15px;">制单日期：{{ parseTime(new Date(), "{y}-{m}-{d}") }}
               </td>
             </tr>
             <tr>
@@ -39,15 +39,15 @@
                 <td>{{ d.matlCode }}</td>
                 <td>{{ `${d.matlName} ${d.matlType}` }}</td>
                 <td>{{ d.matlUnit }}</td>
-                <td>{{ d.outNum }}</td>
-                <td>{{ d.price }}</td>
-                <td>{{ d.outAmount }}</td>
+                <td>{{  d.outNum != null ? Number(d.outNum).toFixed(4) : '' }}</td>
+                <td>{{  d.price != null ? Number(d.price).toFixed(2) : '' }}</td>
+                <td>{{  d.outAmount != null ? Number(d.outAmount).toFixed(2) : '' }}</td>
               </tr>
               <tr>
                 <td style="text-align: center;">备注</td>
                 <td colspan="4" style="text-align: left;">{{ item.comments }} </td>
                 <td style="text-align: right;">合计：</td>
-                <td style="text-align: center;">{{ sum(item.rmstorOutBoundDtDTOList) }}</td>
+                <td style="text-align: center;">{{ sum(item.rmstorOutBoundDtDTOList).toFixed(2) }}</td>
               </tr>
             </tbody>
           </table>
@@ -55,7 +55,7 @@
         <table cellpadding="10" cellspacing="0" width="100%">
           <tbody>
             <tr>
-              <td class="td">请领人：{{ item.pleaseLeaduser }}</td>
+              <!-- <td class="td">请领人：{{ item.pleaseLeaduser }}</td> -->
               <td class="td">制单人：{{ item.makerName }}</td>
               <td class="td">发料人：{{ item.noteName }}</td>
               <td class="td">收料人：{{ item.receiveName }}</td>

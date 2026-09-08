@@ -12,7 +12,7 @@
                 <span v-else>{{ formData.obCode }}</span>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <el-form-item prop="planCode" label="电子请领单：">
                 <el-input v-if="isFormShow" v-model.trim="formData.planCode" placeholder="请选择" readonly>
                   <template #append>
@@ -22,87 +22,51 @@
                 </el-input>
                 <span v-else>{{ formData.planCode }}</span>
               </el-form-item>
-            </el-col>
+            </el-col>-->
             <el-col :span="6">
-              <el-form-item prop="deptName" label="请领车间：">
-                <el-input v-if="isFormShow" v-model="formData.deptName" placeholder="请输入" disabled />
-                <span v-else>{{ formData.deptName }}</span>
+              <el-form-item prop="pleaseDeptCode" label="请领部门：">
+                <el-tree-select
+                  v-if="isFormShow"
+                  v-model="formData.pleaseDeptCode"
+                  :data="deptOptions"
+                  :props="{ label: 'deptName', children: 'children' }"
+                  node-key="id"
+                  check-strictly
+                  clearable
+                  placeholder="选择请领部门"
+                  style="width: 100%"
+                />
+                <span v-else>{{ formData.pleaseDeptName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="teamName" label="请领班组：">
-                <el-input v-if="isFormShow" v-model="formData.teamName" placeholder="请输入" disabled />
-                <span v-else>{{ formData.teamName }}</span>
+              <el-form-item prop="plantId" label="用料地区：">
+                <el-select v-if="isFormShow" v-model="formData.plantId" value-key="id" clearable placeholder="请选择">
+                  <el-option v-for="item in plantOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+                </el-select>
+                <span v-else>{{ formData.plantName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="plantName" label="用料地区：">
-                <el-input v-if="isFormShow" v-model="formData.plantName" placeholder="请输入" disabled />
-                <span v-else>{{ `${formData.plantName}` }}</span>
+              <el-form-item prop="whId" label="仓库：">
+                <el-select v-if="isFormShow" v-model="formData.whId" value-key="whCode" clearable placeholder="请选择">
+                  <el-option v-for="item in whOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+                </el-select>
+                <span v-else>{{ formData.depotName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="depotName" label="仓库：">
-                <el-input v-if="isFormShow" v-model="formData.depotName" placeholder="请输入" disabled />
-                <span v-else>{{ `${formData.depotName}` }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item prop="partitionName" label="仓库分区：">
-                <el-input v-if="isFormShow" v-model="formData.partitionName" placeholder="请输入" disabled />
-                <span v-else>{{ `${formData.partitionName}` }}</span>
+              <el-form-item prop="partitionId" label="仓库分区：">
+                <el-select v-if="isFormShow" v-model="formData.partitionId" value-key="id" clearable placeholder="请选择" @change="whPartitionChange">
+                  <el-option v-for="item in partitionOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+                </el-select>
+                <span v-else>{{ formData.partitionName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item prop="taxFlagName" label="应税用途：">
                 <el-input v-if="isFormShow" v-model="formData.taxFlagName" placeholder="请输入" disabled />
                 <span v-else>{{ formData.taxFlagName }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item prop="natureValueName" label="成本预算项目：">
-                <el-input v-if="isFormShow" v-model="formData.natureValueName" placeholder="请输入" disabled />
-                <span v-else>{{ formData.natureValueName }}</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item prop="pickmatlName" label="请领人：">
-                <el-input v-if="isFormShow" v-model="formData.pickmatlName" placeholder="请选择" disabled>
-                </el-input>
-                <span v-else>{{ formData.pickmatlName }}</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item prop="receiveName" label="收料人：">
-                <el-input v-if="isFormShow" v-model="formData.receiveName" placeholder="请输入">
-                  <template #append>
-                    <el-button class="ep-input-button-icon" icon="Search" @click="approverClick"></el-button>
-                  </template>
-                </el-input>
-                <span v-else>{{ formData.receiveName }}</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item prop="carType" label="车型：">
-                <el-input v-if="isFormShow" v-model="formData.carType" placeholder="请输入" />
-                <span v-else>{{ formData.carType }}</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item prop="trainsetName" label="车组号：">
-                <el-input v-if="isFormShow" v-model="formData.trainsetName" placeholder="请输入" />
-                <span v-else>{{ formData.trainsetName }}</span>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item prop="trainNo" label="车号：">
-                <el-input v-if="isFormShow" v-model="formData.trainNo" placeholder="请输入" />
-                <span v-else>{{ formData.trainNo }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -126,16 +90,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="transType" label="供应方式：">
-                <el-select v-if="isFormShow" v-model="formData.transType" placeholder="请选择" clearable
-                  :disabled="isShow">
-                  <el-option v-for="(dict, index) in transTypeLists" :key="index" :label="dict.label"
-                    :value="dict.value" />
-                </el-select>
-                <span v-else>{{ formData.transType }}</span>
+              <el-form-item prop="receiveName" label="收料人：">
+                <el-input v-if="isFormShow" v-model="formData.receiveName" placeholder="请输入">
+                  <template #append>
+                    <el-button class="ep-input-button-icon" icon="Search" @click="approverClick"></el-button>
+                  </template>
+                </el-input>
+                <span v-else>{{ formData.receiveName }}</span>
               </el-form-item>
             </el-col>
-            <el-col :span="18">
+            <el-col :span="12">
               <el-form-item prop="comments" label="备注：">
                 <el-input v-if="isFormShow" v-model.trim="formData.comments" placeholder="请输入" :disabled="false" />
                 <span v-else>{{ formData.comments }}</span>
@@ -146,6 +110,9 @@
       </el-form>
       <div class="font_s" style="margin-bottom: 17px;">出库单明细信息</div>
       <!-- 表格数据 -->
+      <div class="detail-toolbar">
+        <el-button type="primary" v-if="dialogType === 'create' || dialogType === 'modify'" :disabled="!formData.plantId?.plantCode || !formData.whId?.whCode || !formData.partitionId?.partitionCode" @click="addDetail">添加明细</el-button>
+      </div>
       <table-index class="table-index" :selectionShow="dialogType === 'report' ? true : false"
         :tableJson="dialogType === 'report' ? rmstorRedReversalTableJson : matlTableJson" :tableData="tableData"
         :idName="idName" @handleButtonClick="handleButtonClick" @handleSelectionChange="handleSelectionChange">
@@ -158,6 +125,10 @@
         <template #credCode="{ scope }">
           <el-input v-if="dialogType != 'details'" v-model="scope.row.credCode" placeholder="请输入" clearable />
           <span v-else>{{ scope.row.credCode }}</span>
+        </template>
+        <template #outNum="{ scope }">
+          <el-input-number v-if="dialogType != 'details'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
+          <span v-else>{{ scope.row.outNum }}</span>
         </template>
       </table-index>
     </div>
@@ -172,6 +143,7 @@
     </template>
     <user-dialog ref="userDialog" @selectChange="userSelectChange" />
     <requisitionForm v-model="pubmedVisible" @selectData="selectData"></requisitionForm>
+    <select-matl ref="selectMatlRef" @saveSelect="saveSelectMatl" />
   </ep-dialog>
 </template>
 
@@ -179,13 +151,16 @@
 import {
   rmstorInternalListdetail,
   rmstorInternalcreate, rmstorInternalmodify,generateCode,
-  rmstorwriteBack, equipPartListAll, equipPartList
+  rmstorwriteBack, equipPartListAll, equipPartList,
+  plantDictList, warehouseDict, warehouseplantDictList
 } from '@/api/rmstor/outbound-maintenance'
 import { matlTableJson, rmstorRedReversalTableJson } from "../tableJson"
 import { getCookie } from '@/utils/auth'
+import { deptTree } from '@/api/base/dept'
 const warehouseGetYear = getCookie('warehouseGetYear') && JSON.parse(getCookie('warehouseGetYear'))
 import UserDialog from "@/views/components/userDialog"
 import requisitionForm from './requisitionForm.vue'
+import SelectMatl from './selectMatl.vue'
 const { proxy } = getCurrentInstance()
 import { Search } from '@element-plus/icons-vue'
 
@@ -207,24 +182,48 @@ const tableData = ref([])
 const formData = ref({})
 const data = reactive({
   rules: {
-    planCode: [{ required: true, message: '请选择电子请领单', trigger: ['blur', 'change'] }],
+    idsCode: [{ required: true, message: '请选择单台设备', trigger: ['blur', 'change'] }],
     receiveName: [{ required: true, message: '请选择收料人', trigger: ['blur', 'change'] }],
   },
 })
-const transTypeLists = [
-  { label: '配送', value: '配送' },
-  { label: '自提', value: '自提' },
-  { label: '快件', value: '快件' },
-  { label: '其它', value: '其它' },
-]
 const { rules, } = toRefs(data)
 const emit = defineEmits(['createSuccess']);
 //详情
 const getRmstorInternalGetMatls = (id) => {
   proxy.$modal.loading()
-  rmstorInternalListdetail(id).then(({ data }) => {
+  rmstorInternalListdetail(id).then(async ({ data }) => {
     formData.value = data
     tableData.value = data.rmstorOutBoundDtDTOList || []
+    // 编辑模式回填select选项
+    if (dialogType.value === 'modify') {
+      // 回填用料地区
+      if (data.plantCode) {
+        const plantItem = plantOptions.value.find(item => item.value.plantCode === data.plantCode)
+        if (plantItem) {
+          formData.value.plantId = { ...plantItem.value }
+          // 等待仓库选项加载
+          await proxy.$nextTick()
+          await getWhOptions()
+          // 回填仓库
+          if (data.depotCode) {
+            const whItem = whOptions.value.find(item => item.value.whCode === data.depotCode)
+            if (whItem) {
+              formData.value.whId = { ...whItem.value }
+              // 等待分区选项加载
+              await proxy.$nextTick()
+              await getPartitionOptions()
+              // 回填仓库分区
+              if (data.partitionCode) {
+                const partitionItem = partitionOptions.value.find(item => item.value.partitionCode === data.partitionCode)
+                if (partitionItem) {
+                  formData.value.partitionId = { ...partitionItem.value }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }).finally(() => {
     proxy.$modal.closeLoading()
   })
@@ -243,12 +242,15 @@ function show(type = 'create', row = {}) {
     if (type === 'create') {
       title.value = '新增出库单信息'
       isFormShow.value = true
-     // plantList()
       trackNumber()
       warehouseList()
+      getPlantOptions()
+      getDeptTree()
     } else if (type === 'modify') {
       title.value = '修改出库单信息'
       isFormShow.value = true
+      getPlantOptions()
+      getDeptTree()
       getRmstorInternalGetMatls(row.obmtId)
       plantList(row.idsCode)
       warehouseList()
@@ -268,10 +270,9 @@ const handleButtonClick = (code, data) => {
     // 选择物资
     choiceMatl: () => {
       let preWhHint = ''
-      if (!formData.value.plantCode) {
-        // 请选择调出地区！”或“请选择调出仓库！”或“请选择调入地区！”或“请选择调入仓库！
+      if (!formData.value.plantId?.plantCode) {
         preWhHint = '请选择地区！'
-      } else if (!formData.value.depotCode) {
+      } else if (!formData.value.whId?.whCode) {
         preWhHint = '请选择仓库！'
       } else if (!formData.value.approver) {
         preWhHint = '请选择审批人！'
@@ -280,11 +281,21 @@ const handleButtonClick = (code, data) => {
         proxy.$modal.msgWarning(preWhHint)
         return
       }
-      proxy.$refs.rmstorMatlDialog.show({ plantCode: formData.value.plantCode, depotCode: formData.value.depotCode }, tableData.value)
+      proxy.$refs.rmstorMatlDialog.show({ plantCode: formData.value.plantId?.plantCode, depotCode: formData.value.whId?.whCode }, tableData.value)
     },
   }
   eventObj[code] && eventObj[code]()
 }
+// 添加明细的按钮操作
+function addDetail() {
+  proxy.$refs.selectMatlRef.show(tableData.value)
+}
+
+/** 物资回填 */
+function saveSelectMatl(list) {
+  tableData.value = tableData.value.concat(list)
+}
+
 const saveBtn = () => {
   proxy.$refs.elForm.validate(valid => {
     if (valid) {
@@ -316,6 +327,12 @@ const saveBtn = () => {
 const handleAdd = () => {
   let params = {
     ...formData.value,
+    plantCode: formData.value.plantId?.plantCode || '',
+    plantName: formData.value.plantId?.plantName || '',
+    depotCode: formData.value.whId?.whCode || '',
+    depotName: formData.value.whId?.whName || '',
+    partitionCode: formData.value.partitionId?.partitionCode || '',
+    partitionName: formData.value.partitionId?.partitionName || '',
     recvMatlApplyListDTOList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
   }
@@ -330,6 +347,12 @@ const handleAdd = () => {
 const handleEdit = () => {
   let params = {
     ...formData.value,
+    plantCode: formData.value.plantId?.plantCode || '',
+    plantName: formData.value.plantId?.plantName || '',
+    depotCode: formData.value.whId?.whCode || '',
+    depotName: formData.value.whId?.whName || '',
+    partitionCode: formData.value.partitionId?.partitionCode || '',
+    partitionName: formData.value.partitionId?.partitionName || '',
     outBoundDtModifyParamList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
   }
@@ -373,6 +396,11 @@ const warehouseList = async () => {
   const { data } = await equipPartListAll()
   warehouseLists.value = data
 }
+
+const plantOptions = ref([])
+const whOptions = ref([])
+const partitionOptions = ref([])
+const deptOptions = ref([])
 const approverClick = () => {
   proxy.$refs.userDialog.show()
 }
@@ -406,6 +434,81 @@ const trackNumber = async() =>{
   formData.value.obCode = data
 }
 
+// 用料地区选项
+const getPlantOptions = async () => {
+  try {
+    const { data } = await plantDictList()
+    plantOptions.value = data ? data.length ? data.map(({plantCode, plantName, id}) => ({label: `${plantName}`, value: {plantName, plantCode, id}})) : [] : []
+  } catch (error) {
+  }
+}
+
+// 仓库选项
+const getWhOptions = async () => {
+  try {
+    const { data } = await warehouseDict({ plantId: formData.value.plantId.id })
+    whOptions.value = data ? data.length ? data.map(({whCode, whName, id}) => ({label: `${whName}`, value: {whName, whCode, id}})) : [] : []
+  } catch (error) {
+  }
+}
+
+// 仓库分区选项
+const getPartitionOptions = async () => {
+  try {
+    const { data } = await warehouseplantDictList({ whId: formData.value.whId.id })
+    partitionOptions.value = data ? data.length ? data.map(({partitionCode, partitionName, id, taxFlagCode, taxFlagName}) => ({label: `${partitionName}`, value: {partitionName, partitionCode, id, taxFlagCode, taxFlagName}})) : [] : []
+  } catch (error) {
+  }
+}
+
+// 部门树
+function getDeptTree() {
+  deptTree().then(({ data }) => {
+    let treeData = []
+    if (data && data[0] && data[0].deptCode === '10000001') {
+      treeData = data[0].children || []
+    } else {
+      treeData = data || []
+    }
+    deptOptions.value = treeData
+  })
+}
+
+// 仓库分区change事件
+const whPartitionChange = (val) => {
+  if (!!val && !!val.id) {
+    formData.value.taxFlagCode = val.taxFlagCode
+    formData.value.taxFlagName = val.taxFlagName
+  } else {
+    formData.value.taxFlagCode = ''
+    formData.value.taxFlagName = ''
+  }
+}
+
+// 级联watch：用料地区变化 -> 清空仓库和分区，重新加载仓库选项
+watch(() => formData.value?.plantId, (nval) => {
+  whOptions.value = []
+  partitionOptions.value = []
+  formData.value.whId = ''
+  formData.value.partitionId = ''
+  formData.value.taxFlagCode = ''
+  formData.value.taxFlagName = ''
+  if (!!nval && !!nval.id) {
+    getWhOptions()
+  }
+})
+
+// 级联watch：仓库变化 -> 清空分区，重新加载分区选项
+watch(() => formData.value?.whId, (nval) => {
+  partitionOptions.value = []
+  formData.value.partitionId = ''
+  formData.value.taxFlagCode = ''
+  formData.value.taxFlagName = ''
+  if (!!nval && !!nval.whCode) {
+    getPartitionOptions()
+  }
+})
+
 defineExpose({
   show,
 })
@@ -430,5 +533,13 @@ defineExpose({
   color: #333333;
   font-weight: 700;
   font-style: normal;
+}
+.detail-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 10px;
+  border-top: 1px solid #E4E7ED;
 }
 </style>
