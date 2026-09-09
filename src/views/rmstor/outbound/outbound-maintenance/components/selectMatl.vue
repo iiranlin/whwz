@@ -4,12 +4,9 @@
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" :data="tableData"
         :total="total" @search="onSearch" :show-checkbox="true" :grid-options="{ rowId: 'matlCode' }" :search-collapse-threshold="5"
-        :show-action="false" table-id="self-supply-order-select-matl" @selection-change="handleSelectionChange">
+        :show-action="false" table-id="outbound-select-matl" :key="tableKey" @selection-change="handleSelectionChange">
         <template #matlType="{ row }">
           <span>{{ `${row.matlType}${row.matlRaw ? '/' + row.matlRaw : ''}${row.matlPcode ? '/' + row.matlPcode : ''}` }}</span>
-        </template>
-        <template #tableExtra>
-          <el-checkbox v-model="isNotZero" @change="handleIsNotZeroChange">库存不为0</el-checkbox>
         </template>
       </el-pro-table>
     </div>
@@ -37,7 +34,10 @@ const selectionData = ref([])
 // 已存在明细的物资编码，避免重复添加
 const alreadyCodes = ref([])
 const mode = ref('addDetail')
-const isNotZero = ref(false)
+// 仓库过滤参数（用料地区、仓库、仓库分区）
+const maltParams = ref({})
+// 每次打开递增，强制 el-pro-table 重建内部搜索表单，避免 isNotZeroArr 勾选残留
+const tableKey = ref(0)
 
 const queryParams = ref({
   pageNum: 1,
@@ -48,14 +48,13 @@ const columnsData = ref([
   { field: 'matlCode', title: '物资编号', minWidth: 120, align: 'center', searchable: true, searchType: 'input' },
   { field: 'matlName', title: '物资名称', minWidth: 120, align: 'left', searchable: true, searchType: 'input' },
   { field: 'matlType', title: '规格型号', minWidth: 120, align: 'left', searchable: true, searchType: 'input', hideInTable: true },
-  // 库存不为0   isNotZero
-  { field: "isNotZeroArr", title: " ", minWidth: 120, hideInTable: true },
+  { field: "isNotZeroArr", title: "库存", minWidth: 160, hideInTable: true, searchable: true, searchType: 'checkbox', searchDefaultValue: [], searchProps: { options: [{ label: '库存不为0', value: '1' }] } },
   { field: 'matlType', title: '规格型号', minWidth: 160, align: 'left', type: 'slot' },
   { field: 'matlRaw', title: '材质', minWidth: 100, align: 'center' },
   { field: 'matlPcode', title: '图号', minWidth: 120, align: 'center' },
   { field: 'matlUnit', title: '计量单位', minWidth: 100, align: 'center' },
   { field: 'nowNum', title: '库存数量', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '' },
-  { field: 'price', title: '库存单价', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : '' },
+  { field: 'cardPrice', title: '库存单价', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : '' },
   { field: 'batchNo', title: '批次号', minWidth: 120, align: 'center' },
   { field: 'expirationDate', title: '到期日期', minWidth: 120, align: 'center' },
 ])
@@ -63,7 +62,9 @@ const columnsData = ref([
 /** 查询列表 */
 function getList() {
   loading.value = true
-  const params = { ...queryParams.value, isNotZeroArr: isNotZero.value ? 1 : 0 }
+  const params = { ...queryParams.value, ...maltParams.value }
+  params.isNotZero = !!params.isNotZeroArr?.length
+  delete params.isNotZeroArr
   paramMaltList(params).then(({ data }) => {
     tableData.value = data.list || []
     total.value = data.total || 0
@@ -77,22 +78,21 @@ function onSearch(params, pageConfig) {
   getList()
 }
 
-function handleIsNotZeroChange() {
-  queryParams.value = { ...queryParams.value, pageNum: 1 }
-  getList()
-}
-
 function handleSelectionChange(rows) {
   selectionData.value = rows
 }
 
-/** 打开弹窗（alreadyList 为已存在的明细行） */
-function show(alreadyList = []) {
+/** 打开弹窗（alreadyList 为已存在的明细行，params 为仓库过滤参数） */
+function show(alreadyList = [], params = {}) {
   visible.value = true
   selectionData.value = []
-  isNotZero.value = false
+  queryParams.value = { pageNum: 1, pageSize: 30, isNotZeroArr: [] }
+  maltParams.value = { ...params }
   alreadyCodes.value = (alreadyList || []).map(item => item.matlCode || item.smatlCode)
-  getList()
+  tableKey.value++  // 强制 el-pro-table 重建，内部 searchForm 回到 searchDefaultValue
+  proxy.$nextTick(() => {
+    getList()
+  })
 }
 
 function saveClick() {
@@ -113,4 +113,8 @@ defineExpose({
   show,
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.ep-pro-table__search-area .ep-form .ep-row .ep-col:last-child .ep-form-item .ep-form-item__label) {
+  display: none !important;
+}
+</style>

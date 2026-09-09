@@ -12,17 +12,6 @@
                 <span v-else>{{ formData.obCode }}</span>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="6">
-              <el-form-item prop="planCode" label="电子请领单：">
-                <el-input v-if="isFormShow" v-model.trim="formData.planCode" placeholder="请选择" readonly>
-                  <template #append>
-                    <el-button :icon="Search" style="height: 28px;" @click="handleRequisitionFrom"
-                      :disabled="dialogType !== 'create'"></el-button>
-                  </template>
-                </el-input>
-                <span v-else>{{ formData.planCode }}</span>
-              </el-form-item>
-            </el-col>-->
             <el-col :span="6">
               <el-form-item prop="pleaseDeptCode" label="请领部门：">
                 <el-tree-select
@@ -30,7 +19,7 @@
                   v-model="formData.pleaseDeptCode"
                   :data="deptOptions"
                   :props="{ label: 'deptName', children: 'children' }"
-                  node-key="id"
+                  node-key="deptCode"
                   check-strictly
                   clearable
                   placeholder="选择请领部门"
@@ -40,25 +29,25 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="plantId" label="用料地区：">
-                <el-select v-if="isFormShow" v-model="formData.plantId" value-key="id" clearable placeholder="请选择">
-                  <el-option v-for="item in plantOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+              <el-form-item prop="plantCode" label="用料地区：">
+                <el-select v-if="isFormShow" v-model="formData.plantCode" clearable placeholder="请选择">
+                  <el-option v-for="item in plantOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.plantName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="whId" label="仓库：">
-                <el-select v-if="isFormShow" v-model="formData.whId" value-key="whCode" clearable placeholder="请选择">
-                  <el-option v-for="item in whOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+              <el-form-item prop="depotCode" label="仓库：">
+                <el-select v-if="isFormShow" v-model="formData.depotCode" clearable placeholder="请选择">
+                  <el-option v-for="item in whOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.depotName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="partitionId" label="仓库分区：">
-                <el-select v-if="isFormShow" v-model="formData.partitionId" value-key="id" clearable placeholder="请选择" @change="whPartitionChange">
-                  <el-option v-for="item in partitionOptions" :key="item.label" :value="item.value" :label="item.label"></el-option>
+              <el-form-item prop="partitionCode" label="仓库分区：">
+                <el-select v-if="isFormShow" v-model="formData.partitionCode" clearable placeholder="请选择" @change="whPartitionChange">
+                  <el-option v-for="item in partitionOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.partitionName }}</span>
               </el-form-item>
@@ -111,7 +100,7 @@
       <div class="font_s" style="margin-bottom: 17px;">出库单明细信息</div>
       <!-- 表格数据 -->
       <div class="detail-toolbar">
-        <el-button type="primary" v-if="dialogType === 'create' || dialogType === 'modify'" :disabled="!formData.plantId?.plantCode || !formData.whId?.whCode || !formData.partitionId?.partitionCode" @click="addDetail">添加明细</el-button>
+        <el-button type="primary" :disabled="!formData.plantCode || !formData.depotCode || !formData.partitionCode" @click="addDetail">添加明细</el-button>
       </div>
       <table-index class="table-index" :selectionShow="dialogType === 'report' ? true : false"
         :tableJson="dialogType === 'report' ? rmstorRedReversalTableJson : matlTableJson" :tableData="tableData"
@@ -194,34 +183,13 @@ const getRmstorInternalGetMatls = (id) => {
   rmstorInternalListdetail(id).then(async ({ data }) => {
     formData.value = data
     tableData.value = data.rmstorOutBoundDtDTOList || []
-    // 编辑模式回填select选项
+    // 编辑模式：先加载仓库选项，再触发 watcher 自动级联
     if (dialogType.value === 'modify') {
-      // 回填用料地区
       if (data.plantCode) {
-        const plantItem = plantOptions.value.find(item => item.value.plantCode === data.plantCode)
-        if (plantItem) {
-          formData.value.plantId = { ...plantItem.value }
-          // 等待仓库选项加载
-          await proxy.$nextTick()
-          await getWhOptions()
-          // 回填仓库
-          if (data.depotCode) {
-            const whItem = whOptions.value.find(item => item.value.whCode === data.depotCode)
-            if (whItem) {
-              formData.value.whId = { ...whItem.value }
-              // 等待分区选项加载
-              await proxy.$nextTick()
-              await getPartitionOptions()
-              // 回填仓库分区
-              if (data.partitionCode) {
-                const partitionItem = partitionOptions.value.find(item => item.value.partitionCode === data.partitionCode)
-                if (partitionItem) {
-                  formData.value.partitionId = { ...partitionItem.value }
-                }
-              }
-            }
-          }
-        }
+        await getWhOptions()
+      }
+      if (data.depotCode) {
+        await getPartitionOptions()
       }
     }
   }).finally(() => {
@@ -237,6 +205,7 @@ function show(type = 'create', row = {}) {
   dialogType.value = type
   tableData.value = []
   isShow.value = false
+  isInitializing.value = true
   proxy.$nextTick(async () => {
     proxy.$refs.elForm && proxy.$refs.elForm.resetFields()
     if (type === 'create') {
@@ -246,22 +215,26 @@ function show(type = 'create', row = {}) {
       warehouseList()
       getPlantOptions()
       getDeptTree()
+      isInitializing.value = false
     } else if (type === 'modify') {
       title.value = '修改出库单信息'
       isFormShow.value = true
       getPlantOptions()
       getDeptTree()
-      getRmstorInternalGetMatls(row.obmtId)
+      await getRmstorInternalGetMatls(row.obmtId)
       plantList(row.idsCode)
       warehouseList()
+      isInitializing.value = false
     } else if (type === 'report') {
       title.value = '红冲出库单详情'
       isFormShow.value = false
-      getRmstorInternalGetMatls(row.obmtId)
+      await getRmstorInternalGetMatls(row.obmtId)
+      isInitializing.value = false
     } else if (type === 'details') {
       title.value = '出库单详情'
       isFormShow.value = false
-      getRmstorInternalGetMatls(row.obmtId)
+      await getRmstorInternalGetMatls(row.obmtId)
+      isInitializing.value = false
     }
   })
 }
@@ -270,9 +243,9 @@ const handleButtonClick = (code, data) => {
     // 选择物资
     choiceMatl: () => {
       let preWhHint = ''
-      if (!formData.value.plantId?.plantCode) {
+      if (!formData.value.plantCode) {
         preWhHint = '请选择地区！'
-      } else if (!formData.value.whId?.whCode) {
+      } else if (!formData.value.depotCode) {
         preWhHint = '请选择仓库！'
       } else if (!formData.value.approver) {
         preWhHint = '请选择审批人！'
@@ -281,14 +254,19 @@ const handleButtonClick = (code, data) => {
         proxy.$modal.msgWarning(preWhHint)
         return
       }
-      proxy.$refs.rmstorMatlDialog.show({ plantCode: formData.value.plantId?.plantCode, depotCode: formData.value.whId?.whCode }, tableData.value)
+      proxy.$refs.rmstorMatlDialog.show({ plantCode: formData.value.plantCode, depotCode: formData.value.depotCode }, tableData.value)
     },
   }
   eventObj[code] && eventObj[code]()
 }
 // 添加明细的按钮操作
 function addDetail() {
-  proxy.$refs.selectMatlRef.show(tableData.value)
+  const maltParams = {
+    plantCode: formData.value.plantCode || '',
+    depotCode: formData.value.depotCode || '',
+    partitionCode: formData.value.partitionCode || '',
+  }
+  proxy.$refs.selectMatlRef.show(tableData.value, maltParams)
 }
 
 /** 物资回填 */
@@ -327,13 +305,8 @@ const saveBtn = () => {
 const handleAdd = () => {
   let params = {
     ...formData.value,
-    plantCode: formData.value.plantId?.plantCode || '',
-    plantName: formData.value.plantId?.plantName || '',
-    depotCode: formData.value.whId?.whCode || '',
-    depotName: formData.value.whId?.whName || '',
-    partitionCode: formData.value.partitionId?.partitionCode || '',
-    partitionName: formData.value.partitionId?.partitionName || '',
     recvMatlApplyListDTOList: tableData.value,
+    rmstorOutBoundDtDTOList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
   }
   rmstorInternalcreate(params).then(({ message }) => {
@@ -347,12 +320,6 @@ const handleAdd = () => {
 const handleEdit = () => {
   let params = {
     ...formData.value,
-    plantCode: formData.value.plantId?.plantCode || '',
-    plantName: formData.value.plantId?.plantName || '',
-    depotCode: formData.value.whId?.whCode || '',
-    depotName: formData.value.whId?.whName || '',
-    partitionCode: formData.value.partitionId?.partitionCode || '',
-    partitionName: formData.value.partitionId?.partitionName || '',
     outBoundDtModifyParamList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
   }
@@ -401,6 +368,8 @@ const plantOptions = ref([])
 const whOptions = ref([])
 const partitionOptions = ref([])
 const deptOptions = ref([])
+// 初始化标记，show()中程序设置值时跳过tableData清空
+const isInitializing = ref(false)
 const approverClick = () => {
   proxy.$refs.userDialog.show()
 }
@@ -438,7 +407,7 @@ const trackNumber = async() =>{
 const getPlantOptions = async () => {
   try {
     const { data } = await plantDictList()
-    plantOptions.value = data ? data.length ? data.map(({plantCode, plantName, id}) => ({label: `${plantName}`, value: {plantName, plantCode, id}})) : [] : []
+    plantOptions.value = data ? data.length ? data.map(item => ({...item, label: item.plantName, value: item.plantCode})) : [] : []
   } catch (error) {
   }
 }
@@ -446,8 +415,9 @@ const getPlantOptions = async () => {
 // 仓库选项
 const getWhOptions = async () => {
   try {
-    const { data } = await warehouseDict({ plantId: formData.value.plantId.id })
-    whOptions.value = data ? data.length ? data.map(({whCode, whName, id}) => ({label: `${whName}`, value: {whName, whCode, id}})) : [] : []
+    const plantItem = plantOptions.value.find(i => i.value === formData.value.plantCode)
+    const { data } = await warehouseDict({ plantId: plantItem?.id })
+    whOptions.value = data ? data.length ? data.map(item => ({...item, label: item.whName, value: item.whCode})) : [] : []
   } catch (error) {
   }
 }
@@ -455,15 +425,16 @@ const getWhOptions = async () => {
 // 仓库分区选项
 const getPartitionOptions = async () => {
   try {
-    const { data } = await warehouseplantDictList({ whId: formData.value.whId.id })
-    partitionOptions.value = data ? data.length ? data.map(({partitionCode, partitionName, id, taxFlagCode, taxFlagName}) => ({label: `${partitionName}`, value: {partitionName, partitionCode, id, taxFlagCode, taxFlagName}})) : [] : []
+    const whItem = whOptions.value.find(i => i.value === formData.value.depotCode)
+    const { data } = await warehouseplantDictList({ whId: whItem?.id })
+    partitionOptions.value = data ? data.length ? data.map(item => ({...item, label: item.partitionName, value: item.partitionCode})) : [] : []
   } catch (error) {
   }
 }
 
 // 部门树
 function getDeptTree() {
-  deptTree().then(({ data }) => {
+  return deptTree().then(({ data }) => {
     let treeData = []
     if (data && data[0] && data[0].deptCode === '10000001') {
       treeData = data[0].children || []
@@ -471,42 +442,99 @@ function getDeptTree() {
       treeData = data || []
     }
     deptOptions.value = treeData
+    // 如果已有 pleaseDeptCode（编辑回填场景），重新匹配 name
+    if (formData.value.pleaseDeptCode) {
+      const node = findDeptNode(treeData, formData.value.pleaseDeptCode)
+      formData.value.pleaseDeptName = node?.deptName || ''
+    }
   })
 }
 
+// 递归在部门树里按 deptCode 找节点
+function findDeptNode(nodes, code) {
+  for (const node of nodes) {
+    if (node.deptCode === code) return node
+    if (node.children?.length) {
+      const found = findDeptNode(node.children, code)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+// watch 请领部门 code → 自动回填 name
+watch(() => formData.value?.pleaseDeptCode, (nval) => {
+  if (!nval) {
+    formData.value.pleaseDeptName = ''
+    return
+  }
+  const node = findDeptNode(deptOptions.value, nval)
+  formData.value.pleaseDeptName = node?.deptName || ''
+})
+
 // 仓库分区change事件
 const whPartitionChange = (val) => {
-  if (!!val && !!val.id) {
-    formData.value.taxFlagCode = val.taxFlagCode
-    formData.value.taxFlagName = val.taxFlagName
+  const partitionItem = partitionOptions.value.find(i => i.value === val)
+  if (partitionItem) {
+    formData.value.partitionName = partitionItem.partitionName
+    formData.value.taxFlagCode = partitionItem.taxFlagCode || ''
+    formData.value.taxFlagName = partitionItem.taxFlagName || ''
   } else {
+    formData.value.partitionName = ''
     formData.value.taxFlagCode = ''
     formData.value.taxFlagName = ''
   }
 }
 
 // 级联watch：用料地区变化 -> 清空仓库和分区，重新加载仓库选项
-watch(() => formData.value?.plantId, (nval) => {
+watch(() => formData.value?.plantCode, (nval) => {
+  if (!isInitializing.value) {
+    tableData.value = []
+  }
+  const plantItem = plantOptions.value.find(i => i.value === nval)
+  formData.value.plantName = plantItem?.plantName || ''
   whOptions.value = []
   partitionOptions.value = []
-  formData.value.whId = ''
-  formData.value.partitionId = ''
+  formData.value.depotCode = ''
+  formData.value.depotName = ''
+  formData.value.partitionCode = ''
+  formData.value.partitionName = ''
   formData.value.taxFlagCode = ''
   formData.value.taxFlagName = ''
-  if (!!nval && !!nval.id) {
+  if (!!nval) {
     getWhOptions()
   }
 })
 
+// watch：分区变化 -> 清空明细列表。depotCode watcher 会把 partitionCode 置空并已清空 tableData，
+// 这里用 skipClearTable 标记跳过联动触发的二次清空，只处理用户主动切分区的场景
+const skipClearTable = ref(false)
+
 // 级联watch：仓库变化 -> 清空分区，重新加载分区选项
-watch(() => formData.value?.whId, (nval) => {
+watch(() => formData.value?.depotCode, (nval) => {
+  if (!isInitializing.value) {
+    tableData.value = []
+    skipClearTable.value = true
+  }
+  const whItem = whOptions.value.find(i => i.value === nval)
+  formData.value.depotName = whItem?.whName || ''
   partitionOptions.value = []
-  formData.value.partitionId = ''
+  formData.value.partitionCode = ''
+  formData.value.partitionName = ''
   formData.value.taxFlagCode = ''
   formData.value.taxFlagName = ''
-  if (!!nval && !!nval.whCode) {
+  skipClearTable.value = false
+  if (!!nval) {
     getPartitionOptions()
   }
+})
+
+// watch：分区变化 -> 清空明细列表
+watch(() => formData.value?.partitionCode, (nval, oval) => {
+  if (isInitializing.value) return
+  if (nval === oval) return
+  if (skipClearTable.value) return
+  tableData.value = []
 })
 
 defineExpose({
@@ -536,7 +564,7 @@ defineExpose({
 }
 .detail-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
   padding: 10px 0 10px;

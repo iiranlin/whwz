@@ -45,7 +45,7 @@ export const matlTableJson = [
   { isShow: true, fixed: false, type: 'date', key: 'productionDate', prop: 'productionDate', label: '生产日期', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: 'slot', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, required: true, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
-  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(2) : '' },
+  { isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价（元）', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(2) : '' },
   { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(2) : '' },
   { isShow: true, fixed: false, type: '', key: 'noOutNum', prop: 'noOutNum', label: '未登卡数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
   { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
@@ -64,7 +64,7 @@ export const printMatlTableJson = [
   { isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称/规格型号', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '单位', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '数量', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '金额', align: 'center', width: 160 },
 ]
 
@@ -124,7 +124,7 @@ export const rmstorRedReversalTableJson = [
   { isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: 'slot', key: 'redNum', prop: 'redNum', label: '红冲数量', align: 'center', width: 160, },
-  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价（元）', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: 'slot', key: 'redAmount', prop: 'redAmount', label: '红冲金额（元）', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160 },
