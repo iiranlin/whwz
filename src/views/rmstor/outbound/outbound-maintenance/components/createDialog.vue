@@ -113,8 +113,8 @@
         <template #outAmount="{ scope }">
           <span>{{ calcOutAmount(scope.row) }}</span>
         </template>
-        <template #cardPrice="{ scope }">
-          <span>{{ scope.row.cardPrice != null && scope.row.cardPrice !== '' ? Number(scope.row.cardPrice).toFixed(2) : '' }}</span>
+        <template #price="{ scope }">
+          <span>{{ scope.row.price != null && scope.row.price !== '' ? Number(scope.row.price).toFixed(2) : '' }}</span>
         </template>
         <template #noOutNum="{ scope }">
           <span>{{ scope.row.noOutNum != null ? Number(scope.row.noOutNum).toFixed(4) : '' }}</span>
@@ -255,7 +255,7 @@ function show(type = 'create', row = {}) {
 /** 动态计算出库金额 outAmount = outNum * cardPrice */
 const calcOutAmount = (row, returnRaw = false) => {
   const num = Number(row.outNum) || 0
-  const price = Number(row.cardPrice) || 0
+  const price = Number(row.price) || 0
   const result = Number((num * price).toFixed(2))
   return returnRaw ? result : (result ? result.toFixed(2) : '')
 }
@@ -314,7 +314,7 @@ const saveBtn = () => {
       if (isTsNum) {
         return
       }
-      // 同步每行的 outAmount = outNum * cardPrice，确保提交给后端的值正确
+      // 同步每行的 outAmount = outNum * price
       tableData.value.forEach(row => {
         row.outAmount = calcOutAmount(row, true)
       })
