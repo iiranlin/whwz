@@ -52,10 +52,10 @@ const columnsData = ref([
   { field: "isNotZeroArr", title: " ", minWidth: 120, hideInTable: true },
   { field: 'matlType', title: '规格型号', minWidth: 160, align: 'left', type: 'slot' },
   { field: 'matlRaw', title: '材质', minWidth: 100, align: 'center' },
-  { field: 'matlPcode', title: '图号', minWidth: 120, align: 'center' },
+  { field: 'matlPicCode', title: '图号', minWidth: 120, align: 'center' },
   { field: 'matlUnit', title: '计量单位', minWidth: 100, align: 'center' },
   { field: 'nowNum', title: '库存数量', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '' },
-  { field: 'price', title: '库存单价', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : '' },
+  { field: 'cardPrice', title: '库存单价', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : '' },
   { field: 'batchNo', title: '批次号', minWidth: 120, align: 'center' },
   { field: 'expirationDate', title: '到期日期', minWidth: 120, align: 'center' },
 ])
