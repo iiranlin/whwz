@@ -51,7 +51,7 @@ const columnsData = ref([
   { field: "isNotZeroArr", title: "库存", minWidth: 160, hideInTable: true, searchable: true, searchType: 'checkbox', searchDefaultValue: [], searchProps: { options: [{ label: '库存不为0', value: '1' }] } },
   { field: 'matlType', title: '规格型号', minWidth: 160, align: 'left', type: 'slot' },
   { field: 'matlRaw', title: '材质', minWidth: 100, align: 'center' },
-  { field: 'matlPcode', title: '图号', minWidth: 120, align: 'center' },
+  { field: 'matlPicCode', title: '图号', minWidth: 120, align: 'center' },
   { field: 'matlUnit', title: '计量单位', minWidth: 100, align: 'center' },
   { field: 'nowNum', title: '库存数量', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '' },
   { field: 'cardPrice', title: '库存单价', minWidth: 120, align: 'right', formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : '' },

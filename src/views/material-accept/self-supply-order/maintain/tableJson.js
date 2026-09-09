@@ -9,7 +9,7 @@ export const statusOptions = [
   // { label: '已终止', value: '5' },
   // { label: '处理中', value: '6' },
   // { label: '已处理', value: '7' },
-  { label: '已推送', value: '8' },
+  { label: '已提交', value: '8' },
 ]
 
 // 是否含税
