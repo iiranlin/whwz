@@ -108,13 +108,19 @@
         </template>
         <template #outNum="{ scope }">
           <el-input-number v-if="dialogType === 'create'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
-          <span v-else>{{ scope.row.outNum }}</span>
+          <span v-else>{{ scope.row.outNum != null ? Number(scope.row.outNum).toFixed(4) : '' }}</span>
         </template>
         <template #outAmount="{ scope }">
           <span>{{ calcOutAmount(scope.row) }}</span>
         </template>
         <template #cardPrice="{ scope }">
-          <span>{{ scope.row.cardPrice != null ? Number(scope.row.cardPrice).toFixed(2) : '' }}</span>
+          <span>{{ scope.row.cardPrice != null && scope.row.cardPrice !== '' ? Number(scope.row.cardPrice).toFixed(2) : '' }}</span>
+        </template>
+        <template #noOutNum="{ scope }">
+          <span>{{ scope.row.noOutNum != null ? Number(scope.row.noOutNum).toFixed(4) : '' }}</span>
+        </template>
+        <template #nowNum="{ scope }">
+          <span>{{ scope.row.nowNum != null ? Number(scope.row.nowNum).toFixed(4) : '' }}</span>
         </template>
       </table-index>
     </div>

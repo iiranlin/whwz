@@ -47,8 +47,8 @@ export const matlTableJson = [
   { isShow: true, fixed: false, type: 'slot', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, required: true, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
   { isShow: true, fixed: false, type: 'slot', key: 'cardPrice', prop: 'cardPrice', label: '库存单价（元）', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: 'slot', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160, },
-  { isShow: true, fixed: false, type: '', key: 'noOutNum', prop: 'noOutNum', label: '未登卡数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
-  { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160, formatter: (val) => val != null ? Number(val).toFixed(4) : '' },
+  { isShow: true, fixed: false, type: 'slot', key: 'noOutNum', prop: 'noOutNum', label: '未登卡数量', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: 'slot', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160 },
   // { isShow: true, fixed: false, type: '', key: 'templateName', prop: 'templateName', label: '报账模板', align: 'center', width: 160 },
 ]
 
@@ -189,7 +189,7 @@ async function createRichColumns() {
     //   searchType: 'input',
     // },
     {
-      field: 'deptName',
+      field: 'pleaseDeptName',
       title: '领料部门',
       showOverflowTooltip: true,
       searchable: true,
@@ -277,7 +277,7 @@ async function createRichColumns() {
       align: 'center',
     },
     {
-      field: 'deptName',
+      field: 'pleaseDeptName',
       title: '领料部门',
       showOverflowTooltip: true,
       align: 'center',
