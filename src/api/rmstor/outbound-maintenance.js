@@ -166,3 +166,12 @@ export function paramMaltList(params) {
     params: { ...params }
   })
 }
+
+// 根据设备标号获取年度下出库金额
+export function getEquipOutTotalAmount(params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/equipDict/getEquipOutTotalAmount`,
+    method: "get",
+    params,
+  });
+}

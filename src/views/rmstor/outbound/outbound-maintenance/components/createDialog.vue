@@ -69,16 +69,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="iddCode" label="设备部件：">
-                <el-select v-if="isFormShow" v-model="formData.iddCode" placeholder="请选择" clearable :disabled="isShow"
-                  @change="handleiddChange">
-                  <el-option v-for="dict in plantLists" :key="dict.id" :label="dict.epPartName"
-                    :value="dict.epPartCode" />
-                </el-select>
-                <span v-else>{{ formData.iddName }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
               <el-form-item prop="receiveName" label="收料人：">
                 <el-input v-if="isFormShow" v-model="formData.receiveName" placeholder="请输入">
                   <template #append>
@@ -119,6 +109,12 @@
           <el-input-number v-if="dialogType != 'details'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
           <span v-else>{{ scope.row.outNum }}</span>
         </template>
+        <template #outAmount="{ scope }">
+          <span>{{ calcOutAmount(scope.row) }}</span>
+        </template>
+        <template #cardPrice="{ scope }">
+          <span>{{ scope.row.cardPrice != null ? Number(scope.row.cardPrice).toFixed(2) : '' }}</span>
+        </template>
       </table-index>
     </div>
     <template #footer>
@@ -141,7 +137,7 @@ import {
   rmstorInternalListdetail,
   rmstorInternalcreate, rmstorInternalmodify,generateCode,
   rmstorwriteBack, equipPartListAll, equipPartList,
-  plantDictList, warehouseDict, warehouseplantDictList
+  plantDictList, warehouseDict, warehouseplantDictList, getEquipOutTotalAmount
 } from '@/api/rmstor/outbound-maintenance'
 import { matlTableJson, rmstorRedReversalTableJson } from "../tableJson"
 import { getCookie } from '@/utils/auth'
@@ -158,7 +154,10 @@ const ids = ref([])
 const selectionData = ref([])
 const single = ref(true)
 const multiple = ref(true)
-
+// 单台单台设备年度下的定额
+const quota = ref(0)
+// 本年度出库单金额
+const currentYearAmount = ref(0)
 // 接收参数并指定类型（可选）
 const props = defineProps({
 
@@ -222,7 +221,7 @@ function show(type = 'create', row = {}) {
       getPlantOptions()
       getDeptTree()
       await getRmstorInternalGetMatls(row.obmtId)
-      plantList(row.idsCode)
+      getYearAmount(row.idsCode)
       warehouseList()
       isInitializing.value = false
     } else if (type === 'report') {
@@ -238,6 +237,14 @@ function show(type = 'create', row = {}) {
     }
   })
 }
+/** 动态计算出库金额 outAmount = outNum * cardPrice */
+const calcOutAmount = (row, returnRaw = false) => {
+  const num = Number(row.outNum) || 0
+  const price = Number(row.cardPrice) || 0
+  const result = Number((num * price).toFixed(2))
+  return returnRaw ? result : (result ? result.toFixed(2) : '')
+}
+
 const handleButtonClick = (code, data) => {
   const eventObj = {
     // 选择物资
@@ -292,12 +299,29 @@ const saveBtn = () => {
       if (isTsNum) {
         return
       }
-      //校验
-      proxy.$modal.loading()
-      if (dialogType.value === 'create') {
-        handleAdd()
+      // 同步每行的 outAmount = outNum * cardPrice，确保提交给后端的值正确
+      tableData.value.forEach(row => {
+        row.outAmount = calcOutAmount(row, true)
+      })
+      // 判断该单台设备年度下的定额与本年度的出库单金额进行比对，不强制卡控。
+      if (currentYearAmount.value > quota.value) {
+        proxy.$modal.confirm(`${formData.value.idsName}设备出库金额已超出本年度定额，是否继续？`).then(() => {
+          //校验
+          proxy.$modal.loading()
+          if (dialogType.value === 'create') {
+            handleAdd()
+          } else {
+            handleEdit()
+          }
+        })
       } else {
-        handleEdit()
+        //校验
+        proxy.$modal.loading()
+        if (dialogType.value === 'create') {
+          handleAdd()
+        } else {
+          handleEdit()
+        }
       }
     }
   })
@@ -351,17 +375,26 @@ function handleSelectionChange(selection) {
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
-const plantLists = ref([])
 // 设备部件
-const plantList = async (val) => {
-  const { data } = await equipPartList({equipCode:val === undefined ? 'xx' : val})
-  plantLists.value = data.list
+const getYearAmount = async (val) => {
+  let params = {
+    equipCode:val === undefined ? 'xx' : val,
+    yearCode: new Date().getFullYear(),
+  }
+  let res = await getEquipOutTotalAmount(params)
+  if(res?.data){
+    currentYearAmount.value = res.data.totalAmount || 0
+  }
 }
 const warehouseLists = ref([])
 // 单台设备
 const warehouseList = async () => {
   const { data } = await equipPartListAll()
   warehouseLists.value = data
+  // 如果是编辑页面，则初始化进来的时候就获取设备定额
+  if (dialogType.value === 'modify') {
+    quota.value = warehouseLists.value.find(a => a.equipCode === val)?.quota || 0
+  }
 }
 
 const plantOptions = ref([])
@@ -388,11 +421,8 @@ const handleidsChange = (val) => {
   formData.value.idsCode = val
   formData.value.idsName = warehouseLists.value.find(a => a.equipCode === val)?.equipName
   formData.value.iddCode = ''
-  plantList(val)
-}
-const handleiddChange = (val) => {
-  formData.value.iddCode = val
-  formData.value.iddName = plantLists.value.find(a => a.epPartCode === val)?.epPartName
+  quota.value = warehouseLists.value.find(a => a.equipCode === val)?.quota || 0
+  getYearAmount(val)
 }
 //单号
 const trackNumber = async() =>{
