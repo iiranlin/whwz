@@ -5,19 +5,14 @@
       <div class="blob blob-1"></div>
       <div class="blob blob-2"></div>
       <div class="blob blob-3"></div>
-      <div class="grid-mask"></div>
 
       <div class="brand-content">
-        <div class="brand-logo-wrap">
-          <img class="brand-logo" :src="logoImg" alt="logo" />
-        </div>
+        <img class="brand-logo" :src="logoImg" alt="logo" />
         <div class="brand-title">{{ title }}</div>
         <div class="brand-divider"><span class="divider-dot"></span></div>
-        <div class="brand-subtitle">数字化物资管理平台</div>
+        <div class="brand-subtitle">武汉武铁机辆装备有限公司</div>
         <div class="brand-en">MATERIAL MANAGEMENT SYSTEM</div>
       </div>
-
-      <div class="brand-copyright">© 2026 武汉武铁机辆装备有限公司</div>
     </div>
 
     <!-- 右侧登录表单区 -->
@@ -98,7 +93,7 @@ import { login, getVerificationCode as getCodeApi, changePassword } from '@/api/
 import { generateUUID } from '@/utils'
 import { getCookie, setCookie, removeCookie } from '@/utils/auth'
 import useUserStore from '@/store/modules/user'
-import logoImg from '@/assets/logo/logo.png'
+import logoImg from '@/assets/logo/logo-transparent.png'
 
 const route = useRoute()
 const router = useRouter()
@@ -257,7 +252,7 @@ $text-secondary: #6b7280;
   background: #f5f7fb;
   overflow: hidden;
 
-  /* ============ 左侧品牌区 ============ */
+  /* ============ 左侧品牌区（方案A：深蓝渐变 + 透明徽章 + 标题） ============ */
   .brand-panel {
     position: relative;
     width: 58%;
@@ -301,18 +296,6 @@ $text-secondary: #6b7280;
       animation-delay: -12s;
     }
 
-    // 网格底纹
-    .grid-mask {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 44px 44px;
-      opacity: 0.5;
-    }
-
     .brand-content {
       position: relative;
       z-index: 1;
@@ -322,27 +305,13 @@ $text-secondary: #6b7280;
       text-align: center;
       padding: 0 40px;
 
-      .brand-logo-wrap {
-        width: 116px;
-        height: 116px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        // 外发光 + 内高光，强化视觉中心
-        box-shadow:
-          0 0 40px rgba(255, 255, 255, 0.18),
-          0 8px 30px rgba(0, 0, 0, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      .brand-logo {
+        width: 190px;
+        height: 190px;
+        object-fit: contain;
         margin-bottom: 32px;
-
-        .brand-logo {
-          width: 76px;
-          height: 76px;
-          object-fit: contain;
-        }
+        // 柔和投影提升立体感
+        filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.3));
       }
 
       .brand-title {
@@ -387,17 +356,6 @@ $text-secondary: #6b7280;
         letter-spacing: 6px;
         text-transform: uppercase;
       }
-    }
-
-    .brand-copyright {
-      position: absolute;
-      bottom: 28px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 12px;
-      letter-spacing: 1px;
     }
   }
 

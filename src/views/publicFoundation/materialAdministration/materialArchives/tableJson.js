@@ -42,45 +42,46 @@ export const columns = [
     searchable: true,
     searchType: "input"
   },
-  {
-    field: "unitWeight",
-    title: "物资单重",
-    minWidth: 100,
-    align: "center"
-  },
-  {
-    field: "trainTypeName",
-    title: "车型",
-    minWidth: 140
-  },
-  {
-    field: "exStandard",
-    title: "执行标准名称",
-    minWidth: 160
-  },
-  {
-    field: "materialCode",
-    title: "物料编号",
-    minWidth: 120
-  },
-  {
-    field: "standByattr5",
-    title: "技术平台",
-    minWidth: 100,
-    align: "center"
-  },
-  {
-    field: "standByattr3",
-    title: "是否集中编制",
-    minWidth: 120,
-    align: "center",
-    type: "dict",
-    requestOptions: async () => [
-      { value: "0", label: "否" },
-      { value: "1", label: "是" }
-    ],
-    optionsCacheKey: "material-matl:standbyattr3"
-  },
+  // 以下列暂不使用，注释隐藏（可恢复）
+  // {
+  //   field: "unitWeight",
+  //   title: "物资单重",
+  //   minWidth: 100,
+  //   align: "center"
+  // },
+  // {
+  //   field: "trainTypeName",
+  //   title: "车型",
+  //   minWidth: 140
+  // },
+  // {
+  //   field: "exStandard",
+  //   title: "执行标准名称",
+  //   minWidth: 160
+  // },
+  // {
+  //   field: "materialCode",
+  //   title: "物料编号",
+  //   minWidth: 120
+  // },
+  // {
+  //   field: "standByattr5",
+  //   title: "技术平台",
+  //   minWidth: 100,
+  //   align: "center"
+  // },
+  // {
+  //   field: "standByattr3",
+  //   title: "是否集中编制",
+  //   minWidth: 120,
+  //   align: "center",
+  //   type: "dict",
+  //   requestOptions: async () => [
+  //     { value: "0", label: "否" },
+  //     { value: "1", label: "是" }
+  //   ],
+  //   optionsCacheKey: "material-matl:standbyattr3"
+  // },
   {
     field: "auditDate",
     title: "发布日期",

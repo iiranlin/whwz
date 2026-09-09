@@ -52,7 +52,7 @@ import { columns, toolbarConfig } from "./tableJson"
 import Operate from "./components/operate"
 import RoleDialog from "./components/roleDialog"
 import ResetPwdDialog from "./components/resetPwdDialog"
-import { userPage, userDeleteBatch, unlockUser } from '@/api/base/user'
+import { userPage, userDeleteBatch, unlockUser, lockUserList } from '@/api/base/user'
 import { deptTree } from '@/api/base/dept'
 
 const { proxy } = getCurrentInstance()
@@ -119,8 +119,20 @@ function getList() {
     params.deptId = currentDeptId.value
   }
   userPage(params).then(({ data }) => {
-    tableData.value = data.list || data.records || []
-    total.value = data.total
+    const list = data.list || data.records || []
+    // 加载当前锁定账号，按 username 打标，锁定行“解锁”按钮可点
+    return lockUserList().then(({ data: lockedList }) => {
+      const lockMap = {}
+      ;(lockedList || []).forEach(item => {
+        lockMap[item.username] = item.key
+      })
+      list.forEach(row => {
+        row._locked = !!lockMap[row.username]
+        row._lockKey = lockMap[row.username] || ''
+      })
+      tableData.value = list
+      total.value = data.total
+    })
   }).finally(() => {
     loading.value = false
   })
@@ -156,7 +168,7 @@ function handleDelete() {
 /** 解锁 */
 function handleUnlock(row) {
   proxy.$modal.confirm('确定解锁该用户吗？').then(() => {
-    return unlockUser({ id: row.id })
+    return unlockUser([{ key: row._lockKey }])
   }).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     getList()

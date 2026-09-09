@@ -76,7 +76,7 @@ export const toolbarConfig = {
       code: 'unlock', name: '解锁', showInTop: false, showInRow: true,
       disabled: (selectedRows) => {
         const row = selectedRows[0] || {}
-        return row.status !== '1'
+        return !row._locked
       }
     }
   ]

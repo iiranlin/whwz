@@ -20,7 +20,7 @@ export const columns = [
     optionsCacheKey: "system-notice:publish"
   },
   {
-    field: "createUser",
+    field: "createName",
     title: "创建人",
     minWidth: 120
   },

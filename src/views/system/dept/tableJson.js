@@ -65,10 +65,11 @@ export const toolbarConfig = {
         return !row.id
       }
     },
-    {
-      code: 'batchModify', name: '批量修改', showInRow: false,
-      disabled: (selectedRows) => !selectedRows.length
-    },
+    // 需求「二、组织机构 1. 页面隐藏【批量修改】按钮」：隐藏该按钮，保留配置便于后续恢复
+    // {
+    //   code: 'batchModify', name: '批量修改', showInRow: false,
+    //   disabled: (selectedRows) => !selectedRows.length
+    // },
     { code: 'delete', name: '删除', type: 'primary' }
   ]
 }

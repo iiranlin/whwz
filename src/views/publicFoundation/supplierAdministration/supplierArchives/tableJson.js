@@ -7,13 +7,14 @@ const getSuTypeOptions = async () => {
 }
 
 export const columns = [
-  {
-    field: "suCode",
-    title: "供应商编号",
-    minWidth: 140,
-    searchable: true,
-    searchType: "input"
-  },
+  // 供应商编号列（已隐藏，需要时放开注释）
+  // {
+  //   field: "suCode",
+  //   title: "供应商编号",
+  //   minWidth: 140,
+  //   searchable: true,
+  //   searchType: "input"
+  // },
   {
     field: "suName",
     title: "供应商名称",
@@ -28,14 +29,15 @@ export const columns = [
     searchable: true,
     searchType: "input"
   },
-  {
-    field: "suSimpleName",
-    title: "供应商简称",
-    minWidth: 140
-  },
+  // 供应商简称列（已隐藏，需要时放开注释）
+  // {
+  //   field: "suSimpleName",
+  //   title: "供应商简称",
+  //   minWidth: 140
+  // },
   {
     field: "suBizCodeExpire",
-    title: "营业执照有效期",
+    title: "营业执照到期日期",
     minWidth: 120,
     align: "center",
     type: "date",
@@ -43,7 +45,7 @@ export const columns = [
   },
   {
     field: "suBizCode",
-    title: "营业执照编号",
+    title: "营业执照号",
     minWidth: 140,
     align: "center"
   },
@@ -51,6 +53,12 @@ export const columns = [
     field: "suTaxCode",
     title: "税务登记证编号",
     minWidth: 140,
+    align: "center"
+  },
+  {
+    field: "suRegisterAccount",
+    title: "注册资本（万元）",
+    minWidth: 120,
     align: "center"
   },
   // 供应商类型列（已隐藏，需要时放开注释）
@@ -110,20 +118,21 @@ export const columns = [
   //   ],
   //   optionsCacheKey: "supplier:status"
   // },
-  {
-    field: "bizStatus",
-    title: "业务状态",
-    minWidth: 90,
-    align: "center",
-    searchable: true,
-    searchType: "select",
-    type: "dict",
-    requestOptions: async () => [
-      { value: "0", label: "启用" },
-      { value: "1", label: "停用" }
-    ],
-    optionsCacheKey: "supplier:bizStatus"
-  },
+  // 业务状态列（已隐藏，需要时放开注释）
+  // {
+  //   field: "bizStatus",
+  //   title: "业务状态",
+  //   minWidth: 90,
+  //   align: "center",
+  //   searchable: true,
+  //   searchType: "select",
+  //   type: "dict",
+  //   requestOptions: async () => [
+  //     { value: "0", label: "启用" },
+  //     { value: "1", label: "停用" }
+  //   ],
+  //   optionsCacheKey: "supplier:bizStatus"
+  // },
   {
     field: "createDate",
     title: "创建时间",

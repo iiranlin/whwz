@@ -28,7 +28,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="联系方式：" prop="phone">
-            <el-input v-model="form.phone" placeholder="请输入联系方式" maxlength="11" />
+            <el-input v-model="form.phone" placeholder="请输入联系方式" maxlength="13" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -126,6 +126,20 @@ const data = reactive({
       }
     ],
     nickName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
+    phone: [
+      {
+        pattern: /^(1[3-9]\d{9}|0\d{2,3}-?\d{7,8})$/,
+        message: '联系方式格式不正确',
+        trigger: 'blur'
+      }
+    ],
+    email: [
+      {
+        pattern: /^[\w.%+-]+@[\w-]+(\.[\w-]+)+$/,
+        message: '电子邮箱格式不正确',
+        trigger: 'blur'
+      }
+    ],
     // rank: [{ required: true, message: '请选择数据权限级别', trigger: 'change' }],
   }
 })

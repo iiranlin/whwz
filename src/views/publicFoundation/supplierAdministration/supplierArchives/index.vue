@@ -52,7 +52,20 @@ function getList() {
 
 /** 搜索 */
 function onSearch(form, pageInfo) {
-  queryParams.value = { ...form, ...pageInfo }
+  // 运行时 pro-table 组件对 dateRange 不拆分起止，直接以字段名 createDate 上抛数组 [开始,结束]，
+  // 需显式拆成 createDateStart/createDateEnd，避免数组被序列化为 createDate[0]=... 导致后端绑定报错
+  const { createDate, ...rest } = form || {}
+  queryParams.value = { ...rest, ...pageInfo }
+  let start = '', end = ''
+  if (Array.isArray(createDate) && createDate.length) {
+    start = createDate[0]
+    end = createDate[1]
+  } else {
+    start = createDate || ''
+    end = createDate || ''
+  }
+  queryParams.value.createDateStart = start
+  queryParams.value.createDateEnd = end
   getList()
 }
 

@@ -1,33 +1,41 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="900px" top="8vh" append-to-body v-loading="loading">
     <el-form ref="elFormRef" :model="form" :rules="rules" label-width="140px" :disabled="disabled">
-      <el-divider content-position="left">基本信息</el-divider>
       <el-row>
+        <!-- 供应商编号（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="12">
           <el-form-item label="供应商编号：" prop="suCode">
             <el-input v-model="form.suCode" :disabled="type === 'create'" placeholder="创建时自动生成" />
           </el-form-item>
         </el-col>
+        -->
         <el-col :span="12">
           <el-form-item label="供应商名称：" prop="suName">
             <el-input v-model="form.suName" placeholder="请输入供应商名称" maxlength="150" />
           </el-form-item>
         </el-col>
+        <!-- 供应商简称（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="12">
           <el-form-item label="供应商简称：" prop="suSimpleName">
             <el-input v-model="form.suSimpleName" placeholder="请输入供应商简称" maxlength="50" />
           </el-form-item>
         </el-col>
+        -->
         <el-col :span="12">
           <el-form-item label="统一社会信用代码：" prop="suUnicode">
             <el-input v-model="form.suUnicode" placeholder="请输入统一社会信用代码" maxlength="50" />
           </el-form-item>
         </el-col>
+        <!-- 法定代表人（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="12">
           <el-form-item label="法定代表人：" prop="owner">
             <el-input v-model="form.owner" placeholder="请输入法定代表人" maxlength="50" />
           </el-form-item>
         </el-col>
+        -->
         <!-- 供应商类型（已隐藏，需要时放开注释） -->
         <!--
         <el-col :span="12">
@@ -39,14 +47,14 @@
         </el-col>
         -->
         <el-col :span="12">
-          <el-form-item label="营业执照编号：" prop="suBizCode">
-            <el-input v-model="form.suBizCode" placeholder="请输入营业执照编号" maxlength="50" />
+          <el-form-item label="营业执照号：" prop="suBizCode">
+            <el-input v-model="form.suBizCode" placeholder="请输入营业执照号" maxlength="50" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="营业执照有效期：" prop="suBizCodeExpire">
+          <el-form-item label="营业执照到期日期：" prop="suBizCodeExpire">
             <el-date-picker v-model="form.suBizCodeExpire" type="date" value-format="YYYY-MM-DD"
-              placeholder="请选择营业执照有效期" style="width: 100%" />
+              placeholder="请选择营业执照到期日期" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -81,8 +89,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="注册资金：" prop="suRegisterAccount">
-            <el-input v-model="form.suRegisterAccount" placeholder="请输入注册资金" maxlength="50" />
+          <el-form-item label="注册资本（万元）：" prop="suRegisterAccount">
+            <el-input v-model="form.suRegisterAccount" placeholder="请输入注册资本（万元）" maxlength="50" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -90,6 +98,8 @@
             <el-input v-model="form.suRegisterAddress" placeholder="请输入注册地址" maxlength="200" />
           </el-form-item>
         </el-col>
+        <!-- 业务状态（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="12">
           <el-form-item label="业务状态：" prop="bizStatus">
             <el-select v-model="form.bizStatus" placeholder="请选择业务状态" style="width: 100%">
@@ -98,11 +108,15 @@
             </el-select>
           </el-form-item>
         </el-col>
+        -->
+        <!-- 主营（已隐藏，需要时放开注释） -->
+        <!--
         <el-col :span="24">
           <el-form-item label="主营：" prop="suBizContent">
             <el-input v-model="form.suBizContent" type="textarea" :rows="2" placeholder="请输入主营内容" maxlength="500" />
           </el-form-item>
         </el-col>
+        -->
       </el-row>
 
       <!-- 联系信息（隐藏，需要时放开注释） -->
