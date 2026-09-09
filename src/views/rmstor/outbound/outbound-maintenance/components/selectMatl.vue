@@ -4,7 +4,7 @@
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" :data="tableData"
         :total="total" @search="onSearch" :show-checkbox="true" :grid-options="{ rowId: 'matlCode' }" :search-collapse-threshold="5"
-        :show-action="false" table-id="outbound-select-matl" :key="tableKey" @selection-change="handleSelectionChange">
+        :show-action="false" table-id="outbound-select-matl" :key="tableKey" v-loading="loading" @selection-change="handleSelectionChange">
         <template #matlType="{ row }">
           <span>{{ `${row.matlType}${row.matlRaw ? '/' + row.matlRaw : ''}${row.matlPcode ? '/' + row.matlPcode : ''}` }}</span>
         </template>

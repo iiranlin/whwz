@@ -135,10 +135,10 @@ const toolbarConfig = {
       name: '提交供货单',
       type: 'primary',
       showInTop: true,
-      // disabled: (selectedRows) => {
-      //   if (selectedRows.length === 0) return false
-      //   return selectedRows.some(a => a.status !== '3')
-      // },
+      disabled: (selectedRows) => {
+        if (selectedRows.length === 0) return false
+        return selectedRows.some(a => a.status !== '1')
+      },
     },
     // {
     //   code: 'detail',
@@ -297,10 +297,10 @@ const handlePush = (selectedRows) => {
     proxy.$modal.msgWarning('请至少选择一条数据')
     return
   }
-  // if (selectedRows.some(item => item.status !== '3')) {
-  //   proxy.$modal.msgWarning('只有已审核的数据才能推送')
-  //   return
-  // }
+  if (selectedRows.some(item => item.status !== '1')) {
+    proxy.$modal.msgWarning('当前选择数据不能提交供货单')
+    return
+  }
   proxy.$modal.confirm('您确定要推送所选供货单吗？').then(() => {
     const pdmIds = selectedRows.map(item => item.pdmId)
     pushPurchaseOrder(pdmIds).then(({ message }) => {

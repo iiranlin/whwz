@@ -123,7 +123,7 @@ const toolbarConfig = {
             showInTop: false,
             showInRow: true,
             disabled: (row) => {
-                if (isCloseFlag.value === '1') {
+                if (row[0].flag === '2') {
                     return true
                 } else {
                     return false

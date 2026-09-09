@@ -138,6 +138,12 @@
             <template #accPic="{row}">
               <el-link type="primary" @click="clickLink('accPic', row)">验收照片</el-link>
             </template>
+            <template #stkPrice="{row}">
+             {{ row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' }}
+            </template>
+            <template #cardPrice="{row}">
+             {{ row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' }}
+            </template>
             <template #standardAmount="{row}">
              {{ getStandardAmount(row)}}
             </template>
@@ -324,15 +330,15 @@ const columns = computed(() => [
   { field: "matlName", title: "物资名称", minWidth: 200, align: "center"},
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
-  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '', editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
-  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '', editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
+  { field: "paNum", title: "入库数量", minWidth: 120, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '', editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 4, "controls-position": "right", style: "width: 100%" } } },
+  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "stkPrice" },
   { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '', visible: createForm.value.ibSource === "0" },
-  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '', editRender: { name: "el-input", props: { type: "number", placeholder: "请输入" } } },
-  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '', editRender: { name: "el-input", props: { disabled: true, type: "number", placeholder: "自动计算" } } },
+  { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '',editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 2, "controls-position": "right", style: "width: 100%" } } },
+  { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "cardPrice" },
   { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", type: "slot", slotName: "standardAmount" },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center", editRender: { name: "el-input", props: { placeholder: "请输入" } }},
   { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date", editRender: {name: "el-date-picker", props: { valueFormat: "x", editable: false, placeholder: "请选择"}}},
-  { field: "validityPeriod", title: "有效期", minWidth: 120, align: "center", editRender: { name: "el-input", props: { placeholder: "请输入" } } },
+  { field: "validityPeriod", title: "有效期", minWidth: 120, align: "center", editRender: { name: "el-input-number", props: { placeholder: "请输入" } } },
   { field: "validityPeriodUnit", title: "有效期单位", minWidth: 120, align: "center", editRender: { name: "el-select", props: { placeholder: "请选择", options: validityPeriodUnitArr } } },
   { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center", type: "date", editRender: { name: "el-date-picker", props: { placeholder: "自动计算", readonly: true, } } },
   // { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: createForm.value.ibSource !== "0"},

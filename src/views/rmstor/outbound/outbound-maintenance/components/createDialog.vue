@@ -24,13 +24,14 @@
                   clearable
                   placeholder="选择请领部门"
                   style="width: 100%"
+                  :disabled="dialogType === 'modify'"
                 />
                 <span v-else>{{ formData.pleaseDeptName }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item prop="plantCode" label="用料地区：">
-                <el-select v-if="isFormShow" v-model="formData.plantCode" clearable placeholder="请选择">
+                <el-select v-if="isFormShow" v-model="formData.plantCode" clearable placeholder="请选择" :disabled="dialogType === 'modify'">
                   <el-option v-for="item in plantOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.plantName }}</span>
@@ -38,7 +39,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="depotCode" label="仓库：">
-                <el-select v-if="isFormShow" v-model="formData.depotCode" clearable placeholder="请选择">
+                <el-select v-if="isFormShow" v-model="formData.depotCode" clearable placeholder="请选择" :disabled="dialogType === 'modify'">
                   <el-option v-for="item in whOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.depotName }}</span>
@@ -46,7 +47,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="partitionCode" label="仓库分区：">
-                <el-select v-if="isFormShow" v-model="formData.partitionCode" clearable placeholder="请选择" @change="whPartitionChange">
+                <el-select v-if="isFormShow" v-model="formData.partitionCode" clearable placeholder="请选择" @change="whPartitionChange" :disabled="dialogType === 'modify'">
                   <el-option v-for="item in partitionOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
                 </el-select>
                 <span v-else>{{ formData.partitionName }}</span>
@@ -90,7 +91,7 @@
       <div class="font_s" style="margin-bottom: 17px;">出库单明细信息</div>
       <!-- 表格数据 -->
       <div class="detail-toolbar">
-        <el-button type="primary" :disabled="!formData.plantCode || !formData.depotCode || !formData.partitionCode" @click="addDetail">添加明细</el-button>
+        <el-button type="primary" v-if="dialogType === 'create'" :disabled="!formData.plantCode || !formData.depotCode || !formData.partitionCode" @click="addDetail">添加明细</el-button>
       </div>
       <table-index class="table-index" :selectionShow="dialogType === 'report' ? true : false"
         :tableJson="dialogType === 'report' ? rmstorRedReversalTableJson : matlTableJson" :tableData="tableData"
@@ -102,11 +103,11 @@
           <span>{{ - scope.row.outAmount }}</span>
         </template>
         <template #credCode="{ scope }">
-          <el-input v-if="dialogType != 'details'" v-model="scope.row.credCode" placeholder="请输入" clearable />
+          <el-input v-if="dialogType === 'create' || dialogType === 'modify'" v-model="scope.row.credCode" placeholder="请输入" clearable />
           <span v-else>{{ scope.row.credCode }}</span>
         </template>
         <template #outNum="{ scope }">
-          <el-input-number v-if="dialogType != 'details'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
+          <el-input-number v-if="dialogType === 'create'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
           <span v-else>{{ scope.row.outNum }}</span>
         </template>
         <template #outAmount="{ scope }">
@@ -179,10 +180,17 @@ const emit = defineEmits(['createSuccess']);
 //详情
 const getRmstorInternalGetMatls = (id) => {
   proxy.$modal.loading()
-  rmstorInternalListdetail(id).then(async ({ data }) => {
+  return rmstorInternalListdetail(id).then(async ({ data }) => {
     formData.value = data
     tableData.value = data.rmstorOutBoundDtDTOList || []
-    // 编辑模式：先加载仓库选项，再触发 watcher 自动级联
+    // 字段名兼容：后端可能返回 deptCode/deptId，前端用 pleaseDeptCode
+    if (!formData.value.pleaseDeptCode) {
+      formData.value.pleaseDeptCode = data.deptCode || data.deptId || undefined
+    }
+    if (!formData.value.pleaseDeptName) {
+      formData.value.pleaseDeptName = data.deptName || undefined
+    }
+    // 编辑模式：先加载仓库分区选项（plantOptions 已在 show 中先加载好）
     if (dialogType.value === 'modify') {
       if (data.plantCode) {
         await getWhOptions()
@@ -218,11 +226,12 @@ function show(type = 'create', row = {}) {
     } else if (type === 'modify') {
       title.value = '修改出库单信息'
       isFormShow.value = true
-      getPlantOptions()
-      getDeptTree()
+      // 顺序加载：确保所有 options 和 formData 都就绪后再触发回显
+      await getPlantOptions()
+      await getDeptTree()
       await getRmstorInternalGetMatls(row.obmtId)
       getYearAmount(row.idsCode)
-      warehouseList()
+      warehouseList(row.idsCode)
       isInitializing.value = false
     } else if (type === 'report') {
       title.value = '红冲出库单详情'
@@ -345,6 +354,7 @@ const handleEdit = () => {
   let params = {
     ...formData.value,
     outBoundDtModifyParamList: tableData.value,
+    rmstorOutBoundDtDTOList: tableData.value,
     yearMonth: warehouseGetYear?.yearMonth,
   }
   rmstorInternalmodify(params).then(({ message }) => {
@@ -363,10 +373,13 @@ const redStamp = async () => {
   let params = {
     obdtIds: selectionData.value?.map(item => item.obdtId),
   }
-  const { message } = await rmstorwriteBack(params)
-  proxy.$modal.msgSuccess(message)
-  visible.value = false
-  emit('createSuccess')
+  rmstorwriteBack(params).then(({ message }) => {
+    proxy.$modal.msgSuccess(message)
+    visible.value = false
+    emit('createSuccess')
+  }).finally(() => {
+    proxy.$modal.closeLoading()
+  })
 }
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
@@ -388,7 +401,7 @@ const getYearAmount = async (val) => {
 }
 const warehouseLists = ref([])
 // 单台设备
-const warehouseList = async () => {
+const warehouseList = async (val) => {
   const { data } = await equipPartListAll()
   warehouseLists.value = data
   // 如果是编辑页面，则初始化进来的时候就获取设备定额
@@ -463,8 +476,8 @@ const getPartitionOptions = async () => {
 }
 
 // 部门树
-function getDeptTree() {
-  return deptTree().then(({ data }) => {
+const getDeptTree = async () => {
+  return await deptTree().then(({ data }) => {
     let treeData = []
     if (data && data[0] && data[0].deptCode === '10000001') {
       treeData = data[0].children || []
@@ -523,14 +536,17 @@ watch(() => formData.value?.plantCode, (nval) => {
   }
   const plantItem = plantOptions.value.find(i => i.value === nval)
   formData.value.plantName = plantItem?.plantName || ''
-  whOptions.value = []
-  partitionOptions.value = []
-  formData.value.depotCode = ''
-  formData.value.depotName = ''
-  formData.value.partitionCode = ''
-  formData.value.partitionName = ''
-  formData.value.taxFlagCode = ''
-  formData.value.taxFlagName = ''
+  if (!isInitializing.value) {
+    // 用户主动切换用料地区：清空所有下游字段
+    whOptions.value = []
+    partitionOptions.value = []
+    formData.value.depotCode = ''
+    formData.value.depotName = ''
+    formData.value.partitionCode = ''
+    formData.value.partitionName = ''
+    formData.value.taxFlagCode = ''
+    formData.value.taxFlagName = ''
+  }
   if (!!nval) {
     getWhOptions()
   }
@@ -548,11 +564,14 @@ watch(() => formData.value?.depotCode, (nval) => {
   }
   const whItem = whOptions.value.find(i => i.value === nval)
   formData.value.depotName = whItem?.whName || ''
-  partitionOptions.value = []
-  formData.value.partitionCode = ''
-  formData.value.partitionName = ''
-  formData.value.taxFlagCode = ''
-  formData.value.taxFlagName = ''
+  if (!isInitializing.value) {
+    // 用户主动切换仓库：清空分区
+    partitionOptions.value = []
+    formData.value.partitionCode = ''
+    formData.value.partitionName = ''
+    formData.value.taxFlagCode = ''
+    formData.value.taxFlagName = ''
+  }
   skipClearTable.value = false
   if (!!nval) {
     getPartitionOptions()
