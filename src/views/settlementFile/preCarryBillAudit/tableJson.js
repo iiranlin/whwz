@@ -8,45 +8,20 @@ export const tableJson = [
   {searchType: '', field: 'flag', title: '单据状态', align: 'center',},
 
   // 搜索
-  {field: 'yearMonth', title: '财务年月', searchType: 'date',dateType: "month",searchable: true,hideInTable:true},
+  {field: 'yearMonth', title: '财务年月', searchType: 'date',dateType: "month",searchable: true,hideInTable:true,searchProps:{type: "month", valueFormat: "YYYY-MM"}},
   {field: 'billType', title: '单据类型', searchType: 'select',searchable: true,hideInTable:true,searchProps:{
     options:[
     {value: "入库单", label: "入库单"},
     {value: "出库单", label: "出库单"},
     {value: "退料单", label: "退料单"},
     {value: "移库单", label: "移库单"},
-    {value: "调拨(销售)单", label: "调拨(销售)单"},
     {value: "调整单", label: "调整单"},
-    {value: "调价单", label: "调价单"},
   ]
   }},
   {field: 'billCode', title: '单据号', searchType: 'input',searchable: true,hideInTable:true},
-  {field: 'isNoStorageAllotFlag', title: '单据状态', searchType: 'select',searchable: true,hideInTable:true,dependsOn: ['billType'],searchProps:{
-    options:[],
+  {field: 'isNoStorageAllotFlag', title: '单据状态', searchType: 'select',searchable: true,hideInTable:true,searchProps:{
+    options:[{ value: "0", label: "未登卡" }],
     clearable:true,
-  }, async onDependencyChange({
-      form,
-      changedField,
-      setFieldValue,
-      setFieldProps,
-  }) {
-      if (changedField !== 'billType') return
-      if (!form.billType) {
-        setFieldProps('isNoStorageAllotFlag',{options:[]})
-        setFieldValue('isNoStorageAllotFlag','')
-        return
-      }
-      const isDiaoBo = form.billType === "调拨(销售)单";
-      const flagOptions = [{ value: "0", label: "未登卡" }];
-      if (isDiaoBo) {
-        flagOptions.push({ value: "1", label: "当月末入库调拨单" });
-      }
-      setFieldProps('isNoStorageAllotFlag',{options:flagOptions})
-      if (!isDiaoBo) {
-       setFieldValue('isNoStorageAllotFlag','')
-      }
-      setFieldProps('depotCode',{options:depotOptions})
-      setFieldValue('depotCode','')
   }},
 ]
 

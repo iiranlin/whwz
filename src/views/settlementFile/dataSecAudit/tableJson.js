@@ -28,7 +28,7 @@ export const tableJson = [
   {field: 'plantCode', title: '用料地区', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'depotCode', title: '仓库', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'partitionCode', title: '仓库分区', searchType: 'select',searchable: true,hideInTable:true},
-  {field: 'verifyType', title: '校验类别', searchType: 'select',searchable: true,hideInTable:true,searchPorps:{
+  {field: 'verifyType', title: '校验类别', searchType: 'select',searchable: true,hideInTable:true,searchProps:{
     options:[
     {value:1, label: "数量"},
     {value:0, label: "金额"}
@@ -65,7 +65,7 @@ export const tablePriceJson = [
   {field: 'plantCode', title: '用料地区', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'depotCode', title: '仓库', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'partitionCode', title: '仓库分区', searchType: 'select',searchable: true,hideInTable:true},
-  {field: 'verifyType', title: '校验类别', searchType: 'select',searchable: true,hideInTable:true,searchPorps:{
+  {field: 'verifyType', title: '校验类别', searchType: 'select',searchable: true,hideInTable:true,searchProps:{
     options:[
     {value:1, label: "数量"},
     {value:0, label: "金额"}

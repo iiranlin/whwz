@@ -13,8 +13,7 @@
       @action="onAction"
       :data="tableData"
       :total="total"
-      @search="getList"
-      @reset="getList"
+      @search="handleQuery"
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
@@ -91,10 +90,24 @@ const detailVisible = ref(false);
 const currentData = ref({});
 const rowData = ref([]);
 
+// 财务年月统一转 yyyyMM（兼容登录月份 yyyy-MM/yyyyMM 与月份选择器值），供后端按 YEAR_MONTH 过滤
+const formatYearMonth = (val) => {
+  const s = String(val ?? "").trim();
+  if (!s) return "";
+  let m = s.match(/^(\d{4})-(\d{1,2})/);
+  if (m) return m[1] + (m[2].length < 2 ? "0" + m[2] : m[2]);
+  m = s.match(/^(\d{4})(\d{2})/);
+  if (m) return m[1] + m[2];
+  return s;
+};
+
+const defaultYm = formatYearMonth(getCookie("warehouseYearMonth"));
+
 const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 30,
+    yearMonth: defaultYm,
   },
   formSelectData: {
     isNoStorageAllotFlag: [{ value: "0", label: "未登卡" }],
@@ -107,7 +120,8 @@ const { dictList, dictMap } = useDict("pre_carry_type");
 selectList.value = dictList;
 
 const defaultSearchForm = {
-  yearMonth: getCookie("warehouseYearMonth"),
+  // 展示给月份选择器的值为 YYYY-MM（查询时 handleQuery 再统一转 yyyyMM）
+  yearMonth: defaultYm ? `${defaultYm.slice(0, 4)}-${defaultYm.slice(4)}` : "",
 };
 
 /** 查询列表 */
@@ -125,21 +139,6 @@ const getList = async () => {
       loading.value = false;
     });
 };
-
-// /** 搜索按钮操作 */
-// const handleQuery = (data) => {
-//   let res;
-//   if (data.yearMonth) {
-//     res = { ...data };
-//     res.yearMonth = res.yearMonth.split("-").slice(0, 2).join("");
-//   } else {
-//     res = { ...data };
-//   }
-
-//   queryParams.value.pageNum = 1;
-//   queryParams.value = Object.assign({}, queryParams.value, res);
-//   getList();
-// };
 
 // /** 重置按钮操作 */
 // const resetQuery = (data) => {
@@ -164,6 +163,23 @@ const getList = async () => {
 //     }
 //   }
 // };
+
+/** 查询/重置/翻页统一入口：接收 pro-table 的检索条件与分页参数，合并进 queryParams 后请求 */
+const handleQuery = (params = {}, pager = {}) => {
+  const query = { ...queryParams.value };
+  Object.keys(params).forEach((k) => {
+    const v = params[k];
+    if (v === "" || v === null || v === undefined) {
+      delete query[k];
+    } else {
+      query[k] = k === "yearMonth" ? formatYearMonth(v) : v;
+    }
+  });
+  query.pageNum = pager.pageNum || query.pageNum || 1;
+  query.pageSize = pager.pageSize || query.pageSize || 30;
+  queryParams.value = query;
+  getList();
+};
 
 function handleSelectionChange(selection) {
   selectionData.value = selection;
