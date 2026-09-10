@@ -27,7 +27,9 @@
         >
           <template #action="{ row }">
             <el-button type="primary" link :disabled="row.flag === '2'" @click="handleAction({code: 'edit', row})">修改</el-button>
-            <el-button type="primary" link @click="handleAction({code: 'redReversal', row})">红冲</el-button>
+            <el-button type="primary" link :disabled="row.writeBackFlag === '1' || !!row.wbRmBillCode || row.flag !== '2'" @click="handleAction({code: 'redReversal', row})">红冲</el-button>
+
+            <!-- <el-button type="primary" link @click="handleAction({code: 'redReversal', row})">红冲</el-button> -->
             <el-button v-if="row.flag === '2' && !row.invoiceCode" type="primary" link @click="handleAction({code: 'addInvoiceCode', row})">补充发票号</el-button>
           </template>
         </el-pro-table>
@@ -273,7 +275,7 @@ const toolBarConfig = {
     { code: 'del', name: "删除", type: "primary", showInRow: false, showInTop: true, },
     { code: 'board', name: "登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
     { code: 'revoke', name: "撤销登卡", type: "primary", showInRow: false, showInTop: !(byCodeObj.value["32"] === "1")},
-    { code: 'redReversalTop', name: "红冲", type: "primary", showInRow: false, showInTop: true },
+    // { code: 'redReversalTop', name: "红冲", type: "primary", showInRow: false, showInTop: true },
     { code: 'redReversal', name: "红冲", type: "primary", showInRow: true, showInTop: false },
     { code: 'edit', name: "修改", type: "primary", showInRow: true, showInTop: false, disabled: ([row, ...rows]) => row.flag === "2" },
     { code: 'print1', name: "打印", type: "primary", showInRow: false, showInTop: true, },
@@ -718,14 +720,14 @@ const handleAction = ({code, name, row}) => {
     handleExport()
   }
 
-  if (code === "redReversalTop") {
-    if (!!!tableSelectedData.value.length || tableSelectedData.value.length > 1) {
-      ElMessage.error("请选择一条数据！");
-      return;
-    }
-    currentData.value = {...tableSelectedData.value[0]};
-    redReversalVisible.value = true;
-  }
+  // if (code === "redReversalTop") {
+  //   if (!!!tableSelectedData.value.length || tableSelectedData.value.length > 1) {
+  //     ElMessage.error("请选择一条数据！");
+  //     return;
+  //   }
+  //   currentData.value = {...tableSelectedData.value[0]};
+  //   redReversalVisible.value = true;
+  // }
 
   if (code === "redReversal") {
     if (row.writeBackFlag === "1" || !!row.wbRmBillCode || row.flag !== "2") {
