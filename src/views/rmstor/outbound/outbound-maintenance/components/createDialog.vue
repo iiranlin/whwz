@@ -95,7 +95,8 @@
       </div>
       <table-index class="table-index" :selectionShow="dialogType === 'report' ? true : false"
         :tableJson="dialogType === 'report' ? rmstorRedReversalTableJson : matlTableJson" :tableData="tableData"
-        :idName="idName" @handleButtonClick="handleButtonClick" @handleSelectionChange="handleSelectionChange">
+        :tableButtonJson="dialogType === 'create' ? matlTableButtonJson : []"
+        :operationWidth="'80'" :idName="idName" @handleButtonClick="handleButtonClick" @handleSelectionChange="handleSelectionChange">
         <template #redNum="{ scope }">
           <span>{{ - scope.row.outNum }}</span>
         </template>
@@ -146,7 +147,7 @@ import {
   rmstorwriteBack, equipPartListAll, equipPartList,
   plantDictList, warehouseDict, warehouseplantDictList, getEquipOutTotalAmount
 } from '@/api/rmstor/outbound-maintenance'
-import { matlTableJson, rmstorRedReversalTableJson } from "../tableJson"
+import { matlTableJson, matlTableButtonJson, rmstorRedReversalTableJson } from "../tableJson"
 import { getCookie } from '@/utils/auth'
 import { deptTree } from '@/api/base/dept'
 const warehouseGetYear = getCookie('warehouseGetYear') && JSON.parse(getCookie('warehouseGetYear'))
@@ -189,21 +190,33 @@ const getRmstorInternalGetMatls = (id) => {
   return rmstorInternalListdetail(id).then(async ({ data }) => {
     formData.value = data
     tableData.value = data.rmstorOutBoundDtDTOList || []
-    // 字段名兼容：后端可能返回 deptCode/deptId，前端用 pleaseDeptCode
+    // 字段名兼容：后端可能返回不同字段名，统一映射到前端期望字段
+    // 请领部门：后端 deptCode/deptId → 前端 pleaseDeptCode；后端 deptName → 前端 pleaseDeptName
     if (!formData.value.pleaseDeptCode) {
       formData.value.pleaseDeptCode = data.deptCode || data.deptId || undefined
     }
     if (!formData.value.pleaseDeptName) {
       formData.value.pleaseDeptName = data.deptName || undefined
     }
-    // 编辑模式：先加载仓库分区选项（plantOptions 已在 show 中先加载好）
-    if (dialogType.value === 'modify') {
-      if (data.plantCode) {
-        await getWhOptions()
-      }
-      if (data.depotCode) {
-        await getPartitionOptions()
-      }
+    // 所有模式都加载级联 options，确保 name 字段能回填
+    if (data.plantCode) {
+      await getWhOptions()
+    }
+    if (data.depotCode) {
+      await getPartitionOptions()
+    }
+    // name 字段兜底：如果后端没返回 name，从 options 里匹配
+    if (!formData.value.plantName && plantOptions.value.length) {
+      const p = plantOptions.value.find(i => i.value === formData.value.plantCode)
+      formData.value.plantName = p?.plantName || p?.label || ''
+    }
+    if (!formData.value.depotName && whOptions.value.length) {
+      const w = whOptions.value.find(i => i.value === formData.value.depotCode)
+      formData.value.depotName = w?.whName || w?.label || ''
+    }
+    if (!formData.value.partitionName && partitionOptions.value.length) {
+      const p = partitionOptions.value.find(i => i.value === formData.value.partitionCode)
+      formData.value.partitionName = p?.partitionName || p?.label || ''
     }
   }).finally(() => {
     proxy.$modal.closeLoading()
@@ -242,11 +255,17 @@ function show(type = 'create', row = {}) {
     } else if (type === 'report') {
       title.value = '红冲出库单详情'
       isFormShow.value = false
+      // 先加载基础 options，确保 name 字段能从 options 里匹配回填
+      await getPlantOptions()
+      await getDeptTree()
       await getRmstorInternalGetMatls(row.obmtId)
       isInitializing.value = false
     } else if (type === 'details') {
       title.value = '出库单详情'
       isFormShow.value = false
+      // 先加载基础 options，确保 name 字段能从 options 里匹配回填
+      await getPlantOptions()
+      await getDeptTree()
       await getRmstorInternalGetMatls(row.obmtId)
       isInitializing.value = false
     }
@@ -260,8 +279,17 @@ const calcOutAmount = (row, returnRaw = false) => {
   return returnRaw ? result : (result ? result.toFixed(2) : '')
 }
 
-const handleButtonClick = (code, data) => {
+const handleButtonClick = (code, scope) => {
   const eventObj = {
+    // 删除行
+    delete: () => {
+      const row = scope.row
+      const idx = tableData.value.findIndex(item => item[idName.value] === row[idName.value])
+      if (idx !== -1) {
+        tableData.value.splice(idx, 1)
+        proxy.$modal.msgSuccess('删除成功')
+      }
+    },
     // 选择物资
     choiceMatl: () => {
       let preWhHint = ''

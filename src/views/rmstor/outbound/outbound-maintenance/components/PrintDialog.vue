@@ -22,7 +22,7 @@
             </tr>
             <tr>
               <td class="td" colspan="4">仓库：{{ item.depotName }}</td>
-              <td class="td" colspan="4">部件号：{{ item.iddCode }}</td>
+              <!-- <td class="td" colspan="4">部件号：{{ item.iddCode }}</td> -->
             </tr>
           </tbody>
         </table>

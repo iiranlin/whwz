@@ -207,16 +207,19 @@ async function createRichColumns() {
     {
       field: "plantName",
       title: "用料地区",
+      align: 'center',
       showOverflowTooltip: true,
     },
     {
       field: "depotName",
       title: "仓库",
+      align: 'center',
       showOverflowTooltip: true,
     },
     {
       field: "partitionName",
       title: "仓库分区",
+      align: 'center',
       showOverflowTooltip: true,
     },
     {
@@ -296,12 +299,12 @@ async function createRichColumns() {
       searchType: 'input',
       align: 'center',
     },
-    {
-      field: 'iddCode',
-      title: '设备部件',
-      showOverflowTooltip: true,
-      align: 'center',
-    },
+    // {
+    //   field: 'iddCode',
+    //   title: '设备部件',
+    //   showOverflowTooltip: true,
+    //   align: 'center',
+    // },
     {
       field: 'matlCode',
       title: '物资编号',

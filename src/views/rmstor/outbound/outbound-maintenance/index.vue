@@ -235,9 +235,8 @@ const onAction = ({ code, row, selectedRows }) => {
             handlePrint(row, selectedRows)
         },
         // 导出
-        export: (row, selectedRows) => {
-            const form = proTableRef.value?.getSearchForm?.()
-            const params = proxy.addDateRange(Object.assign({}, form, { obmtId: selectedRows.map(item => item.obmtId)?.join(',') }))
+        export: () => {
+            const params = proxy.addDateRange(Object.assign({}, { obmtId: selectedRows.map(item => item.obmtId)?.join(',') }))
             proxy.$download.name(rmstorInternalExport, params)
         },
         //详情
