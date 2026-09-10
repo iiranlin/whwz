@@ -284,7 +284,16 @@ const handleButtonClick = (code, scope) => {
     // 删除行
     delete: () => {
       const row = scope.row
-      const idx = tableData.value.findIndex(item => item[idName.value] === row[idName.value])
+      const rowIndex = scope.$index
+      // 优先用唯一 id 匹配；新增行没有 obdtId 时用 $index 兜底
+      let idName = 'cardId'
+      const rowId = row[idName]
+      let idx = rowId != null
+        ? tableData.value.findIndex(item => item[idName] === rowId)
+        : -1
+      if (idx === -1 && rowIndex != null && rowIndex >= 0) {
+        idx = rowIndex
+      }
       if (idx !== -1) {
         tableData.value.splice(idx, 1)
         proxy.$modal.msgSuccess('删除成功')
@@ -328,7 +337,7 @@ const saveBtn = () => {
   proxy.$refs.elForm.validate(valid => {
     if (valid) {
       if (!tableData.value.length) {
-        proxy.$modal.msgWarning(`请先输入调拨单明细内容！`)
+        proxy.$modal.msgWarning(`请先添加出库单明细内容！`)
         return
       }
       let isTsNum = false
