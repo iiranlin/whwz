@@ -3,7 +3,7 @@
   <ep-dialog class="ep-dialog-list" title="选择出库单明细信息" iconTitle="form" v-model="visible" width="85vw" top="5vh" append-to-body>
     <div class="sso-front-table-container app-container">
       <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" :data="tableData"
-        :total="total" @search="onSearch" :show-checkbox="true" :grid-options="{ rowId: 'matlCode' }" :search-collapse-threshold="5"
+        :total="total" @search="onSearch" :show-checkbox="true" :grid-options="{ rowId: 'cardId' }" :search-collapse-threshold="5"
         :show-action="false" table-id="outbound-select-matl" :key="tableKey" v-loading="loading" @selection-change="handleSelectionChange">
         <template #matlType="{ row }">
           <span>{{ `${row.matlType}${row.matlRaw ? '/' + row.matlRaw : ''}${row.matlPcode ? '/' + row.matlPcode : ''}` }}</span>
@@ -105,6 +105,10 @@ function saveClick() {
     proxy.$modal.msgWarning('以下物资已存在: ' + duplicate.map(item => item.matlCode).join(','))
     return
   }
+  // 保存选择的物资明细
+  selectionData.value.forEach(item => {
+    item.price = item.cardPrice
+  })
   emit('saveSelect', selectionData.value, mode.value)
   visible.value = false
 }
