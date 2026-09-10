@@ -178,7 +178,8 @@ async function createRichColumns() {
       minWidth: 100,
       align: 'center',
       showOverflowTooltip: true,
-      type: 'dict',
+      type: 'slot',
+      slotName: 'taxFlag',
       searchable: false,
       searchType: 'select',
       searchProps: { options: taxFlagOptions },
@@ -186,7 +187,7 @@ async function createRichColumns() {
     {
       field: 'consAmount',
       title: '采购总金额(元)',
-      minWidth: 140,
+      minWidth: 120,
       align: 'right',
       showOverflowTooltip: true,
       align: 'right',
@@ -196,9 +197,11 @@ async function createRichColumns() {
     {
       field: 'status',
       title: '状态',
-      minWidth: 180,
+      minWidth: 120,
       showOverflowTooltip: true,
-      type: 'dict',
+      type: 'slot',
+      slotName: 'status',
+      align: 'center',
       searchable: false,
       searchType: 'select',
       // 多选（原系统默认 1,2；后端 status 接收逗号分隔字符串，onSearch 时 join 后传入）
@@ -207,7 +210,7 @@ async function createRichColumns() {
     },
     {
       field: 'makeDate',
-      title: '制定日期',
+      title: '制单日期',
       minWidth: 140,
       align: 'center',
       showOverflowTooltip: true,

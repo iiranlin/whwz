@@ -66,9 +66,6 @@
       <el-divider style="margin: 4px 0 10px;" />
       <!-- 明细工具栏 -->
       <div class="detail-toolbar">
-        <el-button type="primary" @click="handleSave">保存</el-button>
-        <el-button @click="goBack">返回</el-button>
-        <span class="flex1"></span>
         <el-button type="primary" @click="addDetail">添加明细</el-button>
         <el-button  @click="downloadTemplate">模板下载</el-button>
         <el-upload :action="uploadUrl" :headers="uploadHeaders" :show-file-list="false" :before-upload="beforeUpload"
@@ -102,6 +99,10 @@
             </template>
           </el-table-column>
         </el-table>
+      </div>
+      <div class="footer-toolbar">
+        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button @click="goBack">返回</el-button>
       </div>
     </div>
     <select-matl ref="selectMatlRef" @saveSelect="saveSelectMatl" />
@@ -332,16 +333,24 @@ onMounted(() => {
 })
 </script>
 <style lang="scss" scoped>
-.flex1 {
-  flex: 1;
-}
+// .flex1 {
+//   flex: 1;
+// }
 .detail-toolbar {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 8px;
   padding: 4px 0 10px;
 }
 .detail-table {
-  height: calc(100vh - 350px);
+  height: calc(100vh - 375px);
+}
+.footer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0 10px 4px;
 }
 </style>

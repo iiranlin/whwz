@@ -14,7 +14,7 @@
               <td class="td" colspan="2">用料地区：{{ orderData.plantName }}</td>
               <!-- <td class="td" colspan="2">计划周期：{{ orderData.rptAccptdtName }}</td> -->
               <td class="td" colspan="2">采购方式：{{ orderData.purcTypeName }}</td>
-              <td class="td" colspan="2">制定日期：{{ parseTime(orderData.makeDate, '{y}-{m}-{d}') }}</td>
+              <td class="td" colspan="2">制单日期：{{ parseTime(orderData.makeDate, '{y}-{m}-{d}') }}</td>
             </tr>
             <tr>
               <td class="td" colspan="8">备注：{{ orderData.comments }}</td>

@@ -147,6 +147,9 @@ const plantData = async () => {
 async function createRichColumns() {
   const plantArr = await plantData()
   let whArr = []
+  // 防抖 flag：解决 element-plus search-form 对同一值变同时 emit update:modelValue + change 导致的重复调用
+  let _whDepLoading = false, _whLastPlantCode = null
+  let _partDepLoading = false, _partLastWhCode = null
   return [
     {
       field: 'flag',
@@ -246,10 +249,17 @@ async function createRichColumns() {
         setFieldValue('depotCode', undefined)
         setFieldProps('depotCode', { options: [] })
         if (!form.plantCode) return
-        const plantCodeObj = plantArr.find(a => a.plantCode === form.plantCode)
-        const res = await warehouseDict({ plantId: plantCodeObj?.id })
-        whArr = (res.data || []).map(r => ({ ...r, label: r.whName, value: r.whCode }))
-        setFieldProps('depotCode', { options: whArr })
+        // 防抖：相同 plantCode 且正在加载，跳过
+        if (_whDepLoading && _whLastPlantCode === form.plantCode) return
+        _whDepLoading = true; _whLastPlantCode = form.plantCode
+        try {
+          const plantCodeObj = plantArr.find(a => a.plantCode === form.plantCode)
+          const res = await warehouseDict({ plantId: plantCodeObj?.id })
+          whArr = (res.data || []).map(r => ({ ...r, label: r.whName, value: r.whCode }))
+          setFieldProps('depotCode', { options: whArr })
+        } finally {
+          _whDepLoading = false
+        }
       },
     },
     {
@@ -265,10 +275,17 @@ async function createRichColumns() {
         setFieldValue('partitionCode', undefined)
         setFieldProps('partitionCode', { options: [] })
         if (!form.depotCode) return
-        const whCodeObj = whArr.find(a => a.whCode === form.depotCode)
-        const res = await warehouseplantDictList({ whId: whCodeObj?.id })
-        const options = (res.data || []).map(r => ({ ...r, label: r.partitionName, value: r.partitionCode }))
-        setFieldProps('partitionCode', { options })
+        // 防抖：相同 depotCode 且正在加载，跳过
+        if (_partDepLoading && _partLastWhCode === form.depotCode) return
+        _partDepLoading = true; _partLastWhCode = form.depotCode
+        try {
+          const whCodeObj = whArr.find(a => a.whCode === form.depotCode)
+          const res = await warehouseplantDictList({ whId: whCodeObj?.id })
+          const options = (res.data || []).map(r => ({ ...r, label: r.partitionName, value: r.partitionCode }))
+          setFieldProps('partitionCode', { options })
+        } finally {
+          _partDepLoading = false
+        }
       },
     },
     {

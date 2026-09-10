@@ -28,7 +28,6 @@
           <template #action="{ row }">
             <el-button type="primary" link :disabled="row.flag === '2'" @click="handleAction({code: 'edit', row})">修改</el-button>
             <el-button type="primary" link :disabled="row.writeBackFlag === '1' || !!row.wbRmBillCode || row.flag !== '2'" @click="handleAction({code: 'redReversal', row})">红冲</el-button>
-
             <!-- <el-button type="primary" link @click="handleAction({code: 'redReversal', row})">红冲</el-button> -->
             <el-button v-if="row.flag === '2' && !row.invoiceCode" type="primary" link @click="handleAction({code: 'addInvoiceCode', row})">补充发票号</el-button>
           </template>
@@ -173,40 +172,48 @@ const getPlantData = async () => {
   }  
 }
 
+// 防抖 flag：解决 element-plus search-field-item 对同一值变同时 emit update:modelValue + change 导致的重复调用
+let _whLoading = false, _lastPlantId = null;
 const getWareHouesData = async ({form, changedField, setFieldValue, setFieldProps}) => {
   try {
-    
-    if (!!!form.plantCode) {
+    if (!form.plantCode) {
       setFieldValue('depotCode', undefined);
       setFieldProps('depotCode', { options: [] });
-    } else {
-      const res = await getwarehouseByUserAndPlant({
-        plantId: form.plantCode.id,
-      });
-      formSelectData.value.depotCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.whName}`, value: { code: item.whCode, id: item.id} })) : [] : [];
-      setFieldValue('depotCode', undefined);
-      setFieldProps('depotCode', { options: formSelectData.value.depotCode });
+      return;
     }
+    const plantId = form.plantCode.id;
+    if (_whLoading && _lastPlantId === plantId) return;
+    _whLoading = true; _lastPlantId = plantId;
+    const res = await getwarehouseByUserAndPlant({ plantId });
+    formSelectData.value.depotCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.whName}`, value: { code: item.whCode, id: item.id} })) : [] : [];
+    setFieldValue('depotCode', undefined);
+    setFieldProps('depotCode', { options: formSelectData.value.depotCode });
   } catch (error) {
     
+  } finally {
+    _whLoading = false;
   }
 }
 
+let _partLoading = false, _lastWhId = null;
 const getPartitionWHData = async ({form, changedField, setFieldValue, setFieldProps}) => {
   try {
-    if (!!!form.depotCode) {
+    if (!form.depotCode) {
       setFieldValue('partitionCode', undefined);
       setFieldProps('partitionCode', { options: [] });
-    } else {
-      const res = await getWarehousePartition({
-        whId: form.depotCode.id,
-      });
-      formSelectData.value.partitionCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.partitionName}`, value: { code: item.partitionCode, id: item.id} })) : [] : [];
-      setFieldValue('partitionCode', undefined);
-      setFieldProps('partitionCode', { options: formSelectData.value.partitionCode });
+      return;
     }
+    const whId = form.depotCode.id;
+    if (_partLoading && _lastWhId === whId) return;
+    _partLoading = true; _lastWhId = whId;
+    const res = await getWarehousePartition({ whId });
+    formSelectData.value.partitionCode = res.data ? res.data.length ? res.data.map(item => ({ label: `${item.partitionName}`, value: { code: item.partitionCode, id: item.id} })) : [] : [];
+    setFieldValue('partitionCode', undefined);
+    setFieldProps('partitionCode', { options: formSelectData.value.partitionCode });
   } catch (error) {
     
+  } finally {
+    _partLoading = false;
   }
 }
 

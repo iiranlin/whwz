@@ -6,7 +6,18 @@
     <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize"
       :toolbar-config="toolbarConfig" @action="onAction" :data="tableData"
       :total="total" @search="onSearch" table-id="self-supply-order-maintain" :show-checkbox="true"
-      action-width="100" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }" />
+      action-width="100" :default-search-form="defaultSearchForm" :grid-options="{ rowId: 'pdmId' }">
+      <template #taxFlag="{ row }">
+        <span :class="row.taxFlag === '1' ? 'success-color' : 'info-color'">
+          {{ row.taxFlag === '1' ? '是' : '否' }}
+        </span>
+      </template>
+      <template #status="{ row }">
+        <span :class="row.status === '1' ? 'warning-color' : 'success-color'">
+          {{ row.status === '1' ? '未提交' : '已提交' }}
+        </span>
+      </template>
+    </el-pro-table>
         </el-col>
     </el-row>
     <order-history ref="orderHistoryRef" />
@@ -41,12 +52,12 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 30,
   // 状态默认查询未提交(1)、已提交(2)，与原系统一致
-  status: '1,2',
+  status: '1,8',
 })
 
 // 搜索区状态多选默认值（ElProTable 中为数组）
 const defaultSearchForm = {
-  status: ['1', '2'],
+  status: ['1', '8'],
 }
 
 /** 查询列表 */
@@ -322,4 +333,14 @@ onMounted(() => {
   // getList()
 })
 </script>
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.success-color {
+  color: #48BB8B;
+}
+.info-color {
+  color: #AFAFAF;
+}
+.warning-color {
+  color: #FF9900;
+}
+</style>
