@@ -1,7 +1,9 @@
 <template>
   <div class="top-right-btn">
-    <el-button type="success" @click="handleFilter"><svg-icon icon-class="Line-Refresh" /></el-button>
-    <el-button type="danger" @click="setClick"><svg-icon icon-class="Line-Filter" /></el-button>
+    <!-- <el-button type="success" @click="handleFilter"><svg-icon icon-class="Line-Refresh" /></el-button>
+    <el-button type="danger" @click="setClick"><svg-icon icon-class="Line-Filter" /></el-button> -->
+    <el-button type="success" @click="handleFilter"><el-icon><Refresh /></el-icon></el-button>
+    <el-button type="danger" @click="setClick"><el-icon><Setting /></el-icon></el-button>
     <to-configure ref="toConfigure" :tableJson="tableJson" :menuId="menuId" @tabConfigSuccess="tabConfigSuccess"></to-configure>
   </div>
 </template>

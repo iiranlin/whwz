@@ -93,15 +93,15 @@
                   <el-button type="primary" @click="handleFilter" class="search-btn"
                     ><svg-icon icon-class="search" /> 查询</el-button
                   >
-                  <el-button type="default" @click="resetForm('elForm')" class="reset-btn"
-                    ><svg-icon icon-class="Line-Refresh" /> 重置</el-button
+                  <el-button type="default" @click="resetForm('elForm')" class="reset-btn" icon="Refresh"
+                    > 重置</el-button
                   >
                 </div>
               </el-form>
               <div class="tab-bten">
                 <el-form label-position="left" class="flex1">
                   <el-button class="tableButton" type="primary" @click="onHandleDict()"
-                    ><svg-icon icon-class="form" /> 新增</el-button
+                    ><el-icon><Plus /></el-icon> 新增</el-button
                   >
                   <el-button class="tableButton" type="danger" @click="handleDictDelete(null)"
                     ><el-icon><Delete /></el-icon> 批量删除</el-button
@@ -109,11 +109,9 @@
                 </el-form>
                 <div class="tab-bten-set">
                   <el-button type="success" @click="handleFilter"
-                    ><svg-icon icon-class="Line-Refresh"
-                  /></el-button>
+                    ><el-icon><Refresh /></el-icon></el-button>
                   <el-button type="danger" @click="setClick"
-                    ><svg-icon icon-class="Line-Filter"
-                  /></el-button>
+                    ><el-icon><Setting /></el-icon></el-button>
                 </div>
               </div>
               <el-table
