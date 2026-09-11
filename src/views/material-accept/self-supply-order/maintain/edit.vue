@@ -4,12 +4,12 @@
     <div v-loading="loading" class="sso-front-table-container">
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="110px">
         <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="采购订单号：" prop="spdCode">
               <el-input v-model="formData.spdCode" placeholder="自动生成采购订单号" disabled />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="供应商：" prop="suCode">
               <el-select v-model="formData.suCode" placeholder="请选择供应商" clearable filterable remote
                 :remote-method="remoteMethod" :loading="remoteLoading" style="width: 100%">
@@ -17,22 +17,21 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="采购方式：" prop="purcTypeCode">
               <el-select v-model="formData.purcTypeCode" placeholder="请选择采购方式" clearable style="width: 100%">
                 <el-option v-for="item in purcTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="用料地区：" prop="plantCode">
               <el-select v-model="formData.plantCode" placeholder="请选择用料地区" clearable filterable style="width: 100%">
                 <el-option v-for="item in plantOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
           <!-- <el-col :span="8">
             <el-form-item label="计划周期" prop="rptAccptdtCode">
               <el-select v-model="formData.rptAccptdtCode" placeholder="请选择计划周期" clearable style="width: 100%">
@@ -40,23 +39,22 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="8">
+        <el-row :gutter="10">
+          <el-col :span="6">
             <el-form-item label="是否含税：" prop="taxFlag">
               <el-radio-group v-model="formData.taxFlag">
                 <el-radio v-for="item in taxFlagOptions" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="税率：" prop="taxRate">
               <el-select v-model="formData.taxRate" placeholder="请选择税率" clearable style="width: 100%">
                 <el-option v-for="item in taxRateOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="16">
+          <el-col :span="6">
             <el-form-item label="备注：" prop="comments">
               <el-input v-model="formData.comments" type="textarea" :rows="1" maxlength="100" placeholder="请输入备注" />
             </el-form-item>
@@ -344,7 +342,7 @@ onMounted(() => {
   padding: 4px 0 10px;
 }
 .detail-table {
-  height: calc(100vh - 375px);
+  height: calc(100vh - 330px);
 }
 .footer-toolbar {
   display: flex;

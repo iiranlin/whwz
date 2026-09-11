@@ -111,16 +111,6 @@ const toolbarConfig = {
         return !['1', '4'].includes(row.status)
       },
     },
-    {
-      code: 'delete',
-      name: '删除',
-      type: 'primary',
-      showInTop: true,
-      disabled: (selectedRows) => {
-        if (selectedRows.length === 0) return false
-        return selectedRows.some(a => a.status !== '1')
-      },
-    },
     // {
     //   code: 'submit',
     //   name: '提交审批',
@@ -144,6 +134,16 @@ const toolbarConfig = {
     {
       code: 'push',
       name: '提交供货单',
+      type: 'primary',
+      showInTop: true,
+      disabled: (selectedRows) => {
+        if (selectedRows.length === 0) return false
+        return selectedRows.some(a => a.status !== '1')
+      },
+    },
+    {
+      code: 'delete',
+      name: '删除',
       type: 'primary',
       showInTop: true,
       disabled: (selectedRows) => {

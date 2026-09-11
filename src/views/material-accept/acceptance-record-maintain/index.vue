@@ -19,9 +19,6 @@
                 :value="item.value" />
             </el-select>
           </template>
-          <template #acceptanceNumber="{ row }">
-            <el-input v-model="row.acceptanceNumber" v-number-input.float="4" v-limit-text-len="50" clearable :disabled="row.acceptanceFlag != '1'" />
-          </template>
           <template #comments="{ row }">
             <el-input v-model="row.comments" v-limit-text-len="50" />
           </template>

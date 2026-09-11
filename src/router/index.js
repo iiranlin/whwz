@@ -54,14 +54,14 @@ export const constantRoutes = [
         component: () => import('@/views/material-accept/self-supply-order/maintain/edit.vue'),
         meta: { title: '供货单编辑', activeMenu: '/material-accept/supply-order-manage' },
         beforeEnter: (to) => {
-          to.meta.title = to.query.type === 'create' ? '供货单新增' : '供货单编辑'
+          to.meta.title = to.query.type === 'create' ? '自采供货单新增' : '自采供货单编辑'
         }
       },
       {
         path: 'detail',
         name: 'self-supply-order-maintain-detail',
         component: () => import('@/views/material-accept/self-supply-order/maintain/detail.vue'),
-        meta: { title: '供货单详情', activeMenu: '/material-accept/supply-order-manage' }
+        meta: { title: '自采供货单详情', activeMenu: '/material-accept/supply-order-manage' }
       }
     ]
   },

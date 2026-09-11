@@ -5,32 +5,27 @@
       <!-- 主单信息（只读） -->
       <el-form label-width="110px" class="detail-head-form">
         <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="采购订单号："><el-input :model-value="orderData.spdCode" disabled /></el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="供应商："><el-input :model-value="orderData.suName || orderData.suCode" disabled /></el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="采购方式："><el-input :model-value="orderData.purcTypeName || orderData.purcTypeCode" disabled /></el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="用料地区："><el-input :model-value="orderData.plantName || orderData.plantCode" disabled /></el-form-item>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="计划周期："><el-input :model-value="orderData.rptAccptdtName || orderData.rptAccptdtCode" disabled /></el-form-item>
-          </el-col> -->
-          <el-col :span="8">
-            <el-form-item label="是否含税："><el-input :model-value="taxFlagText" disabled /></el-form-item>
-          </el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :span="8">
+           <el-col :span="6">
+            <el-form-item label="是否含税："><el-input :model-value="taxFlagText" disabled /></el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="税率："><el-input :model-value="taxRateText" disabled /></el-form-item>
           </el-col>
-          <el-col :span="16">
+          <el-col :span="6">
             <el-form-item label="备注："><el-input :model-value="orderData.comments" disabled /></el-form-item>
           </el-col>
         </el-row>
@@ -130,9 +125,9 @@ function discontinue() {
   }
   proxy.$modal.confirm('终止后不可取消终止，是否确定终止？').then(() => {
     const params = {
-      railwayCode: getCookie('railwayCode'),
+      // railwayCode: getCookie('railwayCode'),
       pdmIds: [orderData.value.pdmId],
-      pddIds: selectionData.value.map(item => item.pddId),
+      // pddIds: selectionData.value.map(item => item.pddId),
     }
     stopPurchaseOrder(params).then(() => {
       proxy.$modal.msgSuccess('操作成功')
@@ -176,6 +171,6 @@ onMounted(() => {
   padding: 4px 0 10px;
 }
 .detail-table {
-  height: calc(100vh - 370px);
+  height: calc(100vh - 330px);
 }
 </style>

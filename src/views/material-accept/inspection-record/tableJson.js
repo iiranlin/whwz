@@ -132,7 +132,8 @@ export const columns = [
     searchable: false,
     minWidth: 100,
     align: 'right',
-    searchType: 'input',
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
   },
   {
     field: 'purNum',
@@ -141,7 +142,8 @@ export const columns = [
     searchable: false,
     minWidth: 100,
     align: 'right',
-    searchType: 'input',
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: 'arrivalNum',
@@ -150,7 +152,8 @@ export const columns = [
     searchable: false,
     minWidth: 100,
     align: 'right',
-    searchType: 'input',
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: 'arrivalDate',
@@ -178,6 +181,8 @@ export const columns = [
     showOverflowTooltip: true,
     searchable: false,
     hideInTable: true,
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '',
     searchType: 'input',
   },
   {
@@ -200,6 +205,8 @@ export const columns = [
     searchable: false,
     minWidth: 100,
     align: 'right',
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '',
     searchType: 'input',
   },
   {

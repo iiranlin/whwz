@@ -75,14 +75,16 @@ export const columns = [
     title: "采购数量",
     minWidth: 120,
     align: "right",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "contPrice",
     title: "采购单价",
     minWidth: 120,
     align: "right",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
   },
   {
     field: "deliverNum",
@@ -90,14 +92,16 @@ export const columns = [
     minWidth: 120,
     align: "right",
     hideInTable: true,
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "arrivalNum",
     title: "到货数量",
     minWidth: 120,
     align: "right",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "batchNo",
@@ -111,14 +115,16 @@ export const columns = [
     title: "验收通过数量",
     minWidth: 120,
     align: "right",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "notAcceptanceNum",
     title: "验收不通过数量",
     minWidth: 120,
     align: "right",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "deliverDate",
@@ -132,8 +138,8 @@ export const columns = [
 
 export const toolbarConfig = {
   buttons: [
-    {code: 'exchange', name: '换货', showInTop: false, showInRow: true},
     {code: 'return', name: '退货', showInTop: false, showInRow: true},
+    {code: 'exchange', name: '换货', showInTop: false, showInRow: true},
     {code: 'replenishBatch', name: '补录发货批次', showInTop: false, showInRow: false},
     {code: 'history', name: '验收历史', showInTop: false, showInRow: true},
   ]

@@ -132,27 +132,31 @@ export const columnsFun = async () => {
         title: "采购单价",
         minWidth: 140,
         align: 'right',
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
       },
       {
         field: "purNum",
         title: "采购数量",
         minWidth: 140,
         align: 'right',
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
       },
       {
         field: "deliverNum",
         title: "发货数量",
         minWidth: 140,
         align: 'right',
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
       },
       {
         field: "arrivalNum",
         title: "到货数量",
         minWidth: 180,
         type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '',
         editProps: ({ column, props, row }) =>  ({
           ...props,
           min: 0.0001,
@@ -320,19 +324,22 @@ export const columnsFun = async () => {
         field: "sellPrice",
         title: "销售单价(元)",
         minWidth: 140,
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
       },
       {
         field: "skuNum",
         title: "商品数量",
         minWidth: 140,
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
       },
       {
         field: "arrivalNum",
         title: "到货数量",
         minWidth: 180,
         type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : '',
         editProps: ({ column, props, row }) =>  ({
           ...props,
           min: 0.0001,
@@ -347,7 +354,8 @@ export const columnsFun = async () => {
         field: "amount",
         title: "金额(元)",
         minWidth: 140,
-        type: 'number'
+        type: 'number',
+        formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
       },
       {
         field: "taxRate",

@@ -90,14 +90,16 @@ export const columns = [
     title: "采购单价",
     minWidth: 74,
     align: "center",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(2) : ''
   },
   {
     field: "purNum",
     title: "采购数量",
     minWidth: 74,
     align: "center",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "deliverNum",
@@ -105,7 +107,8 @@ export const columns = [
     minWidth: 74,
     align: "center",
     hideInTable: true,
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "batchNo",
@@ -119,7 +122,8 @@ export const columns = [
     title: "到货确认数量",
     minWidth: 100,
     align: "center",
-    type: 'number'
+    type: 'number',
+    formatter: (row, column, cellValue) => cellValue != null ? Number(cellValue).toFixed(4) : ''
   },
   {
     field: "facadeFlag",
@@ -140,9 +144,17 @@ export const columns = [
   {
     field: "acceptanceNumber",
     title: "验收通过数量",
-    minWidth: 120,
+    minWidth: 180,
     type: 'number',
-    slotName: 'acceptanceNumber',
+    formatter: (row, column, cellValue) => cellValue != null && cellValue !== '' ? Number(cellValue).toFixed(4) : '',
+    editProps: ({ column, props, row }) => ({
+      ...props,
+      min: 0.0001,
+      max: row.arrivalNum,
+      precision: 4,
+      disabled: row.acceptanceFlag != '1'
+    }),
+    editRender: { name: 'el-input-number' }
   },
   {
     field: "comments",
