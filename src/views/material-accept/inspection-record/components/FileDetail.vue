@@ -73,4 +73,8 @@ const onAction = ({ code, row, selectedRows }) => {
 }
 
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.ep-pro-table__toolbar) {
+    display: none;
+}
+</style>

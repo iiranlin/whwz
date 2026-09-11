@@ -7,6 +7,9 @@
         <template #acceptanceLevel="{ scope }">
           <span>{{ scope.row.acceptanceLevel == '1'?'一级验收':'多级验收' }}</span>
         </template>
+        <template #acceptanceNumber="{ scope }">
+          <span>{{ scope.row.acceptanceNumber != null ? Number(scope.row.acceptanceNumber).toFixed(4) : '' }}</span>
+        </template>
         <template #viewAttachment="{ scope }">
           <el-link type="primary" @click.stop="viewAttachmentClick(scope)">查看</el-link>
         </template>

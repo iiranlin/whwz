@@ -70,4 +70,8 @@ const onAction = ({ code, row, selectedRows }) => {
     eventObj[code] && eventObj[code]()
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.ep-pro-table__toolbar) {
+    display: none;
+}
+</style>

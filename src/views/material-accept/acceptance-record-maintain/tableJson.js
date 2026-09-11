@@ -320,7 +320,7 @@ export const fileTableButtonJson = [
 export const historyTableJson = [
   {isShow: true, fixed: false, type: '', key: 'userName', prop: 'userName', label: '验收人', align: 'center', width: 120},
   {isShow: false, fixed: false, type: 'slot', key: 'acceptanceLevel', prop: 'acceptanceLevel', label: '验收级别', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'acceptanceNumber', prop: 'acceptanceNumber', label: '验收通过数量', align: 'right', width: 120},
+  {isShow: true, fixed: false, type: 'slot', key: 'acceptanceNumber', prop: 'acceptanceNumber', label: '验收通过数量', align: 'right', width: 120},
   {isShow: false, fixed: false, type: '', key: 'conversionBasis', prop: 'conversionBasis', label: '换算依据', align: 'right', width: 120},
   {isShow: true, fixed: false, type: 'dict', key: 'facadeFlag', prop: 'facadeFlag', label: '外观标志', align: 'center', stats: facadeFlagObj, width: 120},
   {isShow: true, fixed: false, type: '', key: 'comments', prop: 'comments', label: '验收说明', align: 'center', width: 120},

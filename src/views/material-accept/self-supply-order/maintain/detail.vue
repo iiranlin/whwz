@@ -53,15 +53,16 @@
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="操作" fixed="right" align="center" width="110">
+          <!-- <el-table-column label="操作" fixed="right" align="center" width="110">
             <template #default="{ row }">
               <el-button type="primary" link @click="handleAcceptHistory(row)">验收历史</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
     </div>
     <accept-history-dialog ref="historyDialogRef" />
+    <DetailDialog v-model="historyVisible" :rowData="rowData" />
   </div>
 </template>
 
@@ -72,6 +73,7 @@ import { taxFlagOptions } from './tableJson'
 import { getOrderMtDetail, stopPurchaseOrder } from '@/api/warehouse/selfSupplyOrder'
 import { getCookie } from '@/utils/auth'
 import AcceptHistoryDialog from './components/acceptHistoryDialog.vue'
+import DetailDialog from "./../../inspection-record/components/DetailDialog.vue"
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 
@@ -136,8 +138,12 @@ function discontinue() {
   }).catch(() => {})
 }
 
+const historyVisible = ref(false)
+const rowData = ref({})
 function handleAcceptHistory(row) {
   proxy.$refs.historyDialogRef.show(row)
+  // historyVisible.value = true
+  // rowData.value = row
 }
 
 /** 返回：关闭当前页签回到来源列表页（维护/审批） */
