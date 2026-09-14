@@ -36,8 +36,8 @@
         <div class="form-right-show-y"></div>
     </div>
     <div class="form-right" :class="isMore && isShowMore ? '' : 'form-rights'">
-        <el-button type="primary" @click="handleQuery" class="search-btn"><svg-icon icon-class="search" />&nbsp;查询</el-button>
-        <el-button type="default" @click="resetQuery" class="reset-btn"><svg-icon icon-class="Line-Refresh" />&nbsp;重置</el-button>
+        <el-button type="default" @click="resetQuery" class="reset-btn"><el-icon size="14"><RefreshLeft /></el-icon>&nbsp;重置</el-button>
+        <el-button type="primary" @click="handleQuery" class="search-btn"><el-icon size="14"><Search /></el-icon>&nbsp;查询</el-button>
     </div>
   </el-form>
 </template>
@@ -150,7 +150,7 @@ defineExpose({ formData })
   overflow: hidden;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #d2d2d2;
+  // border-bottom: 1px solid #d2d2d2;
 
   :deep(.el-form-item__label) {
     align-items: center;
@@ -223,17 +223,17 @@ defineExpose({ formData })
         margin-bottom: 10px;
       }
     }
-    .reset-btn{
-      background-color: #e6e6e6;
-      border-color: #64a1ff;
-      &:hover{
-        color: #64a1ff;
-      }
-    }
-    .search-btn{
-      background-color: #64a1ff;
-      border-color: #64a1ff;
-    }
+    // .reset-btn{
+    //   background-color: #e6e6e6;
+    //   border-color: #64a1ff;
+    //   &:hover{
+    //     color: #64a1ff;
+    //   }
+    // }
+    // .search-btn{
+    //   background-color: #64a1ff;
+    //   border-color: #64a1ff;
+    // }
   }
   .form-rights{
     flex-direction: row;

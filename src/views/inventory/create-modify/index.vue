@@ -2,6 +2,7 @@
   <div class="app-container app-container-splitpanes inventory-create-modify-page">
      <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
       <el-col class="app-container-col">
+        <div class="ep-pro-table__search-area">
         <create-modify-form
           ref="formRef"
           :form-json="formJson"
@@ -11,12 +12,15 @@
           @reset-query="resetQuery"
         >
         </create-modify-form>
-        <el-row :gutter="10" class="mb8 integrated-manage-pane-form-button">
-          <el-col :span="1.5">
+        </div>
+        <div class="ep-pro-table__toolbar">
+          <el-form label-position="left" class="flex1">
             <el-button :disabled="!!!formRef?.formData.csCode" type="primary" class="tableButton" @click="handleCreateModifyOrder">生成调整单</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" :tableJson="tableJsonArr" @queryTable="getList" @tabConfigSuccess="tabConfigSuccess"></right-toolbar>
-        </el-row>
+          </el-form>
+          <div class="ep-pro-table__toolbar-tools">
+            <right-toolbar v-model:showSearch="showSearch" :tableJson="tableJsonArr" @queryTable="getList" @tabConfigSuccess="tabConfigSuccess"></right-toolbar>
+          </div>
+        </div>
         <table-index
           :loading="loading"
           class="table-index"
@@ -175,5 +179,10 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-
+.table-index {
+  :deep(th) {
+    color: #fff;
+    background-color: #409EFF !important;
+  }
+}
 </style>

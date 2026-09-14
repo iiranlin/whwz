@@ -33,73 +33,29 @@
       <!-- 右侧菜单列表 -->
       <pane size="84" class="integrated-manage-pane-form">
         <el-col class="app-container-col">
-        <el-form :model="queryParams" ref="queryRef" inline class="menu-search" @submit.prevent>
-          <el-form-item label="菜单名称" prop="menuName">
-            <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="菜单编码" prop="menuCode">
-            <el-input v-model="queryParams.menuCode" placeholder="请输入菜单编码" clearable style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="queryParams.status" placeholder="菜单状态" clearable style="width: 160px">
-              <el-option label="启用" :value="0" />
-              <el-option label="停用" :value="1" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <div class="menu-toolbar">
-          <el-button type="primary" icon="Plus" @click="handleCreate">新增</el-button>
-          <el-button type="danger" icon="Delete" @click="handleDelete()">删除</el-button>
-        </div>
-        <el-table
-          v-loading="loading"
-          :data="displayData"
-          border
-          fit
-          row-key="id"
-          :tree-props="{ children: 'children' }"
-          default-expand-all
-          @selection-change="onSelectionChange"
-        >
-          <el-table-column type="selection" width="55" align="center" />
-          <el-table-column prop="menuName" label="菜单名称" min-width="180" />
-          <el-table-column prop="menuCode" label="菜单编码" min-width="130" />
-          <el-table-column prop="parentName" label="上级菜单" min-width="130" />
-          <el-table-column prop="menuIcon" label="图标" width="70" align="center">
-            <template #default="{ row }">
-              <svg-icon v-if="row.menuIcon" :icon-class="row.menuIcon" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="menuUrl" label="菜单URL" min-width="170" show-overflow-tooltip />
-          <el-table-column prop="component" label="组件地址" min-width="150" show-overflow-tooltip />
-          <el-table-column prop="seq" label="排序" width="70" align="center" />
-          <el-table-column prop="menuType" label="菜单类型" width="90" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.menuType === '2' ? 'warning' : ''">{{ row.menuType === '2' ? '外部' : '内部' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态" width="80" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.status === 1 ? 'danger' : 'success'">{{ row.status === 1 ? '停用' : '启用' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="isHide" label="是否隐藏" width="90" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.isHide === 1 ? 'warning' : 'info'">{{ row.isHide === 1 ? '隐藏' : '显示' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" fixed="right" align="center" width="230">
-            <template #default="{ row }">
-              <el-button type="primary" link @click="handleUpdate(row)">修改</el-button>
-              <el-button type="primary" link @click="handleAddChild(row)">新增下级</el-button>
-              <el-button type="primary" link @click="handleCopy(row)">复制</el-button>
-              <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-pro-table ref="proTableRef" v-loading="loading" action-width="200"
+          :columns="columns" :toolbar-config="toolbarConfig"
+          :data="displayData" :total="total"
+          :tree-config="{ children: 'children' }" row-key="id"
+          :default-expand-all="true"
+          :show-pagination="false" :show-checkbox="true"
+          :grid-options="{ rowId: 'id' }" table-id="sys-menu"
+          @search="onSearch" @action="onAction"
+          @selection-change="onSelectionChange">
+          <!-- 列 slot -->
+          <template #menuIcon="{ row }">
+            <svg-icon v-if="row.menuIcon" :icon-class="row.menuIcon" />
+          </template>
+          <template #menuType="{ row }">
+            <el-tag :type="row.menuType === '2' ? 'warning' : ''">{{ row.menuType === '2' ? '外部' : '内部' }}</el-tag>
+          </template>
+          <template #status="{ row }">
+            <el-tag :type="row.status === 1 ? 'danger' : 'success'">{{ row.status === 1 ? '停用' : '启用' }}</el-tag>
+          </template>
+          <template #isHide="{ row }">
+            <el-tag :type="row.isHide === 1 ? 'warning' : 'info'">{{ row.isHide === 1 ? '隐藏' : '显示' }}</el-tag>
+          </template>
+        </el-pro-table>
       </el-col>
     </pane>
     </splitpanes>
@@ -113,12 +69,14 @@
 import { Splitpanes, Pane } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 import Operate from "./components/operate"
+import { columns, toolbarConfig } from "./tableJson"
 import { menuTree, menuDeleteBatch } from '@/api/base/menu'
 
 const { proxy } = getCurrentInstance()
 
 const tableData = ref([])
 const loading = ref(false)
+const total = ref(0)
 const ids = ref([])
 const queryParams = reactive({
   menuName: '',
@@ -193,9 +151,7 @@ function filterTree(nodes) {
     return acc
   }, [])
 }
-
-/** 重置查询条件 */
-function resetQuery() {
+const onSearch = (params) => {
   queryParams.menuName = ''
   queryParams.menuCode = ''
   queryParams.status = undefined
@@ -204,6 +160,21 @@ function resetQuery() {
 /** 多选框选中数据 */
 function onSelectionChange(rows) {
   ids.value = rows.map(item => item.id)
+}
+
+/** ProTable 工具栏 + 行内按钮回调 */
+const onAction = ({ code, row, selectedRows }) => {
+  const eventObj = {
+    // 顶部工具栏
+    create: () => handleCreate(),
+    delete: () => handleDelete(),
+    // 行内按钮
+    update: () => handleUpdate(row),
+    addChild: () => handleAddChild(row),
+    copy: () => handleCopy(row),
+    deleteRow: () => handleDelete(row),
+  }
+  eventObj[code] && eventObj[code]()
 }
 
 /** 新增 */

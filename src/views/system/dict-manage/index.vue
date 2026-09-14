@@ -1,9 +1,9 @@
 <template>
-  <div class="app-container">
+  <div class="app-container app-container-splitpanes">
     <el-row :gutter="20" class="app-container-row">
-      <splitpanes class="app-container-splitpanes default-theme">
+      <splitpanes class="app-container-splitpanes default-theme" @resize="resizeSplit">
         <!--左侧字典分类-->
-        <pane size="16" class="integrated-manage-pane-tree">
+        <pane size="26" class="integrated-manage-pane-tree">
           <div class="dict-cate-pane">
             <div class="cate-header flex-between-center">
               <span>字典分类</span>
@@ -52,6 +52,7 @@
         <pane size="84" class="integrated-manage-pane-form">
           <el-col class="app-container-col">
             <div class="sso-front-table-container">
+              <div class="ep-pro-table__search-area">
               <el-form
                 class="form-wrapper"
                 ref="elForm"
@@ -90,28 +91,25 @@
                   <div class="form-right-show-y"></div>
                 </div>
                 <div class="form-right" :class="formWidth ? '' : 'form-rights'">
-                  <el-button type="primary" @click="handleFilter" class="search-btn"
-                    ><svg-icon icon-class="search" /> 查询</el-button
-                  >
-                  <el-button type="default" @click="resetForm('elForm')" class="reset-btn" icon="Refresh"
-                    > 重置</el-button
-                  >
+                  <el-button type="default" @click="resetForm('elForm')" class="reset-btn"> <el-icon size="14"><RefreshLeft /></el-icon><span>重置</span></el-button>
+                  <el-button type="primary" @click="handleFilter" class="search-btn"><el-icon size="14"><Search /></el-icon> <span>查询</span></el-button>
                 </div>
               </el-form>
-              <div class="tab-bten">
+              </div>
+              <div class="ep-pro-table__toolbar">
                 <el-form label-position="left" class="flex1">
                   <el-button class="tableButton" type="primary" @click="onHandleDict()"
-                    ><el-icon><Plus /></el-icon> 新增</el-button
+                    > 新增</el-button
                   >
-                  <el-button class="tableButton" type="danger" @click="handleDictDelete(null)"
-                    ><el-icon><Delete /></el-icon> 批量删除</el-button
+                  <el-button class="tableButton" type="primary" @click="handleDictDelete(null)"
+                    >批量删除</el-button
                   >
                 </el-form>
-                <div class="tab-bten-set">
-                  <el-button type="success" @click="handleFilter"
-                    ><el-icon><Refresh /></el-icon></el-button>
-                  <el-button type="danger" @click="setClick"
-                    ><el-icon><Setting /></el-icon></el-button>
+                <div class="ep-pro-table__toolbar-tools">
+                  <el-button @click="handleFilter" :circle="true"
+                    ><el-icon size="14"><Refresh /></el-icon></el-button>
+                  <el-button @click="setClick" :circle="true"
+                    ><el-icon size="14"><Setting /></el-icon></el-button>
                 </div>
               </div>
               <el-table
@@ -122,7 +120,6 @@
                 :data="dataList"
                 border
                 fit
-                stripe
                 v-loading="loading"
                 @sort-change="sortableColumnChange"
                 highlight-current-row
@@ -171,13 +168,13 @@
                     </template>
                   </el-table-column>
                 </template>
-                <el-table-column label="操作" width="150" fixed="right" align="center">
+                <el-table-column label="操作" width="130" fixed="right" align="center">
                   <template #default="{ row }">
                     <el-button type="text" @click="onHandleDict(row)"
-                      ><el-icon><EditPen /></el-icon>修改</el-button
+                      >修改</el-button
                     >
                     <el-button type="text" @click="handleDictDelete(row)"
-                      ><el-icon><Delete /></el-icon>删除</el-button
+                      >删除</el-button
                     >
                   </template>
                 </el-table-column>
@@ -247,7 +244,10 @@ const hoverCate = ref(null)
 const filterKeyword = ref('')
 const selectionDataList = ref([])
 const tabConfig = ref([])
-
+const resizeSplitData = ref(0)
+const resizeSplit = (val) => {
+  resizeSplitData.value = val.event.x
+}
 /** 初始化列配置（本地持久化，key 与 toConfigure 写入保持一致） */
 function initTabConfig() {
   const key = proxy.$route.meta?.menuId || proxy.$route.meta?.id
@@ -560,7 +560,7 @@ handleFilter()
 .table-wrapper {
   :deep(th) {
     color: #fff;
-    background-color: #3d8aff !important;
+    background-color: #409EFF !important;
     padding: 0;
     height: 40px;
     border-color: #dcddde;

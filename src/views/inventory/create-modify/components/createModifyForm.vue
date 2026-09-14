@@ -146,11 +146,14 @@ defineExpose({ formData })
   overflow: hidden;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #d2d2d2;
+  // border-bottom: 1px solid #d2d2d2;
 
   :deep(.el-form-item__label) {
     align-items: center;
     line-height: 16px;
+  }
+  :deep(.ep-form-item--default) {
+    margin-bottom: 0px !important;
   }
 
   .ep-form-item{
@@ -159,7 +162,7 @@ defineExpose({ formData })
   
   .ep-form-search{
     flex: 1;
-    margin-top: 10px;
+    // margin-top: 10px;
   }
   .ep-button{
     width: 74px;

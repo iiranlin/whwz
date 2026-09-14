@@ -2,16 +2,20 @@
   <div class="app-container app-container-splitpanes inventory-create-page">
     <el-row :gutter="20" class="app-container-row integrated-manage-pane-form integrated-manage-pane-form-a">
       <el-col class="app-container-col">
+        <div class="ep-pro-table__search-area">
         <inventory-form ref="formRef" :show-search="showSearch" :form-json="formJson" @handle-query="handleQuery" @reset-query="resetQuery" :rules="formRules"></inventory-form>
-        <el-row :gutter="10" class="integrated-manage-pane-form-button integrated-manage-pane-form-button-1">
-          <el-col :span="1.5">
+        </div>
+        <div class="ep-pro-table__toolbar">
+          <el-form label-position="left" class="flex1">
             <el-button type="primary" @click="inventoryRangeSelect" :disabled="!!!formRef?.formData.partitionCode">盘点范围选择</el-button>
             <el-button :disabled="!!!tableData.length" type="primary" class="tableButton" @click="handleCreate">生成</el-button>
             <el-button :disabled="!!!tableData.length" type="primary" class="tableButton" @click="handleExport">导出</el-button>
             <el-button :disabled="!replayFalg" type="primary" class="tableButton" @click="handleReplay">重新盘点</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" :tableJson="tableJsonArr" @queryTable="rightToolGetList" @tabConfigSuccess="tabConfigSuccess"></right-toolbar>
-        </el-row>
+          </el-form>
+          <div class="ep-pro-table__toolbar-tools">
+            <right-toolbar v-model:showSearch="showSearch" :tableJson="tableJsonArr" @queryTable="rightToolGetList" @tabConfigSuccess="tabConfigSuccess"></right-toolbar>
+          </div>
+        </div>
         <!-- 表格数据 -->
         <table-index
           class="table-index"
@@ -556,6 +560,12 @@ onMounted(() => {
         }
       }
     }
+  }
+}
+.table-index {
+  :deep(th) {
+    color: #fff;
+    background-color: #409EFF !important;
   }
 }
 </style>
