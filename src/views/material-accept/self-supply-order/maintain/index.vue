@@ -52,13 +52,13 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 30,
   // 状态默认查询未提交(1)、已提交(2)，与原系统一致
-  status: '1,8',
+  status: '1',
 })
 
 // 搜索区状态多选默认值（ElProTable 中为数组）
-const defaultSearchForm = {
-  status: ['1', '8'],
-}
+const defaultSearchForm = reactive({
+  status: '1',
+})
 
 /** 查询列表 */
 function getList() {
