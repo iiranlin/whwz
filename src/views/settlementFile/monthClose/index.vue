@@ -97,7 +97,7 @@
       <template #stopnoteFlag="{ row }">
         <el-checkbox
           v-model="row.stopnoteFlag"
-          id="row.recoredId"
+          :id="`dk_${row.recoredId}`"
           true-label="0"
           false-label="1"
           :disabled="row.isSubmittings"
@@ -116,11 +116,11 @@
       <template #closeFlag="{ row }">
         <el-checkbox
           v-model="row.closeFlag"
-          id="scope.row.recoredId"
+          :id="`kfz_${row.recoredId}`"
           true-label="0"
           false-label="1"
           :disabled="row.isSubmitting"
-          @change="checkCloseFlagFun(row)"
+          @change="() => checkCloseFlagFun(row)"
         >
           <span v-if="row.closeFlag === '1'">封账</span>
           <span v-else>开账</span>
@@ -274,11 +274,12 @@ const onAction = (payload) => {
 // 登卡操作
 const stopnoteIds = ref([]);
 const checkStopnoteFlagFun = async (row) => {
+  console.log("登卡！");
   if (row.isSubmittings) return;
   row.isSubmittings = true;
   try {
     stopnoteIds.value = [];
-    stopnoteIds.value.push(row.recoredId);
+    stopnoteIds.value.push(row.recoredId.replace("dk_",""));
 
     // let yearTime = proxy.$refs.formdataRef.formData;
     // if (!yearTime.yearMonth) {
@@ -317,11 +318,13 @@ const checkStopnoteFlagFun = async (row) => {
 // 封账操作
 const closeIds = ref([]);
 const checkCloseFlagFun = async (row) => {
+  console.log('封账！')
   if (row.isSubmitting) return;
   row.isSubmitting = true;
+  
   try {
     closeIds.value = [];
-    closeIds.value.push(row.recoredId);
+    closeIds.value.push(row.recoredId.replace("kfz_",""));
     // let yearTime = proxy.$refs.formdataRef.formData;
     // if (!yearTime.yearMonth) {
     //   ElMessage.warning("请先选择年月");
@@ -335,7 +338,7 @@ const checkCloseFlagFun = async (row) => {
       },
       row.closeFlag
     );
-    if (res?.data == 1) {
+    if (res?.code == 1) {
       tableData.value.forEach((item) => {
         if (item.recoredId === row.recoredId) {
           item.closeFlag = row.closeFlag == "1" ? "0" : "1";
