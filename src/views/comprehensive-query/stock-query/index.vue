@@ -1,9 +1,15 @@
 <template>
   <div class="app-container">
+    <el-tabs v-model="currentView" class="stock-query-tabs" @tab-change="onViewModeChange">
+      <el-tab-pane
+        v-for="tab in viewTabs"
+        :key="tab.value"
+        :label="tab.label"
+        :name="tab.value"
+      />
+    </el-tabs>
     <el-pro-table
       ref="tableRef"
-      v-model:view-mode="currentView"
-      :view-tabs="viewTabs"
       :columns="tableJsonList"
       :request="getList"
       :sort-remote="false"
@@ -14,17 +20,13 @@
       @action="onAction"
       :before-search-submit="beforeSearchFormat"
       tableId="stock-query"
-      :summary-data="summaryData"
-      @view-mode-change="onViewModeChange"
-      view-keep-alive
       border
       :grid-options="{ rowId: 'uid' }"
     />
   </div>
 </template>
 
-<script setup>
-
+<script setup name="stock-query">
 import {
   comprehensiveSearch,
   comprehensiveSearchStat,
@@ -94,7 +96,7 @@ const tableJsonList = ref([]);
 
 const defaultSearchForm = ref({
   cutCount: 2,
-  dateRange: [getMOnthOffset(0), getMOnthOffset(1)],
+  dateRange: [getMOnthOffset(0), getMOnthOffset(0)],
 });
 
 const currentTableConfig = computed(() => {
@@ -129,6 +131,10 @@ const onViewModeChange = (val) => {
   tableRef.value.reload();
 };
 const getList = async (params) => {
+  if (!params.yearMonthBegin || !params.yearMonthEnd) {
+    params.yearMonthBegin = defaultSearchForm.value.dateRange[0].replace("-", "");
+    params.yearMonthEnd = defaultSearchForm.value.dateRange[1].replace("-", "");
+  }
   const query = { ...params, queryType: currentView.value };
   const {
     data: { list, total },
@@ -175,3 +181,16 @@ const onAction = (payload) => {
   eventObj[code] && eventObj[code]();
 };
 </script>
+
+<style lang="scss" scoped>
+.stock-query-tabs {
+  margin-bottom: 0px;
+  background-color: #f2f3f5;
+  :deep(.ep-tabs__header) {
+    padding: 0px 10px !important
+  }
+}
+:deep(.ep-pro-table .ep-pro-table__search-area) {
+  border-top: transparent !important;
+}
+</style>

@@ -9,10 +9,17 @@ import {
     {
       field: "dateRange",
       title: "财务日期",
-      searchable: true,
       hideInTable: true,
+      searchable: true,
+      searchType: "dateRange",
+      searchProps: {
+        type: "monthrange",
+        valueFormat: "YYYY-MM",
+        clearable: false,
+        startPlaceholder: "开始日期",
+        endPlaceholder: "结束日期",
+      },
       searchSort: 0,
-      searchType: "monthRange",
     },
     {
       field: "plantCode",

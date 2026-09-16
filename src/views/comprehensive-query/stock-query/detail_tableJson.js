@@ -3,17 +3,24 @@ import {
   warehouseDict,
   warehouseplantDictList,
 } from "@/api/rmstor/price-adjustment";
-import { useDictDataQuery } from "@/utils/Dict";
+import { useDictData } from "@/utils/Dict";
 
 export const columns = async (ctx) => {
   return [
     {
       field: "dateRange",
       title: "财务日期",
-      searchable: true,
       hideInTable: true,
+      searchable: true,
+      searchType: "dateRange",
+      searchProps: {
+        type: "monthrange",
+        valueFormat: "YYYY-MM",
+        clearable: false,
+        startPlaceholder: "开始日期",
+        endPlaceholder: "结束日期",
+      },
       searchSort: 0,
-      searchType: "monthRange",
     },
     {
       field: "plantCode",
@@ -122,10 +129,10 @@ export const columns = async (ctx) => {
       optionsCacheKey: "stock-query-detail:stockAttr",
       requestOptions: async () => {
         try {
-          const { dictList } = await useDictDataQuery("stock_attr");
+          const { dictList } = await useDictData("stock_attr");
           return dictList || [];
         } catch (e) {
-          console.warn('useDictDataQuery(stock_attr) 接口调用失败:', e);
+          console.warn('useDictData(stock_attr) 接口调用失败:', e);
           return [];
         }
       },
