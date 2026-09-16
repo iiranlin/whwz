@@ -4,7 +4,21 @@ import {
   warehouseplantDictList,
 } from "@/api/rmstor/price-adjustment";
 
+const plantData = async () => {
+  try {
+    const res = await plantDictList()
+    return (res.data || []).map(item => {
+      return {...item, label: item.plantName, value: item.plantCode}
+    })
+  } catch (e) {
+    console.warn('selectPlantDict 接口调用失败:', e)
+    return []
+  }
+}
+
 export const columns = async (ctx) => {
+  const plantArr = await plantData()
+  let whArr = []
   return [
     {
       field: "csCode",
@@ -30,10 +44,7 @@ export const columns = async (ctx) => {
       labelKey: "plantName",
       valueKey: "plantCode",
       searchProps: {
-        options: async () => {
-          const { data } = await plantDictList();
-          return data;
-        },
+        options: plantArr,
         clearable: true,
       },
     },
@@ -52,20 +63,22 @@ export const columns = async (ctx) => {
       dependsOn: ["plantCode"],
       labelKey: "whName",
       valueKey: "whCode",
-      async onDependencyChange({
-        form,
-        changedField,
-        setFieldValue,
-        setFieldProps,
-        selectedRecords,
-      }) {
-        setFieldValue("depotCode", undefined);
-        setFieldProps("depotCode", { options: [] });
-        if (!selectedRecords["plantCode"]) return;
-        const { data } = await warehouseDict({
-          plantId: selectedRecords["plantCode"].id,
-        });
-        setFieldProps("depotCode", { options: data });
+      async onDependencyChange({form, changedField, setFieldValue, setFieldProps}) {
+        if (changedField !== 'plantCode') return
+        setFieldValue('depotCode', undefined)
+        setFieldProps('depotCode', { options: [] })
+        if(!form.plantCode) return
+        const plantCodeObj = plantArr.find(a => a.plantCode === form.plantCode)
+        if(!plantCodeObj) return
+        try {
+          const res = await warehouseDict({plantId: plantCodeObj.id})
+          whArr = (res.data || []).map(r => {
+            return {...r, label: r.whName, value: r.whCode}
+          })
+          setFieldProps('depotCode', { options: whArr })
+        } catch (e) {
+          console.warn('getwarehouseByUserAndPlant 接口调用失败:', e)
+        }
       },
     },
     {
@@ -83,21 +96,22 @@ export const columns = async (ctx) => {
       dependsOn: ["depotCode"],
       labelKey: "partitionName",
       valueKey: "partitionCode",
-      async onDependencyChange({
-        form,
-        changedField,
-        setFieldValue,
-        setFieldProps,
-        selectedRecords,
-      }) {
-        setFieldValue("partitionCode", undefined);
-        setFieldProps("partitionCode", { options: [] });
-        if (!selectedRecords["depotCode"]) return;
-        const { data } = await warehouseplantDictList({
-          whId: selectedRecords["depotCode"].id,
-        });
-
-        setFieldProps("partitionCode", { options: data });
+      async onDependencyChange({form, changedField, setFieldValue, setFieldProps}) {
+        if (changedField !== 'depotCode' && changedField !== 'plantCode') return
+        setFieldValue('partitionCode', undefined)
+        setFieldProps('partitionCode', { options: [] })
+        if(!form.depotCode) return
+        const whCodeObj = whArr.find(a => a.whCode === form.depotCode)
+        if(!whCodeObj) return
+        try {
+          const res = await warehouseplantDictList({whId: whCodeObj.id})
+          const options = (res.data || []).map(r => {
+            return {...r, label: r.partitionName, value: r.partitionCode}
+          })
+          setFieldProps('partitionCode', { options })
+        } catch (e) {
+          console.warn('getWarehousePartition 接口调用失败:', e)
+        }
       },
     },
         {
