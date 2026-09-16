@@ -2,7 +2,7 @@ import { dateTypeArr, ibSourceArr } from '@/utils/dictionary'
 import { selectPlantDict } from '@/api/warehouse/plantDict'
 import { getwarehouseByUserAndPlant } from '@/api/warehouse/warehouseDict'
 import { getWarehousePartition } from '@/api/warehouse/partition'
-import { useDictDataQuery } from "@/utils/Dict"
+import { useDictData } from "@/utils/Dict"
 import { equipPartListAll, equipPartList } from '@/api/rmstor/outbound-maintenance'
 const plantData = async () => {
   try {
@@ -332,10 +332,10 @@ export const columns = async () => {
       searchType: "select",
       requestOptions: async () => {
         try {
-          const { dictList } = await useDictDataQuery('stock_attr')
+          const { dictList } = await useDictData('stock_attr')
           return dictList || []
         } catch (e) {
-          console.warn('useDictDataQuery(stock_attr) 调用失败:', e)
+          console.warn('useDictData(stock_attr) 调用失败:', e)
           return []
         }
       },

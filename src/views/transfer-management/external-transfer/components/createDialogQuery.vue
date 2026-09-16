@@ -154,7 +154,7 @@ import { selectPlantDict } from '@/api/warehouse/plantDict'
 import { getwarehouseByUserAndPlant } from '@/api/warehouse/warehouseDict'
 import { getWarehousePartition } from '@/api/warehouse/partition'
 import { ruleGenerate } from '@/api/warehouse/receiptRule'
-import { useDictQuery } from "@/utils/Dict"
+import { useDict } from "@/utils/Dict"
 import { matlTableJsonFun, matlTableButtonJson, rmstorMatlTableJsonFun } from "../tableJson"
 import { adjTypeCodeArr, adjTypeCodeObj, handleAdviseTypeArr, handleAdviseTypeObj } from '@/utils/dictionary'
 import RmstorMatlDialog from "@/views/components/rmstorMatlDialogQuery"
@@ -212,7 +212,7 @@ const emit = defineEmits(['createSuccess']);
 
 const warehouseGetYear = getCookie("warehouseGetYear") && JSON.parse(getCookie("warehouseGetYear"));
 
-const { dictList: taxablePurposeDict } = useDictQuery('tax_flag')
+const { dictList: taxablePurposeDict } = useDict('tax_flag')
 taxablePurposeArr.value = taxablePurposeDict
 
 const isRequired = () => {

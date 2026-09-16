@@ -159,3 +159,12 @@ const detailDialogClose = () => {
 
 getList()
 </script>
+<style lang="scss" scoped>
+/* 覆盖 el-pro-table search-form 中 checkbox 字段的宽度：
+   el-pro-table search-form 硬编码 span=6 (25%)，
+   用 :has() 定位 checkbox-group 所在 el-col，改成 span=18 (75%) */
+:deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group)) {
+  flex: 0 0 75% !important;
+  max-width: 75% !important;
+}
+</style>

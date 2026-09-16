@@ -3,7 +3,7 @@ import {
   warehouseDict,
   warehouseplantDictList,
 } from "@/api/rmstor/price-adjustment";
-import { useDictDataQuery } from "@/utils/Dict";
+import { useDictData } from "@/utils/Dict";
 
  const columns = async (ctx) => {
   return [
@@ -120,10 +120,10 @@ import { useDictDataQuery } from "@/utils/Dict";
       optionsCacheKey: "stock-query-bigKind:stockAttr",
       requestOptions: async () => {
         try {
-          const { dictList } = await useDictDataQuery("stock_attr");
+          const { dictList } = await useDictData("stock_attr");
           return dictList || [];
         } catch (e) {
-          console.warn('useDictDataQuery(stock_attr) 接口调用失败:', e);
+          console.warn('useDictData(stock_attr) 接口调用失败:', e);
           return [];
         }
       },

@@ -40,7 +40,7 @@ import {
 import { tableJsonOrderQuery } from "../tableJson";
 import { getLocalStorage } from "@/utils/auth";
 import { formOrderJsonQuery } from "../formJson";
-import { useDictQuery } from "@/utils/Dict";
+import { useDict } from "@/utils/Dict";
 
 const { proxy } = getCurrentInstance();
 

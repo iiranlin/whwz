@@ -101,3 +101,8 @@ const onAction = (payload) => {
 
 getList()
 </script>
+<style lang="scss" scoped>
+:deep(.ep-pro-table__search-area .ep-form .ep-row .ep-col:last-child .ep-form-item .ep-form-item__label) {
+  display: none !important;
+}
+</style>

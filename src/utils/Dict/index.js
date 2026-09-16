@@ -41,31 +41,6 @@ export const useDictData = async (dictType, params = {}) => {
   return {dictList, dictMap}
 };
 
-export const useDictQuery = (dictType, params = {}) => {
-  const dictList = ref([]);
-  const dictMap = ref({});
-  const loadDict = async () => {
-    const {data} = await dictCateListQuery({ ...params, code: dictType });
-    dictList.value = data.map(item => {
-        return {...item, value: item.code, label: item.name}
-    })
-    dictMap.value = data.reduce((map, item) => {
-        map[item.code] = item.name
-        return map
-    }, {})
-  };
-
-  onMounted( () => {
-    loadDict()
-  })
-
-  const getLabel = (value) => {
-    return dictMap.value[value] || '未知'
-  }
-
-  return {dictList, dictMap, getLabel, loadDict}
-};
-
 export const useDictDataQuery = async (dictType, params = {}) => {
   let dictList = [];
   let dictMap = {};

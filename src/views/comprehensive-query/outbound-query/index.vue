@@ -198,3 +198,15 @@ onMounted(() => {
 
 
 </script>
+
+<style lang="scss" scoped>
+:deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group)) {
+  flex: 0 0 75% !important;
+  max-width: 75% !important;
+}
+// /* 隐藏 checkbox col 紧邻的后两个兄弟 col */
+:deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group) + .ep-col-6),
+:deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group) + .ep-col-6 + .ep-col-6) {
+  display: none !important;
+}
+</style>

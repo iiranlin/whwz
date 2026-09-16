@@ -63,6 +63,9 @@ const getList = async () => {
     loading.value = true
     try {
         const form = proTableRef.value?.getSearchForm?.()
+        if (!form?.orderDate) {
+            form.orderDate = defaultSearchForm.orderDate
+        }
         const paramsObj = proxy.addDateRange(queryParams.value, form.orderDate, 'orderDate')
         delete queryParams.value.orderDate
         const { data, total } = await comprehensiveList(paramsObj)

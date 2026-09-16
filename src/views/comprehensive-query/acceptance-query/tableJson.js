@@ -1,23 +1,24 @@
 import { selectPlantDict } from '@/api/warehouse/plantDict'
-import { unitGetUnitListQuery } from "@/api/system/unit"
+import { deptTree } from '@/api/base/dept'
 import { acceptanceLevelArr } from '@/utils/dictionary'
-import { getCookie } from '@/utils/auth'
 
-const getUnitGetUnitList = async () => {
+// 拍平部门树 → [{ label, value, ... }]
+function flattenDeptTree(nodes = [], result = []) {
+  nodes.forEach(node => {
+    result.push({ label: node.deptName, value: node.deptCode, ...node })
+    if (node.children && node.children.length) {
+      flattenDeptTree(node.children, result)
+    }
+  })
+  return result
+}
+
+const getDeptList = async () => {
   try {
-    let { data } = await unitGetUnitListQuery({
-        unitFlag: "1",
-        parentUnitCode: getCookie('railwayCode'),
-    })
-    return (data || []).map(item => {
-        return {
-            label: item.unitName,
-            value: item.unitCode,
-            ...item
-        }
-    })
+    const { data } = await deptTree()
+    return flattenDeptTree(data || [])
   } catch (e) {
-    console.warn('getUnitGetUnitList 接口调用失败:', e)
+    console.warn('deptTree 接口调用失败:', e)
     return []
   }
 }
@@ -35,7 +36,7 @@ const plantData = async () => {
 }
 
 export const columns = async () => {
-  const unitArr = await getUnitGetUnitList()
+  const deptArr = await getDeptList()
   const plantArr = await plantData()
   return {
     plantArr,
@@ -89,7 +90,7 @@ export const columns = async () => {
         searchable: true,
         searchType: 'select',
         searchProps: {
-          options: unitArr,
+          options: deptArr,
           clearable: true,
           filterable: true,
         },
