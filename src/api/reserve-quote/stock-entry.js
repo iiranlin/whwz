@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE
 const VITE_APP_BASE_BASE_SERVICE = import.meta.env.VITE_APP_BASE_BASE_SERVICE
+const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
 //储备定额维护（路局）列表
 export function normListPage(params) {
     return request({
@@ -56,3 +57,29 @@ export function normLgetUnitListWithout(params) {
         params
     })
 }
+//弹框列表
+export function normLgetUnitListWithoutQuery(params) {
+    return request({
+        url: `${VITE_APP_BASE_SSO_BASE}/sys/unit/getUnitListWithoutLogin`,
+        method: 'get',
+        params
+    })
+}
+
+export function comprehensiveSearch(params) {
+    return request({
+        url: `${VITE_APP_BASE_WAREHOUSE}/rmstor/matl/comprehensive-search`,
+        method: 'get',
+        params
+    })
+}
+
+export function comprehensiveSearchStat(params) {
+    return request({
+        url: `${VITE_APP_BASE_WAREHOUSE}/rmstor/matl/comprehensive-search-stat`,
+        method: 'get',
+        params
+    })
+}
+
+export const exportComprehensiveSearch = `${VITE_APP_BASE_WAREHOUSE}/rmstor/matl/export-comprehensive-search`

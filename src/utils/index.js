@@ -1,5 +1,5 @@
 import { parseTime } from "./generalMethod";
-
+import { getCookie } from './auth'
 /**
  * 表格时间格式化
  */
@@ -482,4 +482,15 @@ export function getDateFirstDayLastDay(dateStr = new Date(), type = "firstDay") 
     // 当月最后一天
     return new Date(year, month + 1, 0)
   }
+}
+
+/**
+ * 获取偏移年月
+ * @param {number} offset 偏移
+ * @returns {string} YYYY-MM 格式化日期
+ */
+export const getMOnthOffset = (offset=0) => {
+  const d = new Date()
+  d.setMonth(d.getMonth() + offset)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }

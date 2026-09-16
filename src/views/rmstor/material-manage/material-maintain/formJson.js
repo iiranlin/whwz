@@ -36,11 +36,11 @@ export const formOrderJson = [
   {prop: 'matlName', label: '物资名称', type: '', labelWidth: '90'},
 ]
 // 81-退料单改造：原出库单检索项配置保留备恢复
-// export const formOrderJson = [
-//   {prop: 'obCode', label: '出库单号', type: '', labelWidth: '90'},
-//   {prop: 'matlCode', label: '物资编码', type: '', labelWidth: '90'},
-//   {prop: 'matlName', label: '物资名称', type: '', labelWidth: '90'},
-// ]
+export const formOrderJsonQuery = [
+  {prop: 'obCode', label: '出库单号', type: '', labelWidth: '90'},
+  {prop: 'matlCode', label: '物资编码', type: '', labelWidth: '90'},
+  {prop: 'matlName', label: '物资名称', type: '', labelWidth: '90'},
+]
 
 // 退料人查询
 export const userFormJson = [

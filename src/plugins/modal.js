@@ -20,8 +20,8 @@ export default {
     ElMessage.warning(content)
   },
   // 弹出提示
-  alert(content) {
-    ElMessageBox.alert(content, "系统提示")
+  alert(content, title = "系统提示", options = {}) {
+    ElMessageBox.alert(content, title, options)
   },
   // 错误提示
   alertError(content, dangerouslyUseHTMLString, customStyle) {

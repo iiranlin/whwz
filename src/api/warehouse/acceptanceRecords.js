@@ -1,6 +1,9 @@
 import request from '@/utils/request'
 const VITE_APP_BASE_WAREHOUSE = import.meta.env.VITE_APP_BASE_WAREHOUSE
 
+// 验收记录综合查询-导出
+export const exportComprehensiveSearch = `${VITE_APP_BASE_WAREHOUSE}/rmpl/acceptance/record/export-comprehensive-search`
+
 // 查询验收记录维护列表
 export function acceptanceRecordsList(params) {
   return request({
@@ -88,5 +91,14 @@ export function checkPriceRange (data) {
     url: `${VITE_APP_BASE_WAREHOUSE}/rmpl/purchase/acceptanceRecords/checkPriceRange`,
     method: 'post',
     data
+  })
+}
+
+// 验收记录综合查询
+export function recordComprehensiveSearch (params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmpl/acceptance/record/comprehensive-search`,
+    method: 'get',
+    params
   })
 }

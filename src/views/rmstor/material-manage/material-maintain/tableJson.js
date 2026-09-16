@@ -177,15 +177,15 @@ export const tableJsonOrder = [
   {isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'right', width: 160},
 ]
 // 81-退料单改造：原出库单弹窗明细列配置保留备恢复
-// export const tableJsonOrder = [
-//   {isShow: true, fixed: false, type: '', key: 'obCode', prop: 'obCode', label: '出库单号', align: 'center', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'right', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'right', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '支出数量', align: 'right', width: 160},
-//   {isShow: true, fixed: false, type: '', key: 'depotName', prop: 'depotName', label: '支出仓库', align: 'right', width: 160},
-// ]
+export const tableJsonOrderQuery = [
+  {isShow: true, fixed: false, type: '', key: 'obCode', prop: 'obCode', label: '出库单号', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'right', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'right', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '支出数量', align: 'right', width: 160},
+  {isShow: true, fixed: false, type: '', key: 'depotName', prop: 'depotName', label: '支出仓库', align: 'right', width: 160},
+]
 
 // 退料人
 export const userTableJson = [

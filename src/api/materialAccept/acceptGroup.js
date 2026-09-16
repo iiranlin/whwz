@@ -36,6 +36,14 @@ export function deptTree(params) {
     params
   })
 }
+//仓储子系统-人员
+export function deptTreePersonQuery(params) {
+  return request({
+    url: `${VITE_APP_BASE_SSO_BASE}/sys/user/list`,
+    method: 'get',
+    params
+  })
+}
 //人员（base 专用接口：仅启用用户 status=0、排除管理员、分页正确；字段映射 userCode=username、userName=nickName）
 //原老系统调用（已注释保留）：url: `${VITE_APP_BASE_SSO_BASE}/sys/user/list`
 export function deptTreePerson(params) {

@@ -66,3 +66,30 @@ export function supplierBaseinfoList(params) {
     params
   })
 }
+
+// 查询通用字典明细列表
+export function dictCateListQuery(params) {
+  return request({
+    url: `${VITE_APP_BASE_SSO_BASE}/sys/common/dict/list`,
+    method: 'get',
+    params
+  })
+}
+
+// 部门用户树
+export function treeWithUserQuery(params) {
+  return request({
+    url: `${VITE_APP_BASE_SSO_BASE}/sys/dept/treeWithUser`,
+    method: 'get',
+    params
+  })
+}
+
+// 查询物资目录列表
+export function noAuthorizeListQuery(params) {
+  return request({
+    url: `${VITE_APP_BASE_SSO_BASE}/rmstat/catalog/noAuthorize/list`,
+    method: 'get',
+    params
+  })
+}

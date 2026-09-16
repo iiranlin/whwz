@@ -254,3 +254,68 @@ export const rmstorMatlTableJson = [
   {isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价', align: 'right', width: 200},
   {isShow: true, fixed: false, type: '', key: 'depotName', prop: 'depotName', label: '移出仓库', align: 'center', width: 160},
 ]
+
+// 选择物资弹框字段
+export const rmstorMatlTableJsonFun = (partitionData) => {
+  return [
+    {
+      field: "partitionCode",
+      title: "移出仓库分区",
+      minWidth: 160,
+      hideInTable: true,
+      searchable: true,
+      searchType: 'select',
+      searchProps: { options: partitionData, clearable: false, disabled: true },
+    },
+    {
+      field: "matlCode",
+      title: "物资编码",
+      minWidth: 160,
+      align: "center",
+      searchable: true,
+      searchType: "input",
+    },
+    {
+      field: "matlName",
+      title: "物资名称",
+      minWidth: 160,
+      searchable: true,
+      searchType: "input",
+    },
+    {
+      field: "matlTypeSlot",
+      title: "规格型号/材质/图号",
+      minWidth: 160,
+      slotName: 'matlTypeSlot'
+    },
+    {
+      field: "matlUnit",
+      title: "计量单位",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "batchNo",
+      title: "批次号",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "nowNum",
+      title: "结存数量",
+      minWidth: 160,
+      type: 'number',
+    },
+    {
+      field: "cardPrice",
+      title: "库存单价",
+      minWidth: 160,
+      type: 'number',
+    },
+    {
+      field: "depotName",
+      title: "移出仓库",
+      minWidth: 160,
+    }
+  ]
+}

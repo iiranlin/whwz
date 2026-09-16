@@ -260,3 +260,139 @@ export const rmstorMatlTableJson = [
   {isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价', align: 'right', width: 200},
   {isShow: true, fixed: false, type: '', key: 'depotName', prop: 'depotName', label: '调出仓库', align: 'center', width: 160},
 ]
+// 新增弹框明细字段
+export const matlTableJsonFun = (type) => {
+  return [
+    {
+      field: "matlCode",
+      title: "物资编码",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "matlName",
+      title: "物资名称",
+      minWidth: 160,
+    },
+    {
+      field: "matlTypeSlot",
+      title: "规格型号/材质/图号",
+      minWidth: 160,
+      slotName: "matlTypeSlot",
+    },
+    {
+      field: "matlUnit",
+      title: "计量单位",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "batchNo",
+      title: "批次号",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "outsaleNum",
+      title: "调拨数量",
+      minWidth: 160,
+      type: "number",
+      slotName: "outsaleNum",
+      showRequiredMark: type != "details",
+    },
+    {
+      field: "cardPrice",
+      title: "库存单价(元)",
+      minWidth: 160,
+      type: "number",
+    },
+    {
+      field: "outsalePrice",
+      title: "调拨单价(元)",
+      minWidth: 160,
+      type: "number",
+      slotName: "outsalePrice",
+      showRequiredMark: type != "details",
+    },
+    {
+      field: "outsaleAmount",
+      title: "调拨金额(元)",
+      minWidth: 160,
+      type: "number",
+    },
+    {
+      field: "cardNum",
+      title: "结存数量",
+      minWidth: 160,
+      type: "number",
+    },
+  ];
+};
+
+export const adjustTableButtonJson = {
+  buttons: [
+    {
+      code: "searchValue",
+      name: "请选择调剂单",
+      slotName: "searchValue",
+    },
+  ],
+};
+// 选择物资弹框字段
+export const rmstorMatlTableJsonFun = (partitionData) => {
+  return [
+    {
+      field: "partitionCode",
+      title: "调出仓库分区",
+      minWidth: 160,
+      hideInTable: true,
+      searchable: true,
+      searchType: "select",
+      searchProps: { options: partitionData, clearable: false, disabled: true },
+    },
+    {
+      field: "matlCode",
+      title: "物资编码",
+      minWidth: 160,
+      align: "center",
+      searchable: true,
+      searchType: "input",
+    },
+    {
+      field: "matlName",
+      title: "物资名称",
+      minWidth: 160,
+      searchable: true,
+      searchType: "input",
+    },
+    {
+      field: "matlTypeSlot",
+      title: "规格型号/材质/图号",
+      minWidth: 160,
+      slotName: "matlTypeSlot",
+    },
+    {
+      field: "matlUnit",
+      title: "计量单位",
+      minWidth: 160,
+      align: "center",
+    },
+    {
+      field: "nowNum",
+      title: "结存数量",
+      minWidth: 160,
+      type: "number",
+    },
+    {
+      field: "cardPrice",
+      title: "库存单价",
+      minWidth: 160,
+      type: "number",
+    },
+    {
+      field: "depotName",
+      title: "调出仓库",
+      minWidth: 160,
+    },
+  ];
+};

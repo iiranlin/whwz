@@ -8,3 +8,12 @@ export function unitGetUnitList(params) {
     params
   })
 }
+
+const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
+export function unitGetUnitListQuery(params) {
+  return request({
+    url: `${VITE_APP_BASE_SSO_BASE}/sys/unit/getUnitList`,
+    method: 'get',
+    params
+  })
+}

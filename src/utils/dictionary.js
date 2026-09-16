@@ -212,3 +212,40 @@ export const payStatusArr = [{ value: '0', label: '待付款' }, { value: '1', l
 // 月结转采供所-封账状态
 export const closeFlagObj = {'0': '开账', '1': '封账'}
 export const closeFlagArr = [{ value: '0', label: '开账' }, { value: '1', label: '封账' }]
+
+//入库单综合查询--分组汇总
+export const inboundHasArr = [
+  { value: "SUP_UNIT_CODE", label: "自制项目/供货单位" },
+  { value: "PLANT_CODE", label: "用料地区" },
+  { value: "DEPOT_CODE", label: "仓库" },
+//   { value: "IB_BILL_CODE", label: "仓库分区" },
+  { value: "IB_BILL_CODE", label: "入库单号" },
+  { value: "MATL_CODE", label: "物资编码" },
+];
+//入库单综合查询--入库单来源
+export const ibSourceArr = [
+  { value: "0", label: "外购" },
+  { value: "1", label: "自制" },
+  { value: "2", label: "调拨" },
+  { value: "3", label: "柴油入库" },
+  { value: "4", label: "旧品" },
+  { value: "5", label: "报废" },
+  { value: "6", label: "钢轨入库" },
+  { value: "7", label: "委外修" },
+  { value: "8", label: "其他" },
+  { value: "9", label: "修旧利废" },
+];
+
+export const rmstorEnterFlagArr = [
+  { value: "0", label: "移出未提交" },
+  { value: "1", label: "移出已提交" },
+  { value: "2", label: "移入未登卡" },
+  { value: "4", label: "移入已登卡" },
+];
+
+export const documentTypeArr = [
+  { value: "1", label: "技术证件" },
+  { value: "2", label: "产品图片" },
+  { value: "3", label: "验收过程" },
+  { value: "4", label: "其他" },
+];

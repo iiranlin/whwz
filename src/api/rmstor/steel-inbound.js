@@ -4,6 +4,8 @@ const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE;
 
 // 导出
 export const rmstorInternalExport = `${VITE_APP_BASE_WAREHOUSE}/rmstore/inbound/export`
+// 入库单综合查询-导出
+export const exportComprehensiveSearch = `${VITE_APP_BASE_WAREHOUSE}/rmstore/inbound/export-comprehensive-search`
 
 // 查询内部调拨单据列表
 export function rmstorInternalList(params) {
@@ -151,5 +153,20 @@ export function getCheckList(params) {
     params
   })
 }
-
+// 入库单综合查询
+export function inboundComprehensiveSearch(params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstore/inbound/comprehensive-search`,
+    method: "get",
+    params,
+  });
+}
+// 入库单综合查询统计
+export function inboundComprehensiveSearchStat(params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstore/inbound/comprehensive-search-stat`,
+    method: "get",
+    params,
+  });
+}
 

@@ -4,6 +4,7 @@ const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE;
 
 // 内部调拨单导出
 export const rmstorInternalExport = `${VITE_APP_BASE_WAREHOUSE}/rmstorInternal/export`
+export const rmstorInternalQueryExport = `${VITE_APP_BASE_WAREHOUSE}/rmstorInternal/queryExport`
 
 // 查询内部调拨单据列表
 export function rmstorInternalList(params) {
@@ -109,5 +110,13 @@ export function rmstorInternalWithDrawCard(data) {
     url: `${VITE_APP_BASE_WAREHOUSE}/rmstorInternal/withDrawCard`,
     method: "post",
     data,
+  });
+}
+
+export function rmstorInternalQueryList(params) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstorInternal/queryList`,
+    method: "get",
+    params,
   });
 }

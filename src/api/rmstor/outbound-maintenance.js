@@ -175,3 +175,22 @@ export function getEquipOutTotalAmount(params) {
     params,
   });
 }
+//综合查询
+export function rmsList(data) {
+  return request({
+    url: `${VITE_APP_BASE_WAREHOUSE}/rmstor/out/mt/one/stop/list`,
+    method: "post",
+    data,
+  });
+}
+
+// export const rmstorInternalExportList = `${VITE_APP_BASE_WAREHOUSE}/rmstor/out/mt/one/stop/export`
+
+export function rmstorInternalExportList(data) {
+  return request({
+    method: "post",
+    url:`${VITE_APP_BASE_WAREHOUSE}/rmstor/out/mt/one/stop/export`,
+    data,
+    responseType: 'blob',
+  })
+}
