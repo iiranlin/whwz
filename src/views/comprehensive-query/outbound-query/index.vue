@@ -22,7 +22,8 @@ import { getCookie } from '@/utils/auth'
 import { getDateFirstDayLastDay } from '@/utils'
 import { rmsList, rmstorInternalExportList } from '@/api/rmstor/outbound-maintenance'
 const { proxy } = getCurrentInstance()
-import CreateDialog from "@/views/rmstor/outbound/outbound-maintenance-query/components/createDialog"
+// import CreateDialog from "@/views/rmstor/outbound/outbound-maintenance-query/components/createDialog"
+import CreateDialog from "@/views/rmstor/outbound/outbound-maintenance/components/createDialog"
 import UserDialog from "@/views/components/userDialogQuery"
 const proTableRef = ref()
 

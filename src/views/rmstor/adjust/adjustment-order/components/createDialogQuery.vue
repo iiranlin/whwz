@@ -78,13 +78,13 @@
           @action="onAction" :data="tableData" table-id="price-adjustment" :show-checkbox="false" :table-alert-render="false"
           :grid-options="{ rowId: 'cardId' }" :show-action="dialogType != 'details' ? true : false" :show-refresh="false" :show-setting="false">
           <template #ptNum="{ row, column, index }">
-            <el-input v-if="dialogType != 'details'" v-model="row.ptNum" v-number-input.float="2" clearable
+            <el-input v-if="dialogType != 'details'" v-model="row.ptNum" v-number-input.float="4" clearable
               @input="tsNumChange(row)" placeholder="请输入" />
-            <span v-else>{{ row.ptNum }}</span>
+            <span v-else>{{ row.ptNum != null && row.ptNum !== '' ? Number(row.ptNum).toFixed(4) : '' }}</span>
           </template>
         </el-pro-table>
       </div>
-      <div style="margin-left: 10px;">合计盈亏总金额：{{ profitAmountSum }}元</div>
+      <div style="margin-left: 10px;">合计盈亏总金额：{{ Number(profitAmountSum).toFixed(2) }}元</div>
     </div>
     <template #footer>
       <div class="dialog-footer">

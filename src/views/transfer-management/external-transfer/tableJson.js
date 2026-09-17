@@ -198,11 +198,11 @@ export const matlTableJson = [
   {isShow: true, fixed: false, type: 'slot', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'center', width: 160},
   {isShow: true, fixed: false, type: '', key: 'batchNo', prop: 'batchNo', label: '批次号', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: 'slot', key: 'outsaleNum', prop: 'outsaleNum', label: '调拨数量', align: 'right', width: 160, required: true},
-  {isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价(元)', align: 'right', width: 200},
-  {isShow: true, fixed: false, type: 'slot', key: 'outsalePrice', prop: 'outsalePrice', label: '调拨单价(元)', align: 'right', width: 160, required: true},
-  {isShow: true, fixed: false, type: '', key: 'outsaleAmount', prop: 'outsaleAmount', label: '调拨金额(元)', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'cardNum', prop: 'cardNum', label: '结存数量', align: 'right', width: 160},
+  {isShow: true, fixed: false, type: 'slot', key: 'outsaleNum', prop: 'outsaleNum', label: '调拨数量', align: 'right', width: 160, required: true, formatter: (row) => row.outsaleNum != null && row.outsaleNum !== '' ? Number(row.outsaleNum).toFixed(4) : ''},
+  {isShow: true, fixed: false, type: '', key: 'cardPrice', prop: 'cardPrice', label: '库存单价(元)', align: 'right', width: 200, formatter: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : ''},
+  {isShow: true, fixed: false, type: 'slot', key: 'outsalePrice', prop: 'outsalePrice', label: '调拨单价(元)', align: 'right', width: 160, required: true, formatter: (row) => row.outsalePrice != null && row.outsalePrice !== '' ? Number(row.outsalePrice).toFixed(2) : ''},
+  {isShow: true, fixed: false, type: '', key: 'outsaleAmount', prop: 'outsaleAmount', label: '调拨金额(元)', align: 'right', width: 160, formatter: (row) => row.outsaleAmount != null && row.outsaleAmount !== '' ? Number(row.outsaleAmount).toFixed(2) : ''},
+  {isShow: true, fixed: false, type: '', key: 'cardNum', prop: 'cardNum', label: '结存数量', align: 'right', width: 160, formatter: (row) => row.cardNum != null && row.cardNum !== '' ? Number(row.cardNum).toFixed(4) : ''},
 ]
 
 export const matlTableButtonJson = [
@@ -299,12 +299,14 @@ export const matlTableJsonFun = (type) => {
       type: "number",
       slotName: "outsaleNum",
       showRequiredMark: type != "details",
+      render: (row) => row.outsaleNum != null && row.outsaleNum !== '' ? Number(row.outsaleNum).toFixed(4) : '',
     },
     {
       field: "cardPrice",
       title: "库存单价(元)",
       minWidth: 160,
       type: "number",
+      render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '',
     },
     {
       field: "outsalePrice",
@@ -313,18 +315,21 @@ export const matlTableJsonFun = (type) => {
       type: "number",
       slotName: "outsalePrice",
       showRequiredMark: type != "details",
+      render: (row) => row.outsalePrice != null && row.outsalePrice !== '' ? Number(row.outsalePrice).toFixed(2) : '',
     },
     {
       field: "outsaleAmount",
       title: "调拨金额(元)",
       minWidth: 160,
       type: "number",
+      render: (row) => row.outsaleAmount != null && row.outsaleAmount !== '' ? Number(row.outsaleAmount).toFixed(2) : '',
     },
     {
       field: "cardNum",
       title: "结存数量",
       minWidth: 160,
       type: "number",
+      render: (row) => row.cardNum != null && row.cardNum !== '' ? Number(row.cardNum).toFixed(4) : '',
     },
   ];
 };

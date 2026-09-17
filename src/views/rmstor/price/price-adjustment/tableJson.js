@@ -250,28 +250,29 @@ export const matlTableJson = [
     title: '库存数量',
     showOverflowTooltip: true,
     searchable: false,
-
+    render: (row) => row.num != null && row.num !== '' ? Number(row.num).toFixed(4) : '',
   },
   {
     field: 'prPrice',
     title: '前库存单价（元）',
     showOverflowTooltip: true,
     searchable: false,
-
+    render: (row) => row.prPrice != null && row.prPrice !== '' ? Number(row.prPrice).toFixed(2) : '',
   },
   {
     field: 'ptPrice',
     title: '后库存单价（元）',
     showOverflowTooltip: true,
     searchable: false,
-    slotName: 'ptPrice'
+    slotName: 'ptPrice',
+    render: (row) => row.ptPrice != null && row.ptPrice !== '' ? Number(row.ptPrice).toFixed(2) : '',
   },
   {
     field: 'profitAmount',
     title: '盈亏金额（元）',
     showOverflowTooltip: true,
     searchable: false,
-
+    render: (row) => row.profitAmount != null && row.profitAmount !== '' ? Number(row.profitAmount).toFixed(2) : '',
   },
 ]
 

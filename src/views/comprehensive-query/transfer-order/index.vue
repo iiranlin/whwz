@@ -98,6 +98,7 @@ const handleRowStyle = ({ row }) => {
 
 onMounted(async () => {
     columnsData.value = await columns()
+    await nextTick() 
     getList()
 })
 </script>

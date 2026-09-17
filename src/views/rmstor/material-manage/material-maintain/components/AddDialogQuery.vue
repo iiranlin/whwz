@@ -96,14 +96,14 @@
       </div>
       <div class="font_s" style="margin-bottom: 17px">退料单明细信息</div>
       <div style="height:calc(100% - 240px)">
-        <el-pro-table ref="proTableRef" :columns="matlTableJson" :show-pagination="false" :data="tableData"
+        <el-pro-table ref="proTableRef" :columns="matlTableJsonQuery" :show-pagination="false" :data="tableData"
           :show-checkbox="false" :grid-options="{ rowId: 'returnId' }" :table-alert-render="false"
           :show-action="dialogType === 'create' ? true : false" :show-refresh="false" :show-setting="false"
           :toolbar-config="dialogType === 'create' ? toolbarConfig : {}" @action="onAction">
           <template #rmNum="{ row, column, index }">
             <el-input v-if="dialogType != 'details'" v-model="row.rmNum" placeholder="请输入" clearable
-              v-number-input.float="2" @input="tsNumChange(row)" />
-            <span v-else>{{ row.rmNum }}</span>
+              v-number-input.float="4" @input="tsNumChange(row)" />
+            <span v-else>{{ row.rmNum != null && row.rmNum !== '' ? Number(row.rmNum).toFixed(4) : '' }}</span>
           </template>
         </el-pro-table>
       </div>
@@ -127,7 +127,7 @@ import {
   maintainModify,
   generateCode,
 } from "@/api/materialMaintain/materialGroup";
-import { matlTableJson } from "../tableJson";
+import { matlTableJsonQuery } from "../tableJson";
 import { getCookie } from "@/utils/auth";
 import { Search } from "@element-plus/icons-vue";
 import OutboundOrder from "./outboundOrderQuery.vue";

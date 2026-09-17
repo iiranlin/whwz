@@ -81,11 +81,11 @@
           <template #ptPrice="{ row, column, index }">
             <el-input v-if="dialogType != 'details'" v-model="row.ptPrice" v-number-input.float="2" clearable
               @input="tsNumChange(row)" />
-            <span v-else>{{ row.ptPrice }}</span>
+            <span v-else>{{ row.ptPrice != null && row.ptPrice !== '' ? Number(row.ptPrice).toFixed(2) : '' }}</span>
           </template>
         </el-pro-table>
       </div>
-      <div style="margin: 10px;">合计盈亏总金额：{{ profitAmountSum }}元</div>
+      <div style="margin: 10px;">合计盈亏总金额：{{ Number(profitAmountSum).toFixed(2) }}元</div>
     </div>
     <template #footer>
       <div class="dialog-footer">

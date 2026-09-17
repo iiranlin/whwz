@@ -69,8 +69,8 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="fee" label="运杂费：" :required="isRequired()">
-                <el-input v-if="dialogType != 'details'" v-model="formData.fee" v-number-input.float="4" clearable placeholder="请输入运杂费" />
-                <span v-else>{{ formData.fee }}</span>
+                <el-input v-if="dialogType != 'details'" v-model="formData.fee" v-number-input.float="2" clearable placeholder="请输入运杂费" />
+                <span v-else>{{ formData.fee != null ? Number(formData.fee).toFixed(2) : '' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -123,11 +123,11 @@
           </template>
           <template #outsaleNum="{ row, index }">
             <el-input v-if="dialogType != 'details'" v-model="row.outsaleNum" v-number-input.float="4" clearable @input="outsaleNumChange({row, index})" />
-            <span v-else>{{ row.outsaleNum }}</span>
+            <span v-else>{{ row.outsaleNum != null && row.outsaleNum !== '' ? Number(row.outsaleNum).toFixed(4) : '' }}</span>
           </template>
           <template #outsalePrice="{ row, index }">
-            <el-input v-if="dialogType != 'details'" v-model="row.outsalePrice" v-number-input.float="4" clearable @change="outsaleNumChange({row, index})" />
-            <span v-else>{{ row.outsalePrice }}</span>
+            <el-input v-if="dialogType != 'details'" v-model="row.outsalePrice" v-number-input.float="2" clearable @change="outsaleNumChange({row, index})" />
+            <span v-else>{{ row.outsalePrice != null && row.outsalePrice !== '' ? Number(row.outsalePrice).toFixed(2) : '' }}</span>
           </template>
         </el-pro-table>
       </div>

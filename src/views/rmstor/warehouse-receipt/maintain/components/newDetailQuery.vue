@@ -38,13 +38,13 @@
           <el-form-item v-if="detailData.ibSource === '0' || detailData.ibSource === '2'" :label="detailData.ibSource === '0' ? '采购订单：' : '引用单据：'" prop="refBillCode" class="entry-form-item-dialog">
             <span>{{ detailData.refBillCode || '--' }}</span>
           </el-form-item>
-          <el-form-item v-if="detailData.ibSource === '0'" label="采购方式（发起）：" prop="buyTypeName">
+          <el-form-item v-if="detailData.ibSource === '0'" label="采购方式：" prop="buyTypeName">
             <span>{{ detailData.buyTypeName || '--' }}</span>
           </el-form-item>
           <!-- <el-form-item label="一收一支：" prop="inOutFlag">
             <el-checkbox v-model="detailData.inOutFlag" true-value="1" false-value="0" disabled></el-checkbox>
           </el-form-item> -->
-          <el-form-item label="一收一移库：" prop="allotFlag">
+          <!-- <el-form-item label="一收一移库：" prop="allotFlag">
             <el-checkbox v-model="detailData.allotFlag" true-value="1" false-value="0" disabled></el-checkbox>
           </el-form-item>
           <el-form-item v-if="detailData.allotFlag === '1'" label="移库地区：" prop="ptPlantName">
@@ -55,7 +55,7 @@
           </el-form-item>
           <el-form-item v-if="detailData.allotFlag === '1'" label="移入库区：" prop="ptPartitionName">
             <span>{{ detailData.ptPartitionName || '--' }}</span>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="发票号：" prop="invoiceCode">
             <span>{{ detailData.invoiceCode || '--' }}</span>
           </el-form-item>
@@ -173,8 +173,8 @@ const columns = computed(() => [
   { field: "validityPeriodUnit", title: "有效期单位", minWidth: 120, align: "center" },
   { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center",  },
   { field: "batchNo", title: "批次号", minWidth: 180, align: "center", visible: detailData.value.flag === "2", },
-  { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: detailData.value.ibSource !== "0"},
-  { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: detailData.value.ibSource !== "0" }
+  // { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: detailData.value.ibSource !== "0"},
+  // { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: detailData.value.ibSource !== "0" }
 ]);
 
 watch(() => [detailData.value.incotaxAmount, detailData.value.matlAmount], (nval) => {

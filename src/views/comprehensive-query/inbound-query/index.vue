@@ -18,8 +18,8 @@ import { getCookie } from '@/utils/auth'
 import { inboundComprehensiveSearch, exportComprehensiveSearch, inboundComprehensiveSearchStat } from '@/api/rmstor/steel-inbound'
 import { obdtHasArr } from '@/utils/dictionary'
 import { getDateFirstDayLastDay } from '@/utils'
-import detailDialog from "@/views/rmstor/warehouse-receipt/maintain/components/newDetailQuery.vue";  // 将仓储系统中的newDetail重命名了
-// import detailDialog from "@/views/rmstor/warehouse-receipt/maintain/components/newDetail";   // 仓储系统用的是这个
+// import detailDialog from "@/views/rmstor/warehouse-receipt/maintain/components/newDetailQuery.vue";  // 将仓储系统中的newDetail重命名了
+import detailDialog from "@/views/rmstor/warehouse-receipt/maintain/components/newDetail";  
 
 const { proxy } = getCurrentInstance()
 

@@ -316,39 +316,43 @@ export const matlTableJson = [
     title: '库存单价（元）',
     showOverflowTooltip: true,
     searchable: false,
-
+    render: (row) => row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '',
   },
   {
     field: 'prNum',
     title: '调整前数量',
     showOverflowTooltip: true,
     searchable: false,
-
+    render: (row) => row.prNum != null && row.prNum !== '' ? Number(row.prNum).toFixed(4) : '',
   },
   {
     field: 'prAmount',
     title: '调整前金额',
     showOverflowTooltip: true,
     searchable: false,
+    render: (row) => row.prAmount != null && row.prAmount !== '' ? Number(row.prAmount).toFixed(2) : '',
   },
   {
     field: 'ptNum',
     title: '调整后数量',
     showOverflowTooltip: true,
     searchable: false,
-    slotName: 'ptNum'
+    slotName: 'ptNum',
+    render: (row) => row.ptNum != null && row.ptNum !== '' ? Number(row.ptNum).toFixed(4) : '',
   },
   {
     field: 'ptAmount',
     title: '调整后金额',
     showOverflowTooltip: true,
     searchable: false,
+    render: (row) => row.ptAmount != null && row.ptAmount !== '' ? Number(row.ptAmount).toFixed(2) : '',
   },
   {
     field: 'profitAmount',
     title: '盈亏金额（元）',
     showOverflowTooltip: true,
     searchable: false,
+    render: (row) => row.profitAmount != null && row.profitAmount !== '' ? Number(row.profitAmount).toFixed(2) : '',
   },
 ]
 

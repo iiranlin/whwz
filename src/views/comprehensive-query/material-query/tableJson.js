@@ -1,4 +1,5 @@
 import { plantDictList, warehouseDict, warehouseplantDictList, } from '@/api/rmstor/price-adjustment'
+import { dateTypeArr } from '@/utils/dictionary'
 const plantData = async () => {
     try {
         const res = await plantDictList()
@@ -22,13 +23,29 @@ export const columns = async () => {
             searchType: 'input',
             searchSort: 1
         },
+        // {
+        //     field: 'orderDate',
+        //     title: '下单日期',
+        //     type: 'date',
+        //     hideInTable: true,
+        //     searchable: true,
+        //     searchType: 'dateRange',
+        //     searchSort: 3
+        // },
         {
-            field: 'orderDate',
-            title: '下单日期',
-            type: 'date',
+            field: "orderDate",
+            title: "下单日期",
+            minWidth: 160,
             hideInTable: true,
             searchable: true,
             searchType: 'dateRange',
+            searchProps: { clearable: false },
+            searchPrefix: {
+            field: 'dateType',
+            searchType: 'select',
+            dict: dateTypeArr,
+            searchProps: { clearable: false },
+            },
             searchSort: 3
         },
         // {

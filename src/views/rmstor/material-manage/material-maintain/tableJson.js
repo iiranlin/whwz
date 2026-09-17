@@ -132,6 +132,17 @@ export const matlTableJson = [
   // {isShow: true, fixed: false, type: '', key: 'stockNum', prop: 'stockNum', label: '出库数量', align: 'right', width: 160},
 ]
 
+// 综合查询中退料弹框明细字段
+export const matlTableJsonQuery = [
+  { showOverflowTooltip: true, searchable: false, field: 'matlCode', title: '物资编码', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlName', title: '物资名称', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlType', title: '规格型号/材质/图号', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlUnit', title: '计量单位', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'batchNo', title: '批次号', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'rmNum', title: '退料数量', align: 'right', slotName: 'rmNum',  },
+  { showOverflowTooltip: true, searchable: false, field: 'price', title: '库存单价（元）', align: 'right', minWidth: 160, render: (row) => row.price != null && row.price !== '' ? Number(row.price).toFixed(2) : '' },
+  { showOverflowTooltip: true, searchable: false, field: 'rmAmount', title: '退料金额（元）', align: 'right', minWidth: 160, render: (row) => row.rmAmount != null && row.rmAmount !== '' ? Number(row.rmAmount).toFixed(2) : '' },
+]
 export const matlTableButtonJson = [
   {code: 'delete', name: '删除', type: 'inline'},
 ]
@@ -178,13 +189,13 @@ export const tableJsonOrder = [
 ]
 // 81-退料单改造：原出库单弹窗明细列配置保留备恢复
 export const tableJsonOrderQuery = [
-  {isShow: true, fixed: false, type: '', key: 'obCode', prop: 'obCode', label: '出库单号', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'matlCode', prop: 'matlCode', label: '物资编码', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'matlName', prop: 'matlName', label: '物资名称', align: 'center', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'matlType', prop: 'matlType', label: '规格型号/材质/图号', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'matlUnit', prop: 'matlUnit', label: '计量单位', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'outNum', prop: 'outNum', label: '支出数量', align: 'right', width: 160},
-  {isShow: true, fixed: false, type: '', key: 'depotName', prop: 'depotName', label: '支出仓库', align: 'right', width: 160},
+  { showOverflowTooltip: true, searchable: false, field: 'obCode', title: '出库单号', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlCode', title: '物资编码', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlName', title: '物资名称', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlType', title: '规格型号/材质/图号', align: 'left', },
+  { showOverflowTooltip: true, searchable: false, field: 'matlUnit', title: '计量单位', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'outNum', title: '支出数量', align: 'center', },
+  { showOverflowTooltip: true, searchable: false, field: 'depotName', title: '支出仓库', align: 'center', },
 ]
 
 // 退料人

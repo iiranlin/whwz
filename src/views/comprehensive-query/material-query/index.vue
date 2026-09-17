@@ -63,9 +63,6 @@ const getList = async () => {
     loading.value = true
     try {
         const form = proTableRef.value?.getSearchForm?.()
-        if (!form?.orderDate) {
-            form.orderDate = defaultSearchForm.orderDate
-        }
         const paramsObj = proxy.addDateRange(queryParams.value, form.orderDate, 'orderDate')
         delete queryParams.value.orderDate
         const { data, total } = await comprehensiveList(paramsObj)
@@ -97,6 +94,7 @@ const handleRowStyle = ({ row }) => {
 
 onMounted(async () => {
     columnsData.value = await columns()
+    await nextTick()   // 等 ProTable 的 watch flush 完 initSearchItems，searchForm 才会被赋 defaultSearchForm 默认值
     getList()
 })
 </script>

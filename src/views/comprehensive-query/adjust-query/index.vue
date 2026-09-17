@@ -229,7 +229,8 @@ const handleRowStyle = ({ row }) => {
   }
   return {}
 }
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
   getList()
 })
 </script>
