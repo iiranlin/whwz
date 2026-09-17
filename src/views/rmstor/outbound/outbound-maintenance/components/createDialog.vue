@@ -98,10 +98,10 @@
         :tableButtonJson="dialogType === 'create' ? matlTableButtonJson : []"
         :operationWidth="'80'" :idName="idName" @handleButtonClick="handleButtonClick" @handleSelectionChange="handleSelectionChange">
         <template #redNum="{ scope }">
-          <span>{{ - scope.row.outNum }}</span>
+          <span>{{ (- scope.row.outNum).toFixed(4) }}</span>
         </template>
         <template #redAmount="{ scope }">
-          <span>{{ - scope.row.outAmount }}</span>
+          <span>{{ (- scope.row.outAmount).toFixed(2) }}</span>
         </template>
         <template #credCode="{ scope }">
           <el-input v-if="dialogType === 'create' || dialogType === 'modify'" v-model="scope.row.credCode" placeholder="请输入" clearable />

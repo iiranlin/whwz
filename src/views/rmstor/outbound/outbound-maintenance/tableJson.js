@@ -124,10 +124,10 @@ export const rmstorRedReversalTableJson = [
   { isShow: true, fixed: false, type: 'date', key: 'expirationDate', prop: 'expirationDate', label: '到期日期', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: 'slot', key: 'outNum', prop: 'outNum', label: '出库数量', align: 'center', width: 160, },
   { isShow: true, fixed: false, type: 'slot', key: 'redNum', prop: 'redNum', label: '红冲数量', align: 'center', width: 160, },
-  { isShow: true, fixed: false, type: '', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: 'slot', key: 'price', prop: 'price', label: '库存单价（元）', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: 'slot', key: 'outAmount', prop: 'outAmount', label: '出库金额（元）', align: 'center', width: 160 },
   { isShow: true, fixed: false, type: 'slot', key: 'redAmount', prop: 'redAmount', label: '红冲金额（元）', align: 'center', width: 160 },
-  { isShow: true, fixed: false, type: '', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160 },
+  { isShow: true, fixed: false, type: 'slot', key: 'nowNum', prop: 'nowNum', label: '结存数量', align: 'center', width: 160 },
   // { isShow: true, fixed: false, type: '', key: 'templateName', prop: 'templateName', label: '报账模板', align: 'center', width: 160 },
 ]
 
@@ -412,6 +412,7 @@ async function createRichColumns() {
       searchType: 'input',
       minWidth: 140,
       align: 'center',
+      render: (row) => row.amount != null ? Number(row.amount).toFixed(2) : '',
     },
   ]
 

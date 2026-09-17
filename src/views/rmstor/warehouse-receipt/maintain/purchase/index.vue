@@ -270,9 +270,9 @@ const columns = computed(() => [
   { field: "matlType", title: "规格类型", searchable: false, searchType: "input", hideInTable: true },
   { field: "orderDate", title: "下单日期", minWidth: 140, align: "center", type: "date", searchable: true, searchType: "dateRange",},
   { field: "noteDate", title: "登卡日期", minWidth: 140, align: "center", type: "date", searchable: false, },
-  { field: "matlAmount", title: "料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
-  { field: "incotaxAmount", title: "税额（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
-  { field: "taxMatlAmount", title: "含税料款（元）", minWidth: 160, align: "center", searchable: false, type: "number" },
+  { field: "matlAmount", title: "料款（元）", minWidth: 160, align: "center", searchable: false, type: "number", render: (row) => row.matlAmount != null ? Number(row.matlAmount).toFixed(2) : '' },
+  { field: "incotaxAmount", title: "税额（元）", minWidth: 160, align: "center", searchable: false, type: "number", render: (row) => row.incotaxAmount != null ? Number(row.incotaxAmount).toFixed(2) : '' },
+  { field: "taxMatlAmount", title: "含税料款（元）", minWidth: 160, align: "center", searchable: false, type: "number", render: (row) => row.taxMatlAmount != null ? Number(row.taxMatlAmount).toFixed(2) : '' },
   { field: "action", title: "操作", slotName: "action", width: 180, align: "center", fixed: "right" },
 ]);
 
