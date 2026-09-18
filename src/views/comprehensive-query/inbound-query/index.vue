@@ -175,5 +175,10 @@ const detailDialogClose = () => {
 :deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group)) {
   flex: 0 0 75% !important;
   max-width: 75% !important;
+  // min-width: max-content;
+  padding-top: 10px;
+}
+:deep(.ep-pro-table .ep-input-number) {
+  width: 100%;
 }
 </style>

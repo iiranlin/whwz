@@ -218,4 +218,7 @@ onMounted(async () => {
   display: none !important;
 }
 
+// :deep(.ep-pro-table .ep-col-6:has(.ep-checkbox-group) + .ep-col-6 + .ep-col-6) {
+//   display: none !important;
+// }
 </style>
