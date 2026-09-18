@@ -9,6 +9,7 @@ import 'element-plus/theme-chalk/src/index.scss'
 import locale from 'element-plus/es/locale/lang/zh-cn'
 
 import '@/assets/styles/index.scss' // global css
+import '@/styles/table-summary-footer.scss' // pro-table footer 汇总合并行样式
 import App from './App'
 import store from './store'
 import router from './router'

@@ -9,7 +9,7 @@
       />
     </el-tabs>
     <el-pro-table
-      ref="tableRef"
+      ref="proTableRef"
       :columns="tableJsonList"
       :request="getList"
       :sort-remote="false"
@@ -19,6 +19,7 @@
       :toolbar-config="currentTableConfig.toolbarConfig"
       @action="onAction"
       :before-search-submit="beforeSearchFormat"
+      :footer-config="footerConfig"
       tableId="stock-query"
       border
       :grid-options="{ rowId: 'uid' }"
@@ -48,6 +49,7 @@ import stockCheck_tableJson from "./stockCheck_tableJson";
 
 
 import { computed } from "vue";
+import { useTableSummaryFooter } from '@/composables/useTableSummaryFooter'
 
 const { proxy } = getCurrentInstance();
 
@@ -90,9 +92,15 @@ const viewTabs = [
 ];
 const currentView = ref(VIEW_TYPE.DE);
 const summaryData = ref([]);
-const tableRef = ref();
+const proTableRef = ref();
 const columnsData = ref([]);
 const tableJsonList = ref([]);
+
+const { footerConfig } = useTableSummaryFooter({
+  summaryData,
+  columns: tableJsonList,
+  proTableRef,
+})
 
 const defaultSearchForm = ref({
   cutCount: 2,
@@ -128,7 +136,7 @@ const beforeSearchFormat = (params) => {
   return params;
 };
 const onViewModeChange = (val) => {
-  tableRef.value.reload();
+  proTableRef.value.reload();
 };
 const getList = async (params) => {
   if (!params.yearMonthBegin || !params.yearMonthEnd) {

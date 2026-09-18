@@ -25,6 +25,7 @@ const { proxy } = getCurrentInstance()
 // import CreateDialog from "@/views/rmstor/outbound/outbound-maintenance-query/components/createDialog"
 import CreateDialog from "@/views/rmstor/outbound/outbound-maintenance/components/createDialog"
 import UserDialog from "@/views/components/userDialogQuery"
+import { useTableSummaryFooter } from '@/composables/useTableSummaryFooter'
 const proTableRef = ref()
 
 import { onMounted } from "vue"
@@ -57,40 +58,11 @@ const data = reactive({
 
 const { queryParams, summaryData, defaultSearchForm } = toRefs(data)
 
-/** footerConfig：开启原生 footer，method 先返回空数组（DOM 操作会覆盖） */
-const footerConfig = computed(() => ({
-  enabled: true,
-  method: () => {
-    const colCount = tableJsonList.value.length || 1
-    return Array(colCount).fill('')
-  }
-}))
-
-/** 将 el-table footer 行所有 td 合并成一个 colspan=可见列数 的 td，展示 summaryData */
-function applySummaryFooter() {
-  nextTick(() => {
-    const proTableEl = proTableRef.value?.$el
-    if (!proTableEl || !summaryData.value.length) return
-
-    // 找到 footer 行（ep-table 或 el-table 都兼容）
-    const footerRow = proTableEl.querySelector('.ep-table__footer tr, .el-table__footer tr')
-    if (!footerRow) return
-
-    // 计算可见列数作为 colspan
-    const visibleCols = tableJsonList.value.filter(c => !c.hideInTable).length
-    const colSpan = visibleCols || footerRow.children.length
-
-    // 清空原有 td，创建合并的大 td
-    footerRow.innerHTML = ''
-    const td = document.createElement('td')
-    td.colSpan = colSpan
-    td.className = 'summary-footer-cell'
-    td.innerHTML = summaryData.value
-      .map(s => `<span class="sf-item"><span class="sf-label">${s.label}</span><span class="sf-value">${s.value}</span></span>`)
-      .join('')
-    footerRow.appendChild(td)
-  })
-}
+const { footerConfig } = useTableSummaryFooter({
+  summaryData,
+  columns: tableJsonList,
+  proTableRef,
+})
 
 async function init() {
   columnsData.value = await columns()
@@ -232,16 +204,6 @@ onMounted(async () => {
   getList()
 })
 
-// summaryData 变化时重新合并 footer 行
-watch(summaryData, () => {
-  applySummaryFooter()
-}, { deep: true })
-
-// 列显隐变化时（groupBy）重新合并 footer 行（colspan 可能变化）
-watch(tableJsonList, () => {
-  applySummaryFooter()
-}, { deep: true })
-
 
 </script>
 
@@ -256,31 +218,4 @@ watch(tableJsonList, () => {
   display: none !important;
 }
 
-/* footer 合并行样式 */
-:deep(.ep-table__footer td.summary-footer-cell) {
-  background: #f5f7fa !important;
-  padding: 12px 16px !important;
-  border-radius: 4px;
-}
-:deep(.ep-table__footer .sf-item){
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  padding-right: 24px;
-  margin-right: 24px;
-  border-right: 1px solid #e2e2e2;
-
-}
-:deep(.ep-table__footer .sf-item:last-child) {
-  border-right: none;
-}
-:deep(.ep-table__footer .sf-label) {
-  color: #909399;
-  font-size: 13px;
-}
-:deep(.ep-table__footer .sf-value){
-  color: #1A191A;
-  font-weight: 600;
-  font-size: 16px;
-}
 </style>

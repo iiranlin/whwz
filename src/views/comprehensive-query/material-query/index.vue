@@ -16,6 +16,7 @@ import { comprehensiveList, comprehensiveExport, comprehensivestatList } from '@
 import AddDialog from "@/views/rmstor/material-manage/material-maintain/components/AddDialogQuery"
 import { getCookie } from '@/utils/auth'
 import { columns, toolbarConfig } from "./tableJson"
+import { useTableSummaryFooter } from '@/composables/useTableSummaryFooter'
 const { proxy } = getCurrentInstance()
 const proTableRef = shallowRef(null)
 const tableData = ref([])
@@ -29,31 +30,12 @@ const columnsData = ref([])
 const totalRow = ref(0)
 const summaryData = ref()
 
-/** footerConfig：开启原生 footer，method 返回占位空数组 */
-const footerConfig = computed(() => ({
-    enabled: true,
-    method: () => Array(columnsData.value.length || 1).fill('')
-}))
+const { footerConfig } = useTableSummaryFooter({
+    summaryData,
+    columns: columnsData,
+    proTableRef,
+})
 
-/** 将 footer 行所有 td 合并成一个 colspan=可见列数 的 td，展示 summaryData */
-function applySummaryFooter() {
-    nextTick(() => {
-        const proTableEl = proTableRef.value?.$el
-        if (!proTableEl || !summaryData.value?.length) return
-        const footerRow = proTableEl.querySelector('.ep-table__footer tr, .el-table__footer tr')
-        if (!footerRow) return
-        const visibleCols = columnsData.value.filter(c => !c.hideInTable).length
-        const colSpan = visibleCols || footerRow.children.length
-        footerRow.innerHTML = ''
-        const td = document.createElement('td')
-        td.colSpan = colSpan
-        td.className = 'summary-footer-cell'
-        td.innerHTML = summaryData.value
-            .map(s => `<span class="sf-item"><span class="sf-label">${s.label}</span><span class="sf-value">${s.value}</span></span>`)
-            .join('')
-        footerRow.appendChild(td)
-    })
-}
 const initDate = () => {
     const date = new Date(getCookie("warehouseYearMonth"));
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -123,36 +105,5 @@ onMounted(async () => {
     await nextTick()   // 等 ProTable 的 watch flush 完 initSearchItems，searchForm 才会被赋 defaultSearchForm 默认值
     getList()
 })
-
-// summaryData 变化时重新合并 footer 行
-watch(summaryData, () => { applySummaryFooter() }, { deep: true })
 </script>
-<style lang="scss" scoped>
-/* footer 合并行样式 */
-:deep(.ep-table__footer td.summary-footer-cell) {
-  background: #f5f7fa !important;
-  padding: 12px 16px !important;
-  border-radius: 4px;
-}
-:deep(.ep-table__footer .sf-item){
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  padding-right: 24px;
-  margin-right: 24px;
-  border-right: 1px solid #e2e2e2;
 
-}
-:deep(.ep-table__footer .sf-item:last-child) {
-  border-right: none;
-}
-:deep(.ep-table__footer .sf-label) {
-  color: #909399;
-  font-size: 13px;
-}
-:deep(.ep-table__footer .sf-value){
-  color: #1A191A;
-  font-weight: 600;
-  font-size: 16px;
-}
-</style>
