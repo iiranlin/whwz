@@ -198,6 +198,9 @@ const onAction = (payload) => {
     padding: 0px 10px !important
   }
 }
+:deep(.ep-pro-table) {
+  height: calc(100% - 54px) !important;
+}
 :deep(.ep-pro-table .ep-pro-table__search-area) {
   border-top: transparent !important;
 }
