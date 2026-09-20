@@ -21,7 +21,7 @@
       </span>
       <el-dropdown trigger="click" @command="handleCommand">
         <span class="navbar-user">
-          <span class="navbar-avatar">{{ avatarChar }}</span>
+          <span class="navbar-avatar" :class="{ 'is-long': avatarChar.length > 1 }">{{ avatarChar }}</span>
           <span class="navbar-username">{{ username }}</span>
           <el-icon class="navbar-arrow"><ArrowDown /></el-icon>
         </span>
@@ -141,7 +141,8 @@ const username = computed(() => userStore.userInfo.username || userStore.userInf
 // 头像首字：优先取昵称首字
 const avatarChar = computed(() => {
   const name = userStore.userInfo.nickName || userStore.userInfo.username || '用'
-  return name.charAt(0).toUpperCase()
+  // return name.charAt(0).toUpperCase()
+  return name.toUpperCase()
 })
 
 // 退出登录
@@ -237,6 +238,14 @@ function handleCommand(command) {
         font-size: 13px;
         font-weight: 600;
         flex-shrink: 0;
+        white-space: nowrap;
+
+        &.is-long {
+          width: auto;
+          padding: 0 10px;
+          border-radius: 14px;
+          font-size: 12px;
+        }
       }
 
       .navbar-username {
