@@ -41,16 +41,31 @@ const tableJsonList = ref([])
 
 
 const dateStr = getCookie("warehouseYearMonth")
+
+const dateRangeInitial = [
+  proxy.parseTime(getDateFirstDayLastDay(dateStr, 'firstDay'), "{y}-{m}-{d}"),
+  proxy.parseTime(getDateFirstDayLastDay(dateStr, 'lastDay'), "{y}-{m}-{d}"),
+]
+
+// 从复合控件值中提取 dateType 和 dateRange
+function extractOrderDate(composite) {
+  if (!composite) return { dateType: '1', dateRange: dateRangeInitial }
+  if (Array.isArray(composite)) return { dateType: '1', dateRange: composite }
+  return {
+    dateType: composite.dateType ?? '1',
+    dateRange: composite.dateRange ?? dateRangeInitial,
+  }
+}
+
 const data = reactive({
   defaultSearchForm: {
-    dateType: '1',
-    orderDate: [proxy.parseTime(getDateFirstDayLastDay(dateStr, 'firstDay'), "{y}-{m}-{d}"), proxy.parseTime(getDateFirstDayLastDay(dateStr, 'lastDay'), "{y}-{m}-{d}")],
+    orderDate: { dateType: '1', dateRange: dateRangeInitial },
   },
   queryParams: {
     pageNum: 1,
     pageSize: 30,
     dateType: '1',
-    orderDate: [proxy.parseTime(getDateFirstDayLastDay(dateStr, 'firstDay'), "{y}-{m}-{d}"), proxy.parseTime(getDateFirstDayLastDay(dateStr, 'lastDay'), "{y}-{m}-{d}")],
+    orderDate: dateRangeInitial,
   },
   plantList: [],
   summaryData: []
@@ -101,8 +116,13 @@ const groupByFieldObj = {
 
 /** 搜索按钮操作 */
 function onSearch(form, pageInfo) {
+  const { dateType, dateRange } = extractOrderDate(form.orderDate)
   queryParams.value = {
-    ...form, ...pageInfo, measures: [
+    ...form,
+    ...pageInfo,
+    dateType,
+    orderDate: dateRange,
+    measures: [
       {
         "agg": "SUM",
         "field": "outBoundAmount"

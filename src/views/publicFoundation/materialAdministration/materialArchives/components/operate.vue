@@ -1,7 +1,7 @@
 <template>
   <ep-dialog :title="title" v-model="visible" width="560px" top="10vh" append-to-body v-loading="loading">
     <el-form ref="elFormRef" :model="form" :rules="rules" label-width="110px">
-      <el-form-item label="物资编码：" prop="matlCode">
+      <el-form-item label="物资编号：" prop="matlCode">
         <el-input v-model="form.matlCode" :disabled="type === 'update'" placeholder="请输入物资编码" maxlength="30" />
       </el-form-item>
       <el-form-item label="物资名称：" prop="matlName">

@@ -28,17 +28,17 @@ export const columns = [
     searchType: "input"
   },
   {
-    field: "matlUnit",
-    title: "计量单位",
-    minWidth: 100,
-    align: "center",
+    field: "matlPcode",
+    title: "图号",
+    minWidth: 140,
     searchable: true,
     searchType: "input"
   },
   {
-    field: "matlPcode",
-    title: "图号",
-    minWidth: 140,
+    field: "matlUnit",
+    title: "计量单位",
+    minWidth: 100,
+    align: "center",
     searchable: true,
     searchType: "input"
   },
@@ -82,15 +82,15 @@ export const columns = [
   //   ],
   //   optionsCacheKey: "material-matl:standbyattr3"
   // },
-  {
-    field: "auditDate",
-    title: "发布日期",
-    minWidth: 130,
-    type: "date"
-  },
+  // {
+  //   field: "auditDate",
+  //   title: "发布日期",
+  //   minWidth: 130,
+  //   type: "date"
+  // },
   {
     field: "enableState",
-    title: "目录状态",
+    title: "状态",
     minWidth: 90,
     align: "center",
     searchable: true,
@@ -102,14 +102,14 @@ export const columns = [
     ],
     optionsCacheKey: "material-matl:status"
   },
-  {
-    field: "stopReason",
-    title: "停用原因",
-    minWidth: 120
-  },
+  // {
+  //   field: "stopReason",
+  //   title: "停用原因",
+  //   minWidth: 120
+  // },
   {
     field: "comments",
-    title: "申请备注",
+    title: "备注",
     minWidth: 140
   }
 ]

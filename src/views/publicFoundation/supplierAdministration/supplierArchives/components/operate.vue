@@ -90,7 +90,8 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="注册资本（万元）：" prop="suRegisterAccount">
-            <el-input v-model="form.suRegisterAccount" placeholder="请输入注册资本（万元）" maxlength="50" />
+            <el-input-number v-model="form.suRegisterAccount" :min="0" :controls="false" placeholder="请输入注册资本（万元）"
+              style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -246,7 +247,7 @@ const data = reactive({
     suBizType: '',
     creditLevel: '',
     suFoundingDate: '',
-    suRegisterAccount: '',
+    suRegisterAccount: undefined,
     suRegisterAddress: '',
     bizStatus: '0',
     suBizContent: '',
@@ -333,7 +334,7 @@ function init(dialogType, rowId) {
     suBizType: '',
     creditLevel: '',
     suFoundingDate: '',
-    suRegisterAccount: '',
+    suRegisterAccount: undefined,
     suRegisterAddress: '',
     bizStatus: '0',
     suBizContent: '',
@@ -371,7 +372,7 @@ function init(dialogType, rowId) {
         suBizType: data.suBizType || '',
         creditLevel: data.creditLevel || '',
         suFoundingDate: pickDate(data.suFoundingDate),
-        suRegisterAccount: data.suRegisterAccount || '',
+        suRegisterAccount: data.suRegisterAccount ?? undefined,
         suRegisterAddress: data.suRegisterAddress || '',
         bizStatus: data.bizStatus || '0',
         suBizContent: data.suBizContent || '',
@@ -417,3 +418,8 @@ function submit() {
 
 defineExpose({ init })
 </script>
+<style scoped lang="scss">
+:deep(.ep-input-number .ep-input__inner) {
+  text-align: left;
+}
+</style>

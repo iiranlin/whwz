@@ -40,13 +40,14 @@ export const columns = async () => {
       minWidth: 160,
       hideInTable: true,
       searchable: true,
-      searchType: 'dateRange',
-      searchProps: { clearable: false },
-      searchPrefix: {
-        field: 'dateType',
-        searchType: 'select',
-        dict: dateTypeArr,
-        searchProps: { clearable: false },
+      // 自定义组合控件：日期类型下拉 + 日期范围选择器
+      searchRender: {
+        name: 'date-type-date-range',
+      },
+      searchProps: {
+        options: dateTypeArr,
+        selectClearable: false,
+        dateClearable: false,
       },
       searchSort: 0
     },
