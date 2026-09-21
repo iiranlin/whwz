@@ -164,11 +164,11 @@ const emptyForm = () => ({
 const formData = ref(emptyForm())
 
 const rules = {
-  // suCode: [{ required: true, message: '请选择供应商！', trigger: 'change' }],
-  // purcTypeCode: [{ required: true, message: '请选择采购方式', trigger: 'change' }],
-  // plantCode: [{ required: true, message: '请选择用料地区', trigger: 'change' }],
-  // taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
-  // rptAccptdtCode: [{ required: true, message: '请选择计划周期', trigger: 'change' }],
+  suCode: [{ required: true, message: '请选择供应商！', trigger: 'change' }],
+  purcTypeCode: [{ required: true, message: '请选择采购方式', trigger: 'change' }],
+  plantCode: [{ required: true, message: '请选择用料地区', trigger: 'change' }],
+  taxFlag: [{ required: true, message: '请选择是否含税', trigger: 'change' }],
+  taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
 }
 
 const supplierOptions = ref([])
@@ -190,7 +190,9 @@ function initPage() {
 function getDetail(pdmId) {
   loading.value = true
   getOrderMtDetail(pdmId).then(({ data }) => {
-    formData.value = { ...data, details: data.details || [] }
+    // 税率下拉选项 value 为字符串，后端回显可能为数字，需统一为字符串以匹配选中
+    const taxRate = data.taxRate != null && data.taxRate !== '' ? String(data.taxRate) : ''
+    formData.value = { ...data, details: data.details || [], taxRate }
     // 根据供应商编码回填供应商名称（远程下拉）
     if (data.suName) remoteMethod(data.suName, true)
   }).finally(() => {
