@@ -281,7 +281,8 @@ const dialogClose = () => {
 }
 
 const getPurchaseName = (data) => {
-  const res = `${data.spdCode}-${data.suName}-${data.directFlag === "1" ? "直发" : "非直发"}${data.settleFlag === "1" ? "直达" : "非直达"}`;
+  const res = `${data.spdCode}-${data.suName}`;
+  // const res = `${data.spdCode}-${data.suName}-${data.directFlag === "1" ? "直发" : "非直发"}${data.settleFlag === "1" ? "直达" : "非直达"}`;
   return res;
 }
 
