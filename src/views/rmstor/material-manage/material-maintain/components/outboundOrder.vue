@@ -21,6 +21,8 @@
               ref="formDataRef"
               :showSearch="showSearch"
               :formJson="formOrderJson"
+              :defaultExpand="true"
+              :gridColCount="3"
               @handleQuery="handleQuery"
               :formSelectData="formSelectData"
               @resetQuery="resetQuery"
@@ -33,6 +35,7 @@
                     :loading="searchLoading"
                     clearable
                     filterable
+                    :filter-method="filterMethod"
                     @change="spdChange"
                   >
                     <el-option
@@ -110,8 +113,19 @@ const showSearch = ref(true);
 
 // 出库单主表下拉菜单
 const searchOptions = ref([]);
+const allSearchOptions = ref([]);
 const searchValue = ref("");
 const searchLoading = ref(false);
+
+const filterMethod = (query) => {
+  if (query) {
+    searchOptions.value = allSearchOptions.value.filter(item =>
+      item.obCode && item.obCode.toLowerCase().includes(query.toLowerCase())
+    );
+  } else {
+    searchOptions.value = allSearchOptions.value;
+  }
+};
 
 watch(groupVisible, (newVal) => {
   if (newVal) {
@@ -137,7 +151,7 @@ const selectData = ref({});
 // 91-跨页勾选：累计已选明细集合（按 obdtId 记忆），翻页不丢
 const selectedMap = new Map();
 
-const title = ref("出库单号");
+const title = ref("出库单");
 
 const data = reactive({
   queryParams: {
@@ -200,6 +214,7 @@ const getList = async (val = {}) => {
   await maintainListMtObCode(queryParams.value)
     .then(({ data }) => {
       searchOptions.value = data || [];
+      allSearchOptions.value = data || [];
       if (val.obCode && searchOptions.value.length) {
         searchValue.value = data[0].obCode;
         selectData.value = {};

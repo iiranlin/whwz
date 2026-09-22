@@ -312,7 +312,7 @@ const handlePush = (selectedRows) => {
     proxy.$modal.msgWarning('当前选择数据不能提交供货单')
     return
   }
-  proxy.$modal.confirm('您确定要推送所选供货单吗？').then(() => {
+  proxy.$modal.confirm('您确定要提交所选供货单吗？').then(() => {
     const pdmIds = selectedRows.map(item => item.pdmId)
     pushPurchaseOrder(pdmIds).then(({ message }) => {
       proxy.$modal.msgSuccess(message)

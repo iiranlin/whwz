@@ -5,7 +5,7 @@
       <el-col class="app-container-col">
         <el-pro-table ref="proTableRef" :columns="columns" :page-size="queryParams.pageSize" action-width="150"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
-            :total="total" @search="onSearch"  table-id="inspection-record" :show-checkbox="true"
+            :total="total" @search="onSearch"  table-id="inspection-record" :show-checkbox="false"
             :grid-options="{ rowId: 'acId' }" />
         </el-col>
     </el-row>

@@ -18,7 +18,7 @@
                   v-if="isFormShow"
                   v-model="formData.pleaseDeptCode"
                   :data="deptOptions"
-                  :props="{ label: 'deptName', children: 'children' }"
+                  :props="{ label: 'deptName', children: 'children', disabled: (data) => data.children && data.children.length > 0 }"
                   node-key="deptCode"
                   check-strictly
                   clearable

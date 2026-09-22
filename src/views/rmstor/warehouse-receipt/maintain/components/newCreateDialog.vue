@@ -34,7 +34,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="应税用途：" prop="taxFlagName">
-            <el-input v-model="createForm.taxFlagName" ></el-input>
+            <el-input v-model="createForm.taxFlagName" disabled></el-input>
           </el-form-item>
           <el-form-item v-if="createForm.ibSource === '0'" label="采购订单：" prop="refBillCode" class="entry-form-item-dialog">
             <el-input v-model="createForm.refBillCode" readonly>
@@ -96,7 +96,7 @@
             <el-input v-model="createForm.incotaxAmount" @blur="(val) => basicPriceBlur(val, 'incotaxAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="料款：" prop="matlAmount">
-            <el-input v-model="createForm.matlAmount" @blur="(val) => basicPriceBlur(val, 'matlAmount')" placeholder="请输入"></el-input>
+            <el-input v-model="createForm.matlAmount" readonly></el-input>
           </el-form-item>
           <el-form-item label="税额+料款：" prop="taxMatlAmount">
             <el-input v-model="createForm.taxMatlAmount" readonly></el-input>
@@ -1077,7 +1077,7 @@ const returnOutsaleData = ([arr, data]) => {
   for (const element of arr) {
     element.cardPrice = _formatDecimal(element.cardPrice, decimalPlaces.value) || 0;
     // element.cardPrice = detailPriceformat(element.cardPrice) || 0;
-    element.paNum = detailPriceformat(element.paNum) || 0;
+    element.paNum = detailPriceformat(element.paNum, "4") || 0;
   }
    tableData.value = [...arr];
   _tableData.value = [...arr];
@@ -1091,7 +1091,7 @@ const returnPurchaseData = ([arr, data]) => {
     if(!!item.productionDate && typeof item.productionDate === 'string') item.productionDate.includes("-") ? item.productionDate = new Date(item.productionDate).getTime() : item.productionDate = Number(item.productionDate);
     if(!!item.expirationDate && typeof item.expirationDate === 'string') item.expirationDate.includes("-") ? item.expirationDate = new Date(item.expirationDate).getTime() : item.expirationDate = Number(item.expirationDate);
     item.stkPrice = detailPriceformat(item.stkPrice) || 0;
-    item.paNum = detailPriceformat(item.paNum) || 0;
+    item.paNum = detailPriceformat(item.paNum, "4") || 0;
     item._stkPrice = item.stkPrice;
     // item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value);
     item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value) || 0;
@@ -1268,15 +1268,9 @@ const validityPeriodUnitChange = (val, data) => {
 }
 const getTotalStkAmount = ref(0);
 watch(() => tableData.value, () => {
-  const arr = tableData.value.map(item => {
-    return Number(item.stkAmount);
-  });
-
-  let total = 0;
-  for (const item of arr) {
-    total+=item;
-  }
+  const total = tableData.value.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0;
   getTotalStkAmount.value = total;
+  createForm.value.matlAmount = total.toFixed(2);
 }, {deep: true});
 
 const getInBoundCode = async () => {
@@ -1337,7 +1331,7 @@ const getDecimalPlaces = async() => {
     const res = await paramConfigList({paramCode: "25"});
     const arr = res.data?.list || [];
     arr.length ? decimalPlaces.value = (isNaN(Number(arr[0].paramValue)) ? 2 : Number(arr[0].paramValue)) : decimalPlaces.value = 2;
-    if (decimalPlaces.value > 10 || decimalPlaces.value < 0) {
+    if (decimalPlaces.value > 10 || decimalPlaces.value < 2) {
       decimalPlaces.value = 2;
     }
   } catch (error) {

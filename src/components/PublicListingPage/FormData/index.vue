@@ -2,7 +2,7 @@
   <el-form class="form-data" :model="formData" ref="queryRef" v-show="showSearch" :inline="true"
     :label-width="labelWidth + 'px'" :style="{ 'max-height': height }">
     <el-scrollbar ref="elScrollbar" max-height="200px" :class="{ 'no-scroll': height == '100px', 'flex1': true }">
-      <div class="ep-form-search" ref="elFormSearch">
+      <div class="ep-form-search" ref="elFormSearch" :style="gridColStyle">
         <el-form-item v-for="item in formJsonData" :key="item.prop" :prop="item.prop"
           :label="item.label ? item.label + '：' : ''" l :label-width="item.labelWidth ? item.labelWidth + 'px' : ''">
           <slot v-if="item.type === 'slot'" :name="item.prop" :scope="{ item }"></slot>
@@ -101,11 +101,29 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  defaultExpand: {
+    type: Boolean,
+    default: false
+  },
+  gridColCount: {
+    type: [Number, String],
+    default: 0
+  },
 })
 
-const height = ref('100px')
+const height = ref(props.defaultExpand ? '200px' : '100px')
 const isMore = ref(false)
 const suffixClose = ref(false)
+const gridColStyle = computed(() => {
+  const n = Number(props.gridColCount)
+  if (!n) return {}
+  return {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
+    columnGap: '10px',
+    alignItems: 'center'
+  }
+})
 
 const formJsonData = ref(props.formJson)
 

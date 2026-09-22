@@ -11,6 +11,7 @@
       :search-collapse-threshold="3"
       :default-search-form="defaultSearchForm"
       @action="onAction"
+      :max-visible-buttons="99"
       :data="tableData"
       :total="total"
       @search="handleQuery"

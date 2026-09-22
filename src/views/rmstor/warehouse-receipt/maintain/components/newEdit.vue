@@ -71,7 +71,7 @@
             <el-input v-model="detailData.incotaxAmount" @blur="(val) => basicPriceBlur(val, 'incotaxAmount')" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item label="料款：" prop="matlAmount">
-            <el-input v-model="detailData.matlAmount" @blur="(val) => basicPriceBlur(val, 'matlAmount')" placeholder="请输入"></el-input>
+            <el-input v-model="detailData.matlAmount" readonly></el-input>
           </el-form-item>
           <el-form-item label="税额+料款：" prop="taxMatlAmount">
             <el-input v-model="detailData.taxMatlAmount" readonly></el-input>
