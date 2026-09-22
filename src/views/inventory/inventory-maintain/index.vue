@@ -16,7 +16,7 @@
         </div>
         <div class="ep-pro-table__toolbar">
           <el-form label-position="left" class="flex1">
-            <el-button key="sub" :disabled="submitBtnDisabled" type="primary" class="tableButton" @click="handleSubmit">报批</el-button>
+            <el-button key="sub" :disabled="submitBtnDisabled" type="primary" class="tableButton" @click="handleSubmit">提交</el-button>
             <el-button key="del" :disabled="delBtnDisabled" type="primary" class="tableButton" @click="handleDel">删除</el-button>
          </el-form>
         <div class="ep-pro-table__toolbar-tools">
@@ -63,7 +63,7 @@
     <maintain-dialog key="maintain" class="inventory-maintain-dialog"  :visible="maintainVisible" title="维护盘点数量" width="90%" @maintain-dialog-close="maintainDialogClose">
       <template #footer>
         <el-button type="primary" :disabled="!!errorTip" @click="handleSaveInventory">保存</el-button>
-        <el-button type="primary" :disabled="!!errorTip" @click="handleSubmitInventory">报批</el-button>
+        <!-- <el-button type="primary" :disabled="!!errorTip" @click="handleSubmitInventory">报批</el-button> -->
         <el-button @click="maintainDialogClose">关闭</el-button>
       </template>
       <template #default>
@@ -339,7 +339,7 @@ const handleSubmit = async () => {
       return
     }
 
-    proxy.$modal.confirm('您确定要报批所选盘点单吗？').then(async () => {
+    proxy.$modal.confirm('您确定要提交所选盘点单吗？').then(async () => {
       const ids = tableSelectedData.value.map(item => item.csmId)
       // 无工作流：直接报批，不走"选审批人"弹窗（$reviewerDialog），不再传 auditUserId
       // proxy.$reviewerDialog({

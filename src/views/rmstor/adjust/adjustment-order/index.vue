@@ -50,7 +50,7 @@ const initDate = () => {
     return [formatDate(firstDay), formatDate(lastDay)]
 }
 const defaultSearchForm = {
-    flag: '0',
+    flag: '1',
     orderDate: initDate()
 };
 
@@ -108,7 +108,7 @@ const toolbarConfig = {
             showInTop: false,
             showInRow: true,
             disabled: (row) => {
-                if (isCloseFlag.value === '0' && row[0].flag !== '0') {
+                if (isCloseFlag.value === '0' && row[0].flag !== '1') {
                     return true
                 } else {
                     return false

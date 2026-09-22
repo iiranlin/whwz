@@ -7,7 +7,7 @@
         </div>
         <div class="ep-pro-table__toolbar">
           <el-form label-position="left" class="flex1">
-            <el-button type="primary" @click="inventoryRangeSelect" :disabled="!!!formRef?.formData.partitionCode">盘点范围选择</el-button>
+            <!-- <el-button type="primary" @click="inventoryRangeSelect" :disabled="!!!formRef?.formData.partitionCode">盘点范围选择</el-button> -->
             <el-button :disabled="!!!tableData.length" type="primary" class="tableButton" @click="handleCreate">生成</el-button>
             <el-button :disabled="!!!tableData.length" type="primary" class="tableButton" @click="handleExport">导出</el-button>
             <el-button :disabled="!replayFalg" type="primary" class="tableButton" @click="handleReplay">重新盘点</el-button>

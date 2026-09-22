@@ -107,7 +107,7 @@ async function createRichColumns() {
       searchable: true,
       searchType: 'select',
       options: [
-        { label: '未提交', value: '0' },
+        // { label: '未提交', value: '0' },
         { label: '未登卡', value: '1' },
         { label: '已登卡', value: '2' },
       ],
