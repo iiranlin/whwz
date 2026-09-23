@@ -19,6 +19,7 @@ import { userRoleList, userBindRole } from '@/api/base/user'
 
 const { proxy } = getCurrentInstance()
 
+const emit = defineEmits(['success'])
 const visible = ref(false)
 const loading = ref(false)
 const roleList = ref([])
@@ -50,6 +51,7 @@ function submit() {
   userBindRole({ roleIds: checkedRoleIds.value }, userInfo.value.id).then(({ message }) => {
     proxy.$modal.msgSuccess(message)
     visible.value = false
+    emit('success')
   }).finally(() => {
     loading.value = false
   })

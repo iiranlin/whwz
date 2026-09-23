@@ -40,7 +40,7 @@
     </el-row>
 
     <operate ref="operateRef" @createSuccess="getList()" />
-    <role-dialog ref="roleRef" />
+    <role-dialog ref="roleRef" @success="getList()" />
     <reset-pwd-dialog ref="resetPwdRef" />
   </div>
 </template>
