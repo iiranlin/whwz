@@ -2,42 +2,37 @@
   <el-main>
     <div class="scale">
       <el-button
-        icon="el-icon-plus"
         size="small"
         @click="scale += 10"
         :disabled="scale >= 150"
         circle
-      ></el-button>
+      ><el-icon><Plus /></el-icon></el-button>
       <span>{{ scale }}%</span>
       <el-button
-        icon="el-icon-minus"
         size="small"
         @click="scale -= 10"
         :disabled="scale <= 40"
         circle
-      ></el-button>
-      <!--      <el-button @click="validate">校验流程</el-button>-->
+      ><el-icon><Minus /></el-icon></el-button>
     </div>
     <div
       class="design"
       :style="'transform: scale('+ scale / 100 +');'"
     >
       <process-tree
-        ref="processTree"
-        @selectedNode="nodeSelected"
+        ref="processTreeRef"
+        @selected-node="nodeSelected"
       />
     </div>
     <el-drawer
       :title="selectedNode.name"
-      v-model:visible="showConfig"
-      :modal-append-to-body="false"
+      v-model="showConfig"
       :size="selectedNode.type === 'CONDITION' ? '600px':'500px'"
       direction="rtl"
       :modal="false"
       destroy-on-close
     >
       <template #title>
-        <div>
         <el-input
           v-model="selectedNode.name"
           size="medium"
@@ -56,7 +51,6 @@
           ></i>
           {{selectedNode.name}}
         </el-link>
-        </div>
       </template>
       <div class="node-config-content">
         <node-config />
@@ -66,22 +60,30 @@
 </template>
 
 <script setup name="ProcessDesign">
+import { ref, computed } from 'vue'
 import ProcessTree from './process/ProcessTree.vue'
 import NodeConfig from '../../common/process/config/NodeConfig'
+import { useProcessStore } from '@/store/modules/process'
 
 const processStore = useProcessStore()
+const processTreeRef = ref(null)
 
-const processTree = ref(null)
 const scale = ref(100)
-const selected = ref({})
 const showInput = ref(false)
 const showConfig = ref(false)
 
 const selectedNode = computed(() => processStore.selectedNode)
 
+defineExpose({
+  validate() {
+    return processTreeRef.value?.validateProcess?.() || []
+  }
+})
+
 function validate() {
-  return processTree.value.validateProcess()
+  return processTreeRef.value?.validateProcess?.() || []
 }
+
 function nodeSelected(node) {
   console.log('配置节点', node)
   showConfig.value = true
@@ -90,7 +92,6 @@ function nodeSelected(node) {
 
 <style lang="scss" scoped>
 .design {
-  // margin-top: 100px;
   display: flex;
   transform-origin: 50% 0px 0px;
   margin-top: 60px;
@@ -113,8 +114,4 @@ function nodeSelected(node) {
 .node-config-content {
   padding: 0 20px 20px;
 }
-
-// ::v-deep .el-drawer__body {
-//   overflow-y: auto;
-// }
 </style>

@@ -8,13 +8,10 @@
       ></layout-header>
     </el-header>
     <div class="layout-body">
-      <!-- <form-base-setting ref="baseSetting" v-show="activeSelect === 'baseSetting'"/> -->
-      <!-- <form-design ref="formSetting" v-show="activeSelect === 'formSetting'"/> -->
       <process-design
-        ref="processDesign"
+        ref="processDesignRef"
         v-show="activeSelect === 'processDesign'"
       />
-      <!-- <form-pro-setting ref="proSetting" v-show="activeSelect === 'proSetting'" /> -->
     </div>
     <w-dialog
       :showFooter="false"
@@ -38,35 +35,32 @@
       <el-result
         :icon="validIcon"
         :title="errTitle"
-        :subTitle="validResult.desc"
+        :sub-title="validResult.desc"
       >
-        <template #icon>
-          <i
-            style="font-size: 30px"
-            v-if="!validResult.finished"
-            class="el-icon-loading"
-          ></i>
-        </template>
-        <template #subTitle>
-          <div
-            class="err-info"
-            v-if="validResult.errs.length > 0"
+        <i
+          slot="icon"
+          style="font-size: 30px"
+          v-if="!validResult.finished"
+          class="el-icon-loading"
+        ></i>
+        <div
+          slot="subTitle"
+          class="err-info"
+          v-if="validResult.errs.length > 0"
+        >
+          <ellipsis
+            hover-tip
+            v-for="(err, i) in validResult.errs"
+            :key="i + '_err'"
+            :content="err"
           >
-            <ellipsis
-              hover-tip
-              v-for="(err, i) in validResult.errs"
-              :key="i + '_err'"
-              :content="err"
-            >
-              <template #pre>
-                <i
-                  class="el-icon-warning-outline"
-                ></i>
-              </template>
-            </ellipsis>
-          </div>
-        </template>
-        <template #extra>
+            <i
+              slot="pre"
+              class="el-icon-warning-outline"
+            ></i>
+          </ellipsis>
+        </div>
+        <template slot="extra">
           <el-button
             type="primary"
             v-if="validResult.finished"
@@ -83,35 +77,37 @@
 </template>
 
 <script setup name="FormProcessDesign">
-import { getFiledByType as fetchFiledByType } from '@/api/workflow/category'
-import LayoutHeader from './LayoutHeader'
-import { getFormDetailByModelId, saveFormDetailByMode } from '@/api/design'
-import ProcessDesign from '@/views/admin/layout/ProcessDesign'
+import { ref, computed, onActivated, onBeforeUnmount, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { getFiledByType as getFiledByTypeApi } from '@/api/workflow/category'
+import LayoutHeader from './LayoutHeader'
+import ProcessDesign from '@/views/admin/layout/ProcessDesign'
+import { getFormDetailByModelId, saveFormDetailByMode } from '@/api/design'
 import { useProcessStore } from '@/store/modules/process'
+import { isNotEmpty } from '@/utils/process'
 
 const { proxy } = getCurrentInstance()
+const processStore = useProcessStore()
 const router = useRouter()
 const route = useRoute()
-const processStore = useProcessStore()
 
+const key = ref('1')
 const isNew = ref(true)
-const validStep = ref(0)
-const timer = ref(null)
 const activeSelect = ref('processDesign')
 const validVisible = ref(false)
+const validStep = ref(0)
+const timer = ref(null)
+const formItems = ref([])
+const processDesignRef = ref(null)
+
 const validResult = ref({})
 const validOptions = ref([
   { title: '审核流程', description: '', icon: '', status: '' },
 ])
-const validComponents = ref([
+const validComponents = [
   'processDesign',
-])
-const formItems = ref([])
-const key = ref('1')
-
-const processDesign = ref(null)
+]
 
 const setup = computed(() => processStore.design)
 
@@ -132,24 +128,19 @@ const validIcon = computed(() => {
   }
 })
 
-onActivated(async () => {
+onActivated(() => {
   showValiding()
-  let formId = route.query.code
-  let isUpdate = route.query.isUpdate
+  const code = route.query.code
+  const isUpdate = route.query.isUpdate
   key.value = route.query.id
-  await getFiledByType()
+  getFiledByType()
   loadInitFrom()
   if (isUpdate) {
     isNew.value = false
-    loadFormInfo(formId)
+    loadFormInfo(code)
   }
-  let group = route.query.group
-  // 通过 store action 修改，避免 computed ref.value 属性赋值（Vue3 不建议）
-  if (proxy.$isNotEmpty(group)) {
-    processStore.design.groupId = parseInt(group)
-  } else {
-    processStore.design.groupId = null
-  }
+  const group = route.query.group
+  processStore.groupId = isNotEmpty(group) ? parseInt(group) : null
 })
 
 onBeforeUnmount(() => {
@@ -158,8 +149,7 @@ onBeforeUnmount(() => {
 
 function loadFormInfo(formId) {
   getFormDetailByModelId(formId).then(rsp => {
-    console.log("rsp ==> ", rsp)
-    let form = rsp.data || {}
+    const form = rsp.data || {}
     form.formItems = formItems.value
     form.process = JSON.parse(form.process)
     processStore.loadForm(form)
@@ -172,9 +162,44 @@ async function getFiledByType() {
   const params = {
     type: route.query.billType
   }
-  const loading = proxy.$loading({ lock: true, text: '加载中...' })
+  const loading = ElLoading.service({ lock: true, text: '加载中...' })
   try {
-    const res = await fetchFiledByType(params)
+    console.log(params, '1111111111111')
+    
+    // const res = await getFiledByTypeApi(params)
+    const res = {
+    "code": 0,
+    "message": "操作成功",
+    "data": [
+        {
+            "id": "materialClassify",
+            "title": "物资分类",
+            "name": "TextInput",
+            "valueType": "String",
+            "dictFlag": false,
+            "props": {
+                "enablePrint": true,
+                "required": true
+            },
+            "dictMap": {}
+        },
+        {
+            "id": "isExpertAudit",
+            "title": "是否需要专家审核",
+            "name": "TextInput",
+            "valueType": "String",
+            "dictFlag": true,
+            "props": {
+                "enablePrint": true,
+                "required": true
+            },
+            "dictMap": {
+                "0": "否",
+                "1": "是"
+            }
+        }
+    ]
+}
     if (res.code == 0) {
       formItems.value = res.data || []
     } else {
@@ -183,7 +208,7 @@ async function getFiledByType() {
   } catch (e) {
     console.error('getFiledByType', e)
   } finally {
-    loading?.close()
+    loading.close()
   }
 }
 
@@ -223,14 +248,13 @@ function loadInitFrom() {
 }
 
 function validateDesign() {
-  console.log('000')
   validVisible.value = true
   validStep.value = 0
   showValiding()
   stopTimer()
   timer.value = setInterval(() => {
-    validResult.value.errs = proxy.$refs[validComponents.value[validStep.value]].validate()
-    if (Array.isArray(validResult.value.errs) && validResult.value.errs.length === 0) {
+    const errs = processDesignRef.value?.validate?.() || []
+    if (Array.isArray(errs) && errs.length === 0) {
       validStep.value++
       if (validStep.value >= validOptions.value.length) {
         stopTimer()
@@ -239,9 +263,9 @@ function validateDesign() {
     } else {
       stopTimer()
       validOptions.value[validStep.value].status = 'error'
+      validResult.value.errs = errs
       showValidFinish(false, getDefaultValidErr())
     }
-
   }, 300)
 }
 
@@ -289,7 +313,7 @@ function doAfter() {
   if (validResult.value.success) {
     doPublish()
   } else {
-    activeSelect.value = validComponents.value[validStep.value]
+    activeSelect.value = validComponents[validStep.value]
     validVisible.value = false
   }
 }
@@ -297,6 +321,7 @@ function doAfter() {
 function stopTimer() {
   if (timer.value) {
     clearInterval(timer.value)
+    timer.value = null
   }
 }
 
@@ -309,15 +334,14 @@ function publishProcess() {
 }
 
 async function doPublish() {
-  let loading = null
   try {
-    await proxy.$confirm('如果您只想预览请选择预览，确认发布后流程立即生效，是否继续?', '提示', {
+    await ElMessageBox.confirm('如果您只想预览请选择预览，确认发布后流程立即生效，是否继续?', '提示', {
       confirmButtonText: '发布',
       cancelButtonText: '取消',
       type: 'warning'
     })
     console.log(setup.value)
-    let template = {
+    const template = {
       process: JSON.stringify(setup.value.process),
       formItems: JSON.stringify(setup.value.formItems),
       modelId: route.query.code,
@@ -327,7 +351,6 @@ async function doPublish() {
       billType: route.query.billType,
     }
     const rsp = await saveFormDetailByMode(template)
-    console.info(111, rsp)
     if (rsp.code != 0) {
       throw new Error(rsp?.message || '发布失败')
     }
@@ -336,12 +359,9 @@ async function doPublish() {
     router.push({ name: 'processDesign' })
   } catch (e) {
     if (e !== 'cancel') {
-      ElMessage.error(e)
+      ElMessage.error(e?.message || e)
     }
-    console.log("🚀 ~ file: FormProcessDesign.vue:351 ~ doPublish ~ e:", e)
-
-  } finally {
-    loading?.close()
+    console.log("doPublish error:", e)
   }
 }
 </script>
@@ -360,15 +380,9 @@ async function doPublish() {
   .btn {
     margin: 0;
   }
-  // *,
-  // *:before,
-  // *:after {
-  //   box-sizing: content-box;
-  // }
 }
 </style>
 <style lang="scss" scoped>
-// 流程第一次进来无法滚动问题
 .layout-body {
   min-width: 980px;
   height: calc(100vh - 65px);
@@ -384,7 +398,6 @@ async function doPublish() {
 
 .err-info {
   max-height: 180px;
-  // overflow-y: auto;
   & > div {
     padding: 5px;
     margin: 2px 0;
@@ -409,4 +422,3 @@ async function doPublish() {
   background-color: #e8e8e8;
 }
 </style>
-

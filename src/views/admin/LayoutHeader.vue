@@ -1,22 +1,17 @@
 <template>
   <div>
     <div class="header">
-      <el-menu :default-active="modelValue" active-text-color="#409eff" class="el-menu-demo" mode="horizontal">
-        <!-- <el-menu-item index="baseSetting" @click="to('baseSetting')">① 基础信息</el-menu-item> -->
-        <!-- <el-menu-item index="formSetting" @click="to('formSetting')">② 审批表单</el-menu-item> -->
-        <!-- <el-menu-item index="processDesign" @click="to('processDesign')"> -->
+      <el-menu :default-active="value" active-text-color="#409eff" class="el-menu-demo" mode="horizontal">
         <el-menu-item index="processDesign">
-          <!-- ③  -->
           审批流程
         </el-menu-item>
-        <!-- <el-menu-item index="proSetting" @click="to('proSetting')">④ 扩展设置</el-menu-item> -->
       </el-menu>
       <div class="publish">
-        <el-button size="mini" @click="preview"><i class="el-icon-view"></i>预览</el-button>
-        <el-button size="mini" type="primary" @click="publish"><i class="el-icon-s-promotion"></i>发布</el-button>
+        <el-button size="mini" @click="preview"><el-icon><View /></el-icon>预览</el-button>
+        <el-button size="mini" type="primary" @click="publish"><el-icon><Promotion /></el-icon>发布</el-button>
       </div>
       <div class="back">
-        <el-button @click="exit" size="medium" icon="el-icon-arrow-left" circle></el-button>
+        <el-button @click="exit" size="medium" :icon="ArrowLeft" circle></el-button>
         <span style="paddingLeft: 10px">
           <!-- <i :class="" :style="'background:' + setup.logo.background"></i> -->
           <span>{{ route.query.modelName }}</span>
@@ -27,8 +22,10 @@
 </template>
 
 <script setup name="LayoutHeader">
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { useProcessStore } from '@/store/modules/process'
 
 const { proxy } = getCurrentInstance()
@@ -37,26 +34,27 @@ const route = useRoute()
 const processStore = useProcessStore()
 
 const props = defineProps({
-  modelValue: {
+  value: {
     type: String,
     default: 'baseSetup'
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'publish', 'preview'])
+const emit = defineEmits(['publish', 'preview', 'input'])
 
 const viewCode = ref(false)
 
 const setup = computed(() => processStore.design)
 
-// created
+// created 钩子逻辑
 console.log('setup', setup.value)
 check()
 
+// mounted 钩子逻辑
 onMounted(() => {
   console.log(document.body.offsetWidth)
   if (document.body.offsetWidth <= 970) {
-    proxy.$msgbox.alert("本设计器未适配中小屏幕，建议您在PC电脑端浏览器进行操作")
+    ElMessageBox.alert("本设计器未适配中小屏幕，建议您在PC电脑端浏览器进行操作")
   }
   listener()
 })
@@ -67,6 +65,7 @@ function publish() {
 
 function preview() {
   emit('preview')
+  //this.
   viewCode.value = true
 }
 
@@ -80,11 +79,22 @@ function valid() {
 }
 
 function exit() {
+  // this.$confirm('未发布的内容将不会被保存，是否直接退出 ?', '提示', {
+  //   confirmButtonText: '退出',
+  //   cancelButtonText: '取消',
+  //   type: 'warning'
+  // }).then(() => {
+    //window.location.reload()
+    //this.$store.commit('clearTemplate')
+  //   router.go(-1)
+  // })
+  // 判断是否为单开页签
+  // this.cancelRouterSkip();
   router.push({ name: 'processDesign' })
 }
 
 function to(path) {
-  emit('update:modelValue', path)
+  emit('input', path)
 }
 
 function handleSelect(key, keyPath) {
@@ -94,20 +104,29 @@ function handleSelect(key, keyPath) {
 function listener() {
   window.onunload = closeBefore()
   window.onbeforeunload = closeBefore()
+  //window.on('beforeunload',this.closeBefore())
 }
 
 function closeBefore() {
+  //alert("您将要离开本页")
   return false
 }
 
 function check() {
   if (processStore.isEdit === null) {
-    //this.$router.push("/workPanel");
+    //router.push("/workPanel");
   }
 }
 </script>
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
+:deep(.header .ep-menu--horizontal .ep-menu-item) {
+      color: #409eff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 2px solid #409eff !important;
+}
 :deep(.header) {
 
   // min-width: 980px;
@@ -116,7 +135,7 @@ function check() {
   // min-width: 980px;
   position: absolute;
 
-  .el-menu {
+  .el-menu-demo {
     top: 0;
     z-index: 999;
     display: flex;
