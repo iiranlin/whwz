@@ -144,21 +144,38 @@ const getList = async (params) => {
     params.yearMonthEnd = defaultSearchForm.value.dateRange[1].replace("-", "");
   }
   const query = { ...params, queryType: currentView.value };
-  const {
-    data: { list, total },
-  } = await comprehensiveSearch(query);
-  const { data } = await comprehensiveSearchStat(query);
+
+  // 接口 1：列表数据（空值保护 + 异常隔离）
+  let list = [];
+  let total = 0;
+  try {
+    const res = await comprehensiveSearch(query);
+    const data = res?.data ?? {};
+    list = Array.isArray(data.list) ? data.list : [];
+    total = data.total ?? 0;
+  } catch (e) {
+    console.warn('comprehensiveSearch 调用失败:', e);
+  }
+
+  // 接口 2：统计汇总（空值保护 + 异常隔离，不影响列表）
+  let statData = {};
+  try {
+    const res = await comprehensiveSearchStat(query);
+    statData = res?.data ?? {};
+  } catch (e) {
+    console.warn('comprehensiveSearchStat 调用失败:', e);
+  }
   summaryData.value = summaryData.value.map(({ field, ...other }) => ({
     ...other,
     field,
-    value: `${data[field] || 0}元`,
+    value: `${statData[field] ?? 0}元`,
   }));
-  const result = {
+  // 无条件返回，ProTable 会覆盖旧数据（空数组也会清空）
+  return {
     data: list.map((item) => ({ ...item, uid: generateUUID() })),
-    total: total,
+    total,
     success: true,
   };
-  return result;
 };
 
 const onAction = (payload) => {

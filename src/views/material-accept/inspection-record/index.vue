@@ -6,7 +6,11 @@
         <el-pro-table ref="proTableRef" :columns="columns" :page-size="queryParams.pageSize" action-width="150"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch"  table-id="inspection-record" :show-checkbox="false"
-            :grid-options="{ rowId: 'acId' }" />
+            :grid-options="{ rowId: 'acId' }" >
+             <template #matlTypeSlot="{ row }">
+                <span>{{`${row.matlType}${row.matlRaw?'/'+row.matlRaw:''}${row.matlpCode?'/'+row.matlpCode:''}`}}</span>
+            </template>
+         </el-pro-table>
         </el-col>
     </el-row>
         <DetailDialog v-model="historyVisible" :rowData="rowData" />

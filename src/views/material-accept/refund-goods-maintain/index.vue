@@ -6,6 +6,9 @@
           :total="total" :columns="columns" :table-alert-render="false"
           :toolbar-config="toolbarConfigData" :grid-options="{ rowId: idName }" :table-id="menuId" @search="onSearch"
           @action="onAction" @selection-change="onSelectionChange">
+           <template #matlTypeSlot="{ row }">
+                <span>{{`${row.matlType}${row.matlRaw?'/'+row.matlRaw:''}${row.matlpCode?'/'+row.matlpCode:''}`}}</span>
+            </template>
         </el-pro-table>
       </el-col>
     </el-row>
