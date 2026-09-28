@@ -108,7 +108,7 @@
           <span v-else>{{ scope.row.credCode }}</span>
         </template>
         <template #outNum="{ scope }">
-          <el-input-number v-if="dialogType === 'create'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
+          <el-input-number v-if="dialogType === 'create' || dialogType === 'modify'" v-model="scope.row.outNum" :min="0" :max="9999999999" :precision="4" controls-position="right" style="width: 100%" />
           <span v-else>{{ scope.row.outNum != null ? Number(scope.row.outNum).toFixed(4) : '' }}</span>
         </template>
         <template #outAmount="{ scope }">
@@ -355,6 +355,13 @@ const saveBtn = () => {
       tableData.value.forEach(row => {
         row.outAmount = calcOutAmount(row, true)
       })
+      // 对每行的出库数量和结存数量进行对比， 出库数量不能大于结存数量
+      for (let i = 0; i < tableData.value.length; i++) {
+        if (Number(tableData.value[i].outNum) > Number(tableData.value[i].nowNum)) {
+          proxy.$modal.msgWarning(`第${i + 1}行明细的"出库数量"不能大于"库存数量"！`)
+          return
+        }
+      }
       // 判断该单台设备年度下的定额与本年度的出库单金额进行比对，不强制卡控。
       if (currentYearAmount.value > quota.value) {
         proxy.$modal.confirm(`${formData.value.idsName}设备出库金额已超出本年度定额，是否继续？`).then(() => {
