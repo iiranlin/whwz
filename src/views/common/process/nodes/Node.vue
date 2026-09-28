@@ -1,11 +1,11 @@
 <template>
   <div :class="{'node': true, 'root': isRoot || !show, 'node-error-state': showError}">
-    <div v-if="show" @click="$emit('selected')" :class="{'node-body': true, 'error': showError}" >
+    <div v-if="show" @click="onSelect" :class="{'node-body': true, 'error': showError}" >
       <div>
         <div class="node-body-header" :style="{'background-color': headerBgc}">
           <i :class="headerIcon" style="margin-right: 5px" v-if="(headerIcon || '') !== ''"></i>
           <ellipsis class="name" hover-tip :content="title"/>
-          <i class="el-icon-close" v-if="!isRoot && processStore.diagramMode !== 'viewer'" style="float:right;" @click="$emit('delNode')"></i>
+          <i class="el-icon-close" v-if="!isRoot && processStore.diagramMode !== 'viewer'" style="float:right;" @click="onDelNode"></i>
         </div>
         <div class="node-body-content">
           <i :class="leftIcon" v-if="leftIcon"></i>
@@ -22,19 +22,23 @@
     </div>
     <div class="node-footer">
       <div class="btn">
-        <insert-button v-show="processStore.diagramMode !== 'viewer'" @insertNode="type => $emit('insertNode', type)"></insert-button>
+        <insert-button
+          v-show="processStore.diagramMode !== 'viewer'"
+          @insertNode="onInsertNode"
+        ></insert-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup name="Node">
+import { onMounted, onBeforeUnmount, watch } from 'vue'
 import InsertButton from '@/views/common/InsertButton.vue'
 import { useProcessStore } from '@/store/modules/process'
 
 const processStore = useProcessStore()
 
-defineProps({
+const props = defineProps({
   //是否为根节点
   isRoot: {
     type: Boolean,
@@ -83,7 +87,55 @@ defineProps({
     default: '无信息'
   },
 })
-defineEmits(['selected', 'delNode', 'insertNode'])
+const emit = defineEmits(['selected', 'delNode', 'insertNode'])
+
+/* ========== 调试日志开始 ========== */
+console.log('[Node] setup 执行, title =', props.title, ', isRoot =', props.isRoot)
+console.log('[Node] setup 时 diagramMode =', processStore.diagramMode)
+console.log('[Node] setup 时 InsertButton 组件 =', InsertButton)
+
+onMounted(() => {
+  console.log('[Node] onMounted, title =', props.title)
+  console.log('[Node] onMounted 时 diagramMode =', processStore.diagramMode)
+  console.log('[Node] onMounted 时 v-show 条件 (diagramMode !== viewer) =', processStore.diagramMode !== 'viewer')
+})
+
+onBeforeUnmount(() => {
+  console.log('[Node] onBeforeUnmount, title =', props.title)
+})
+
+// 监听 diagramMode 变化，观察按钮是否被隐藏
+watch(
+  () => processStore.diagramMode,
+  (val, oldVal) => {
+    console.log('[Node] diagramMode 变化:', oldVal, '->', val, ', title =', props.title)
+  }
+)
+
+// 监听 show，确认节点体是否渲染
+watch(
+  () => props.show,
+  (val) => {
+    console.log('[Node] show 变化:', val, ', title =', props.title)
+  },
+  { immediate: true }
+)
+/* ========== 调试日志结束 ========== */
+
+function onSelect() {
+  console.log('[Node] 节点被点击 (selected), title =', props.title)
+  emit('selected')
+}
+
+function onDelNode() {
+  console.log('[Node] 删除节点 (delNode), title =', props.title)
+  emit('delNode')
+}
+
+function onInsertNode(type) {
+  console.log('[Node] 收到 InsertButton 的 insertNode 事件, type =', type, ', title =', props.title)
+  emit('insertNode', type)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -176,6 +228,9 @@ defineEmits(['selected', 'delNode', 'insertNode'])
       display: flex;
       padding: 20px 0 32px;
       justify-content: center;
+      /* 调试：临时提高层级，排除被 ::before 盖住的可能 */
+      position: relative;
+      z-index: 10;
     }
     :deep(.el-button){
       height: 32px;

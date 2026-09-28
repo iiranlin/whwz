@@ -73,11 +73,11 @@ const { queryParams } = toRefs(data)
 /** 部门树 */
 function getDeptTree() {
   deptTree().then(({ data }) => {
-    if (data && data[0] && data[0].deptCode === '10000001') {
-      deptOptions.value = data[0].children || []
-    } else {
+    // if (data && data[0] && data[0].deptCode === '10000001') {
+    //   deptOptions.value = data[0].children || []
+    // } else {
       deptOptions.value = data || []
-    }
+    // }
   })
 }
 

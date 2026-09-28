@@ -1,65 +1,59 @@
 <template>
   <el-popover placement="bottom-start" title="添加流程节点" width="350" trigger="click">
+    <template #reference>
+      <el-button style="margin: 0" icon="el-icon-plus" type="primary" size="small" circle></el-button>
+    </template>
     <div class="node-select">
       <div @click="addApprovalNode">
         <i class="el-icon-s-check" style="color:rgb(255, 148, 62);"></i>
         <span>审批人</span>
       </div>
-      <!-- <div @click="addCcNode">
-        <i class="el-icon-s-promotion" style="color:rgb(50, 150, 250);"></i>
-        <span>抄送人</span>
-      </div> -->
-      <!-- TODO 项目二期 工作流不展示条件分支 0913 -->
       <div @click="addConditionsNode">
         <i class="el-icon-share" style="color:rgb(21, 188, 131);"></i>
         <span>条件分支</span>
       </div>
-    <!-- <div @click="addConcurrentsNode">
-        <i class="el-icon-s-operation" style="color:#718dff;"></i>
-        <span>并行分支</span>
-      </div> -->
-      <!--
-      <div @click="addDelayNode">
-        <i class="el-icon-time" style="color:#f25643;"></i>
-        <span>延迟等待</span>
-      </div>
-      <div @click="addTriggerNode">
-        <i class="el-icon-set-up" style="color:#15BC83;"></i>
-        <span>触发器</span>
-      </div> -->
     </div>
-    <el-button style="margin: 0" icon="el-icon-plus" #reference type="primary" size="small" circle></el-button>
   </el-popover>
 </template>
 
 <script setup name="InsertButton">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useProcessStore } from '@/store/modules/process'
 
 const processStore = useProcessStore()
-
 const emit = defineEmits(['insertNode'])
 
-const selectedNode = computed(() => {
-  processStore.selectedNode
+/* ========== 调试日志开始 ========== */
+console.log('[InsertButton] setup 执行')
+onMounted(() => {
+  console.log('[InsertButton] onMounted 执行')
 })
+/* ========== 调试日志结束 ========== */
+
+const selectedNode = computed(() => processStore.selectedNode)
 
 function addApprovalNode() {
+  console.log('[InsertButton] 点击了 审批人')
   emit('insertNode', "APPROVAL")
 }
 function addCcNode() {
+  console.log('[InsertButton] 点击了 抄送人')
   emit('insertNode', "CC")
 }
 function addDelayNode() {
+  console.log('[InsertButton] 点击了 延迟等待')
   emit('insertNode', "DELAY")
 }
 function addConditionsNode() {
+  console.log('[InsertButton] 点击了 条件分支')
   emit('insertNode', "CONDITIONS")
 }
 function addConcurrentsNode() {
+  console.log('[InsertButton] 点击了 并行分支')
   emit('insertNode', "CONCURRENTS")
 }
 function addTriggerNode() {
+  console.log('[InsertButton] 点击了 触发器')
   emit('insertNode', "TRIGGER")
 }
 </script>

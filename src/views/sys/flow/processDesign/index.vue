@@ -86,9 +86,9 @@ function getList() {
       total.value = data.total
     })
     .finally(() => { 
-        let data = listCategoryData
-        tableData.value = data.list || []
-        total.value = data.total
+        // let data = listCategoryData
+        // tableData.value = data.list || []
+        // total.value = data.total
         loading.value = false })
 }
 

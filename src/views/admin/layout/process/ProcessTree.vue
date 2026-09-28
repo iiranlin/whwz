@@ -16,6 +16,21 @@ import Node from '@/views/common/process/nodes/Node.vue'
 
 import DefaultProps from "./DefaultNodeProps"
 
+// 节点类型 -> 组件 映射表（解决 h() 传入小写字符串被当成原生标签的问题）
+const COMPONENT_MAP = {
+  ROOT: Root,
+  APPROVAL: Approval,
+  CC: Cc,
+  DELAY: Delay,
+  TRIGGER: Trigger,
+  CONDITION: Condition,
+  CONCURRENT: Concurrent,
+  EMPTY: Empty,
+  // 下面两个是分支容器，实际走 branch 渲染逻辑，这里保留以防兜底
+  CONDITIONS: Condition,
+  CONCURRENTS: Concurrent,
+}
+
 export default defineComponent({
   name: "ProcessTree",
   components: {Node, Root, Approval, Cc, Trigger, Concurrent, Condition, Delay, Empty},
@@ -54,7 +69,7 @@ export default defineComponent({
   },
   render() {
     const h2 = h
-    console.log("渲染流程树")
+    console.log("渲染流程树 dom =", JSON.parse(JSON.stringify(this.dom)))
     // render 内用本地 ref Map 构建（非 reactive，.set/.clear 不触发 effect）
     this.nodeMap = new Map()
     let processTrees = this.getDomTree(h2, this.dom)
@@ -114,7 +129,9 @@ export default defineComponent({
     //解码渲染的时候插入dom到同级
     decodeAppendDom(h, node, dom, props = {}){
       props.config = node
-      dom.unshift(h(node.type.toLowerCase(), {
+      // 通过映射表取到组件对象，避免 h('root') / h('approval') 被 Vue 当作原生标签
+      const comp = COMPONENT_MAP[node.type] || Node
+      dom.unshift(h(comp, {
         ...props,
         ref: node.id,
         key: node.id,

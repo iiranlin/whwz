@@ -3,11 +3,11 @@ import request from '@/utils/request'
 let VUE_APP_BASE_PREFIX = import.meta.env.VUE_APP_BASE_SERVER;
 const VUE_APP_VMI_SERVER = import.meta.env.VUE_APP_VMI_SERVER;
 let VUE_APP_STORAGE_SERVER = import.meta.env.VUE_APP_STORAGE_SERVER;
-const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_SSO_BASE
+const VITE_APP_BASE_SSO_BASE = import.meta.env.VITE_APP_BASE_BASE_SERVICE 
 // 弹出框 选择人员 查询接口
 export function getUserListAllByDept(params = {}) {
 	return request({
-		 url: `${VITE_APP_BASE_SSO_BASE}/sys/user/list`,
+		 url: `${VITE_APP_BASE_SSO_BASE}/user/list`,
 		method: 'GET',
     params
 	})

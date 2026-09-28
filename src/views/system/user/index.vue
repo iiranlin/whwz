@@ -80,11 +80,11 @@ const { queryParams } = toRefs(data)
 function getDeptTree() {
   deptTree().then(({ data }) => {
     let treeData = []
-    if (data && data[0] && data[0].deptCode === '10000001') {
-      treeData = data[0].children || []
-    } else {
+    // if (data && data[0] && data[0].deptCode === '10000001') {
+    //   treeData = data[0].children || []
+    // } else {
       treeData = data || []
-    }
+    // }
     deptOptions.value = treeData
   })
 }
