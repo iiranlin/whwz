@@ -21,7 +21,7 @@
           </div>
           <div class="test">2.当月收支存与单据间对应关系:</div>
           <div class="test">●卡片收入合计= (入库单合计+退料单合计)</div>
-          <div class="test">●卡片支出合计= (出库单合计+调拨(销售)单合计)</div>
+          <div class="test">●卡片支出合计= (出库单合计)</div>
           <div class="test">
             ●卡片调整合计= (移库单移入合计-移库单移除合计+调整单合计)
           </div>

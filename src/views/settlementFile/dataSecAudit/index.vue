@@ -20,6 +20,7 @@
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
+      :show-action="false" 
     >
     </el-pro-table>
     </el-col>
