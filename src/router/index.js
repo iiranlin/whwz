@@ -74,7 +74,34 @@ export const constantRoutes = [
     path: '/401',
     component: () => import('@/views/error/401'),
     hidden: true
-  }
+  },
+  {
+    path: "/bpmn/processDesign",
+    component: () => import('@/layout/index.vue'),
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'processDesign',
+        component: () => import("@/views/sys/flow/processDesign"),
+        meta: { title: '流程设计' }
+      }
+    ]
+  },
+  {
+    path: "/bpmn/processViewr",
+    name: 'processViewr',
+    component: () => import("@/views/sys/flow/processViewr"),
+    hidden: true,
+    meta: { title: '流程预览' },
+  },
+  {
+    path: "/bpmn/processForm",
+    name: "WorkDesign",
+    component: () => import("@/views/admin/FormProcessDesign.vue"),
+    hidden: true,
+    meta: { title: "表单流程设计" },
+  },
 ]
   // {
   //   path: '/system/role-auth',

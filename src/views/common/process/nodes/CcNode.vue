@@ -1,0 +1,54 @@
+<template>
+  <node :title="config.name" :show-error="showError" :content="content" :error-info="errorInfo"
+        @selected="$emit('selected')" @delNode="$emit('delNode')" @insertNode="type => $emit('insertNode', type)"
+        placeholder="请设置抄送人" header-bgc="#3296fa" header-icon="el-icon-s-promotion"/>
+</template>
+
+<script setup name="CcNode">
+import { ref, computed } from 'vue'
+import Node from './Node'
+
+const props = defineProps({
+  config: {
+    type: Object,
+    default: () => {
+      return {}
+    }
+  }
+})
+defineEmits(['selected', 'delNode', 'insertNode'])
+
+const showError = ref(false)
+const errorInfo = ref('')
+
+const content = computed(() => {
+  if (props.config.props.shouldAdd) {
+    return '由发起人指定'
+  } else if (props.config.props.assignedUser.length > 0) {
+    let texts = []
+    props.config.props.assignedUser.forEach(org => texts.push(org.name))
+    return String(texts).replaceAll(',', '、')
+  } else {
+    return null
+  }
+})
+
+//校验数据配置的合法性
+function validate(err) {
+  showError.value = false
+  if (props.config.props.shouldAdd) {
+    showError.value = false
+  } else if (props.config.props.assignedUser.length === 0) {
+    showError.value = true
+    errorInfo.value = '请选择需要抄送的人员'
+  }
+  if (showError.value) {
+    err.push(`抄送节点 ${props.config.name} 未设置抄送人`)
+  }
+  return !showError.value
+}
+</script>
+
+<style scoped>
+
+</style>

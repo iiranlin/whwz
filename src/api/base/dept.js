@@ -54,6 +54,14 @@ export function getDeptTreeByUser(params) {
     params
   })
 }
+// 当前用户部门树
+export function deptGetTreeByDeptId(params) {
+  return request({
+    url: `${BASE}/dept/deptGetTreeByDeptId`,
+    method: 'get',
+    params
+  })
+}
 
 // 单位树
 export function getUnitTree(params) {

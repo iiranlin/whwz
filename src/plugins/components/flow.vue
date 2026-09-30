@@ -59,7 +59,7 @@ export default {
 
         initData() {
             const { mid = '', bid = '' } = this.options
-            this.iframeUrl = `/integrated-manage/bpmn/processViewr?mid=${mid}&bid=${bid}`
+            this.iframeUrl = `/bpmn/processViewr?mid=${mid}&bid=${bid}`
             this.visible = true;
         },
         handleClose() {

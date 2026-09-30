@@ -47,7 +47,8 @@ import EpDialog from '@/components/epDialog'
 // 打印
 import Print from 'vue3-print-nb'
 
-
+import WDialog from "@/components/common/WDialog";
+import Ellipsis from "@/components/common/Ellipsis";
 
 import FormData from '@/components/PublicListingPage/FormData'
 import TableIndex from '@/components/PublicListingPage/TableIndex'
@@ -98,7 +99,8 @@ function render(props = {}) {
   app.component('Editor', Editor)
   app.component('RightToolbar', RightToolbar)
   app.component('EpDialog', EpDialog)
-
+  app.component('WDialog', WDialog)
+  app.component('Ellipsis', Ellipsis)
   app.use(Print)
   app.use(store)
   app.use(router)
