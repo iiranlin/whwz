@@ -80,7 +80,7 @@
     <div class="my-process-designer__container">
       <div class="my-process-designer__canvas" ref="bpmnCanvasRef"></div>
     </div>
-    <el-dialog title="预览" width="60%" v-model:visible="previewModelVisible" append-to-body destroy-on-close >
+    <el-dialog title="预览" width="60%" v-model="previewModelVisible" append-to-body destroy-on-close >
       <highlightjs :language="previewType" :code="previewResult" style="height: 60vh" />
     </el-dialog>
   </div>

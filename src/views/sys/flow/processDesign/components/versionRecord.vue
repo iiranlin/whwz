@@ -38,7 +38,6 @@
 <script setup name="versionRecord">
 import { parseTime } from '@/utils/generalMethod'
 import { getVersionRecord } from '@/api/workflow/category'
-import { getVersionRecordData } from './mockData'
 // props / emits —— 与 Options API 版本完全一致
 const props = defineProps({
   processKey: {

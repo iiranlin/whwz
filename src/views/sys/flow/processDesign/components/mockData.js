@@ -314,3 +314,37 @@ export const getVersionRecordData = {
             }
         ]
     }
+
+export const  getFiledByTypeApiData = {
+      "code": 0,
+      "message": "操作成功",
+      "data": [
+        {
+          "id": "materialClassify",
+          "title": "物资分类",
+          "name": "TextInput",
+          "valueType": "String",
+          "dictFlag": false,
+          "props": {
+            "enablePrint": true,
+            "required": true
+          },
+          "dictMap": {}
+        },
+        {
+          "id": "isExpertAudit",
+          "title": "是否需要专家审核",
+          "name": "TextInput",
+          "valueType": "String",
+          "dictFlag": true,
+          "props": {
+            "enablePrint": true,
+            "required": true
+          },
+          "dictMap": {
+            "0": "否",
+            "1": "是"
+          }
+        }
+      ]
+    }

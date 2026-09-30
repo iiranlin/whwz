@@ -46,7 +46,6 @@
 <script setup name="addDialog">
 import { ElMessage } from 'element-plus'
 import { addCategory, deptTreeAll, detailCategory, getDictByCode, updateCategory } from '@/api/workflow/category'
-import { getDictByCodeData, deptTreeAllData, detailCategoryData } from './mockData'
 
 const { proxy } = getCurrentInstance()
 
@@ -151,14 +150,12 @@ function init(row, buttonCode) {
   getDictByCode('billType').then(({ data }) => {
     businessTypeList.value = data || []
   }).catch(() => {
-    businessTypeList.value = getDictByCodeData
   })
 
   if (buttonCode === 'update') {
     detailCategory(row.id).then(({ data }) => {
       applyDetail(data)
     }).catch(() => {
-      applyDetail(detailCategoryData)
     })
   }
 }
@@ -221,7 +218,6 @@ watch(() => data.formData.billType, (val) => {
     deptTreeAll({ billType: val, id: id.value }).then(({ data }) => {
       deptOptions.value = (data || []).map(normalizer)
     }).catch(() => {
-      deptOptions.value = deptTreeAllData.map(normalizer)
     })
   }
 }, { immediate: true })

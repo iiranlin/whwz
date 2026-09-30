@@ -179,42 +179,7 @@ async function getFiledByType() {
   }
   const loading = ElLoading.service({ lock: true, text: '加载中...' })
   try {
-    console.log(params, '1111111111111')
-
-    // const res = await getFiledByTypeApi(params)
-    const res = {
-      "code": 0,
-      "message": "操作成功",
-      "data": [
-        {
-          "id": "materialClassify",
-          "title": "物资分类",
-          "name": "TextInput",
-          "valueType": "String",
-          "dictFlag": false,
-          "props": {
-            "enablePrint": true,
-            "required": true
-          },
-          "dictMap": {}
-        },
-        {
-          "id": "isExpertAudit",
-          "title": "是否需要专家审核",
-          "name": "TextInput",
-          "valueType": "String",
-          "dictFlag": true,
-          "props": {
-            "enablePrint": true,
-            "required": true
-          },
-          "dictMap": {
-            "0": "否",
-            "1": "是"
-          }
-        }
-      ]
-    }
+    const res = await getFiledByTypeApi(params)
     if (res.code == 0) {
       formItems.value = res.data || []
     } else {

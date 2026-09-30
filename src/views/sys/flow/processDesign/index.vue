@@ -12,13 +12,13 @@
 
     <!-- 弹窗 -->
     <add-dialog ref="addDialogRef" @success="getList"></add-dialog>
-    <el-dialog :title="designerData.title || '流程设计器'" v-model:visible="designerOpen" append-to-body>
+    <el-dialog :title="designerData.title || '流程设计器'" v-model="designerOpen" append-to-body>
       <process-designer :key="designerOpen" style="border: 1px solid rgba(0, 0, 0, 0.1)"
         v-loading="designerData.loading" :bpmnXml="designerData.bpmnXml"
         :designer-form="designerData.form" @save="handleSaveDesigner" />
     </el-dialog>
-    <el-dialog title="流程详情" v-model:visible="openModeDetail" append-to-body width="1200px"
-      :close-on-click-modal="false">
+    <el-dialog title="流程详情" v-model="openModeDetail" append-to-body width="1200px" top="2vh"
+      class="process-detail-dialog" :close-on-click-modal="false" :showFooter="false">
       <iframe :src="iframeUrl" frameborder="0" height="800px" width="100%"></iframe>
     </el-dialog>
     <version-record v-model:openVersionRecord="openVersionRecord" :processKey="currentRow.processKey" />
@@ -33,13 +33,16 @@ import { listCategory, delCategory, changeStatus } from '@/api/workflow/category
 import addDialog from './components/addDialog'
 import versionRecord from './components/versionRecord.vue'
 import ProcessDesigner from '@/components/ProcessDesigner'
-import packageJson from '../../../../../package'
-import {  listCategoryData } from './components/mockData'
+import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper'
 
 
 const route = useRoute()
 const router = useRouter()
 const { proxy } = getCurrentInstance()
+
+// 路由前缀必须与 router/index.js 中 createWebHistory 的 base 保持一致：
+// qiankun 微应用模式下为 /warehouse-manage-v3，独立运行时为根路径
+const routeBase = qiankunWindow.__POWERED_BY_QIANKUN__ ? '/warehouse-manage-v3' : ''
 
 // refs
 const addDialogRef = ref(null)
@@ -86,9 +89,6 @@ function getList() {
       total.value = data.total
     })
     .finally(() => { 
-        // let data = listCategoryData
-        // tableData.value = data.list || []
-        // total.value = data.total
         loading.value = false })
 }
 
@@ -197,9 +197,8 @@ function clickLink(r) {
   if (!r?.version) {
     return ElMessage.error('当前流程无流程模型')
   }
-  console.log(packageJson.name, '11111111111')
   openModeDetail.value = true
-  iframeUrl.value = `/${packageJson.name}/bpmn/processViewr?mid=${r.modelId}`
+  iframeUrl.value = `${routeBase}/bpmn/processViewr?mid=${r.modelId}`
 }
 
 // --- ProcessDesigner 空壳（原逻辑已废弃） ---
@@ -212,3 +211,9 @@ onMounted(() => {
   getList()
 })
 </script>
+<style lang="scss">
+.process-detail-dialog {
+  height: 98vh !important;
+  margin-bottom: 1vh !important;
+}
+</style>

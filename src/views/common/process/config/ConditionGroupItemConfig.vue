@@ -29,22 +29,24 @@
           <el-form label-width="100px">
             <!--构建表达式-->
             <el-form-item v-for="(condition, cindex) in group.conditions" :key="condition.id + '_' + cindex">
-              <Ellipsis #label hover-tip :content="condition.title"/>
+              <template #label>
+                <span class="cond-label" :title="condition.title">{{ condition.title }}</span>
+              </template>
               <template v-if="condition.valueType === ValueType.string" style="display: flex;">
-                <el-select size="small" placeholder="判断符" style="width: 120px;margin-left: 10px;" v-model="condition.compare"
+                <el-select size="small" placeholder="判断符" style="width: 120px;" v-model="condition.compare"
                            @change="condition.value = []">
                   <el-option v-if="condition.id !== 'materialClassify'" label="等于" value="="></el-option>
                   <el-option v-if="condition.id !== 'materialClassify'" label="包含在" value="IN"></el-option>
                   <el-option v-else label="区间" value="RANGE"></el-option>
                 </el-select>
                 <!--物资分类范围-->
-                <template v-if="condition.id === 'materialClassify'" style="margin-left: 10px;">
+                <template v-if="condition.id === 'materialClassify'">
                   <el-tree-select
                     v-model="condition.value[0]"
                     :data="categoryTree"
                     :props="{ label: 'label', children: 'children' }"
                     node-key="id"
-                    style="width: 400px; margin: 8px 0"
+                    style="width: 366px; margin: 8px 0"
                     :placeholder="condition.compare === 'RANGE' ? '请选择开始范围' : '请选择'"
                     empty-text="无数据"
                   />
@@ -53,32 +55,32 @@
                     :data="categoryTree"
                     :props="{ label: 'label', children: 'children' }"
                     node-key="id"
-                    style="width: 400px"
+                    style="width: 366px"
                     placeholder="请选择结束范围"
                     empty-text="无数据"
                   />
 
                 </template>
-                <template v-else-if="condition.dictFlag" style="margin-left: 10px">
-                  <el-select style="width: 280px;" clearable :multiple="condition.compare === 'IN'" size="small" v-model="condition.value"
+                <template v-else-if="condition.dictFlag" >
+                  <el-select style="width: 246px;" clearable :multiple="condition.compare === 'IN'" size="small" v-model="condition.value"
                              placeholder="请选字典值">
                     <el-option v-for="(option, oi) in getDictMapToLabelValue(condition.dictMap)" :key="oi" :label="option.label"
                                :value="option.value"></el-option>
                   </el-select>
                 </template>
-                <template v-else-if="isSelect(condition.id)" style="margin-left: 10px">
-                  <el-select v-if="condition.compare === 'IN'" style="width: 280px;" clearable multiple size="small"
+                <template v-else-if="isSelect(condition.id)" >
+                  <el-select v-if="condition.compare === 'IN'" style="width: 246px;" clearable multiple size="small"
                              v-model="condition.value" placeholder="选择值">
                     <el-option v-for="(option, oi) in getOptions(condition.id)" :key="oi" :label="option" :value="option"></el-option>
                   </el-select>
-                  <el-select v-else style="width: 280px;" clearable size="small" v-model="condition.value[0]" placeholder="选择值">
+                  <el-select v-else style="width: 246px;" clearable size="small" v-model="condition.value[0]" placeholder="选择值">
                     <el-option v-for="(option, oi) in getOptions(condition.id)" :key="oi" :label="option" :value="option"></el-option>
                   </el-select>
                 </template>
-                <template v-else style="margin-left: 10px">
-                  <el-input v-if="condition.compare === '='" style="width: 280px;" placeholder="输入比较值" size="small"
+                <template v-else >
+                  <el-input v-if="condition.compare === '='" style="width: 246px;" placeholder="输入比较值" size="small"
                             v-model="condition.value[0]"/>
-                  <el-select v-else style="width: 280px;" multiple clearable filterable allow-create size="small" v-model="condition.value"
+                  <el-select v-else style="width: 246px;" multiple clearable filterable allow-create size="small" v-model="condition.value"
                              placeholder="输入可能包含的值"></el-select>
                 </template>
               </template>
@@ -87,9 +89,9 @@
                   <el-option :label="exp.label" :value="exp.value" :key="exp.value" v-for="exp in explains"></el-option>
                 </el-select>
                 <span style="margin-left: 10px">
-                  <el-input style="width: 280px;" v-if="conditionValType(condition.compare) === 0" size="small" placeholder="输入比较值"
+                  <el-input style="width: 246px;" v-if="conditionValType(condition.compare) === 0" size="small" placeholder="输入比较值"
                             type="number" v-model="condition.value[0]"/>
-                  <el-select style="width: 280px;" multiple filterable allow-create v-else-if="conditionValType(condition.compare) === 1"
+                  <el-select style="width: 246px;" multiple filterable allow-create v-else-if="conditionValType(condition.compare) === 1"
                              size="small" v-model="condition.value" placeholder="输入可能包含的值"></el-select>
                   <span v-else>
                     <el-input style="width: 130px;" size="small" type="number" placeholder="输入比较值" v-model="condition.value[0]"/>
@@ -437,6 +439,17 @@ onMounted(() => {
 
   .group-content {
     padding: 10px 5px;
+
+    // label 超出宽度省略号，hover 展示全部
+    .cond-label {
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
 
     p {
       text-align: center;

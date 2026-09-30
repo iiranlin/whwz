@@ -268,7 +268,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped>>
+<style lang="scss" scoped>
 .process-viewer {
   position: relative;
 }
