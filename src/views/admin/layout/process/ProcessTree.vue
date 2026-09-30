@@ -69,7 +69,7 @@ export default defineComponent({
   },
   render() {
     const h2 = h
-    console.log("渲染流程树 dom =", JSON.parse(JSON.stringify(this.dom)))
+    console.log("渲染流程树 dom =", JSON.parse(JSON.stringify(this.dom || {})))
     // render 内用本地 ref Map 构建（非 reactive，.set/.clear 不触发 effect）
     this.nodeMap = new Map()
     let processTrees = this.getDomTree(h2, this.dom)
