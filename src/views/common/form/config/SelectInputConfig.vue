@@ -5,11 +5,13 @@
     </el-form-item>
     <el-form label-position="top">
       <el-form-item label="选项设置" class="options">
-        <div #label class="option-item-label">
-          <span>选项设置</span>
-          <el-button icon="Plus" type="text" size="mini"
-                     @click="value.options.push('新选项')">新增选项</el-button>
-        </div>
+        <template #label>
+          <div class="option-item-label">
+            <span>选项设置</span>
+            <el-button icon="Plus" type="text" size="mini"
+                       @click="value.options.push('新选项')">新增选项</el-button>
+          </div>
+        </template>
         <draggable :list="value.options" group="option" handle=".el-icon-rank"
                    :animation="300" :sort="true" :item-key="option => option">
           <template #item="{ index }">

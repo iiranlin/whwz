@@ -460,7 +460,7 @@ onMounted(() => {
         color: #e6a23c;
         vertical-align: middle;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 18px;
       }
     }
 
