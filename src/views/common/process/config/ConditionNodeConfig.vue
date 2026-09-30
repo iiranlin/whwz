@@ -1,19 +1,31 @@
 <template>
   <div>
-    <el-form inline label-width="100px">
+    <el-form inline label-width="88px">
       <el-form-item label="调整优先级" prop="level">
         <el-popover placement="right" title="拖拽条件调整优先级顺序" width="250" trigger="click">
-          <draggable style="width: 100%; min-height:25px" :list="prioritySortList" group="from" :options="sortOption">
-            <div :class="{'drag-no-choose': true, 'drag-hover': cd.id === selectedNode.id}"
-                 v-for="(cd, index) in prioritySortList">
-              <ellipsis style="width: 160px;" hover-tip :content="cd.name"/>
-              <div>优先级 {{ index + 1 }}</div>
-            </div>
+          <draggable
+            style="width: 100%; min-height:25px"
+            :list="prioritySortList"
+            group="from"
+            :animation="300"
+            chosen-class="choose"
+            :scroll="true"
+            :sort="true"
+            item-key="id"
+          >
+            <template #item="{ element, index }">
+              <div :class="{'drag-no-choose': true, 'drag-hover': element.id === selectedNode.id}">
+                <ellipsis style="width: 160px;" hover-tip :content="element.name"/>
+                <div>优先级 {{ index + 1 }}</div>
+              </div>
+            </template>
           </draggable>
-          <el-button icon="el-icon-sort" size="small" #reference>第{{ nowNodeLeave + 1 }}级</el-button>
+          <template #reference>
+            <el-button style="margin-left: 10px;" icon="Sort" size="small">第{{ nowNodeLeave + 1 }}级</el-button>
+          </template>
         </el-popover>
       </el-form-item>
-      <el-form-item label="条件组关系" label-width="150px">
+      <el-form-item label="条件组关系" label-width="150px" class="groups-type-item">
         <el-switch v-model="config.groupsType" active-color="#409EFF"
                    inactive-color="#c1c1c1" active-value="AND" inactive-value="OR"
                    active-text="且" inactive-text="或">
@@ -24,8 +36,8 @@
         <span class="item-desc">使用表达式构建复杂逻辑，例如: (A & B) | C</span>
       </el-form-item> -->
     </el-form>
-    <div>
-      <el-button type="primary" size="mini" icon="el-icon-plus" style="margin: 0 15px 15px 0" round @click="addConditionGroup">
+    <div class="add-group-bar">
+      <el-button type="primary" size="mini" icon="Plus" style="margin: 0 15px 0 0" round @click="addConditionGroup">
         添加条件组
       </el-button>
       <span class="item-desc">（只有必填字段才能作为审核条件）</span>
@@ -35,7 +47,7 @@
 </template>
 
 <script setup name="ConditionNodeConfig">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import draggable from 'vuedraggable'
 import GroupItem from './ConditionGroupItemConfig.vue'
 import { useProcessStore } from '@/store/modules/process'
@@ -48,13 +60,6 @@ const props = defineProps({
 })
 
 const processStore = useProcessStore()
-
-const sortOption = ref({
-  animation: 300,
-  chosenClass: 'choose',
-  scroll: true,
-  sort: true
-})
 
 const selectedNode = computed(() => processStore.selectedNode)
 const select = computed(() => props.config.assignedUser || [])
@@ -92,6 +97,24 @@ function removeOrgItem(index) {
 </script>
 
 <style lang="scss" scoped>
+// 条件组关系：switch 与 label 同行展示不换行错位，switch 距离 label 10px
+.groups-type-item {
+  :deep(.el-form-item__content) {
+    flex-wrap: nowrap;
+  }
+
+  :deep(.el-switch) {
+    margin-left: 10px;
+  }
+}
+
+// 添加条件组：按钮与说明文字同行、垂直居中不错位；原按钮 bottom 15px 间距移到容器
+.add-group-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .choose {
   border-radius: 5px;
   margin-top: 2px;

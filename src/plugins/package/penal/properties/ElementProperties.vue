@@ -13,7 +13,7 @@
       </el-table-column>
     </el-table>
     <div class="element-drawer__button">
-      <el-button size="mini" type="primary" icon="el-icon-plus" @click="openAttributesForm(null, -1)">添加属性</el-button>
+      <el-button size="mini" type="primary" icon="Plus" @click="openAttributesForm(null, -1)">添加属性</el-button>
     </div>
 
     <el-dialog v-model="propertyFormModelVisible" title="属性配置" width="600px" append-to-body destroy-on-close>

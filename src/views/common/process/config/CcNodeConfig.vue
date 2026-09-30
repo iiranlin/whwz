@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button size="mini" icon="el-icon-plus" type="primary" @click="selectOrg" round>选择抄送人</el-button>
+    <el-button size="mini" icon="Plus" type="primary" @click="selectOrg" round>选择抄送人</el-button>
     <div class="option">
       <el-checkbox label="允许发起人添加抄送人" v-model="config.shouldAdd"></el-checkbox>
     </div>

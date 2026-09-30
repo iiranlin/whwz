@@ -119,7 +119,7 @@ defineEmits(['selected', 'leftMove', 'rightMove', 'copy', 'delNode', 'insertNode
           color: #718dff;
           .name{
             display: inline-block;
-            height: 14px;
+            height: 15px;
             width: 130px;
             margin-left: 2px;
           }

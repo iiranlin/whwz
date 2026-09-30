@@ -1,12 +1,12 @@
 <template>
   <div class="from-panel" ref="panel">
     <div class="from-title">
-      <el-button icon="el-icon-back" type="info" size="mini" circle plain style="margin-right: 15px" @click="router.push('/')"></el-button>
+      <el-button :icon="Back" type="info" size="mini" circle plain style="margin-right: 15px" @click="router.push('/')"></el-button>
       <span>流程面板</span>
       <span style="color: #c75450; margin-left: 20px">📢 开发版本，数据为测试数据❤</span>
       <div>
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="newProcess">新建表单</el-button>
-        <el-button icon="el-icon-plus" @click="addGroup" size="mini">新建分组</el-button>
+        <el-button type="primary" :icon="Plus" size="mini" @click="newProcess">新建表单</el-button>
+        <el-button :icon="Plus" @click="addGroup" size="mini">新建分组</el-button>
       </div>
     </div>
     <draggable :list="groups" group="group" handle=".el-icon-rank" filter=".undrag" @start="groupsSort = true"
@@ -16,13 +16,13 @@
         <div class="form-group-title">
           <span>{{group.name}}</span>
           <span>({{group.items.length}})</span>
-          <i class="el-icon-rank" title="长按拖动可对分组排序"></i>
+          <el-icon class="el-icon-rank" title="长按拖动可对分组排序"><Rank /></el-icon>
           <div v-if="!(group.id === 0 || group.id === undefined)">
             <el-dropdown>
-              <el-button type="text" icon="el-icon-setting">编辑分组</el-button>
+              <el-button type="text" :icon="Setting">编辑分组</el-button>
               <el-dropdown-menu #dropdown>
-                <el-dropdown-item icon="el-icon-edit-outline" @click="editGroup(group)">修改名称</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-delete" @click="delGroup(group)">删除分组</el-dropdown-item>
+                <el-dropdown-item :icon="Edit" @click="editGroup(group)">修改名称</el-dropdown-item>
+                <el-dropdown-item :icon="Delete" @click="delGroup(group)">删除分组</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -40,12 +40,12 @@
               <span>最后更新时间：{{item.updated}}</span>
             </div>
             <div>
-              <el-button type="text" icon="el-icon-edit-outline" size="mini" @click="editFrom(item, group)">编辑</el-button>
-              <el-button type="text" :icon="item.isStop ? 'el-icon-check':'el-icon-close'" size="mini" @click="stopFrom(item)">
+              <el-button type="text" :icon="Edit" size="mini" @click="editFrom(item, group)">编辑</el-button>
+              <el-button type="text" :icon="item.isStop ? Check : Close" size="mini" @click="stopFrom(item)">
                 {{item.isStop ? '启用' : '停用'}}
               </el-button>
 
-              <el-button type="text" icon="el-icon-delete" size="mini" @click="moveFrom(item)" v-if="item.isStop">删除
+              <el-button type="text" :icon="Delete" size="mini" @click="moveFrom(item)" v-if="item.isStop">删除
               </el-button>
               <el-popover placement="left" trigger="click" width="400" style="margin-left: 10px" @show="moveSelect === null" v-else>
                 <el-radio-group v-model="moveSelect" size="mini">
@@ -55,13 +55,13 @@
                 <div style="text-align: right; margin: 0">
                   <el-button type="primary" size="mini" @click="moveFrom(item)">提交</el-button>
                 </div>
-                <el-button #reference type="text" icon="el-icon-s-promotion" size="mini">移动</el-button>
+                <el-button #reference type="text" :icon="Promotion" size="mini">移动</el-button>
               </el-popover>
             </div>
           </div>
         </draggable>
         <div style="text-align: center" v-if="group.items === undefined || group.items.length === 0">
-          <el-button style="padding-top: 0" type="text" icon="el-icon-plus" @click="newProcess(group.id)">创建新表单</el-button>
+          <el-button style="padding-top: 0" type="text" :icon="Plus" @click="newProcess(group.id)">创建新表单</el-button>
         </div>
       </div>
     </draggable>
@@ -70,6 +70,7 @@
 
 <script setup name="FormsPanel">
 import draggable from "vuedraggable"
+import { Back, Plus, Rank, Setting, Edit, Delete, Check, Close, Promotion } from '@element-plus/icons-vue'
 import {
   getFormGroups, groupItemsSort,
   getFormDetail, updateGroup, updateForm as callUpdateForm

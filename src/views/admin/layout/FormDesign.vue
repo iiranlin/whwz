@@ -12,7 +12,7 @@
                        :group="{ name: 'form', pull: 'clone', put: false }"
                        @start="isStart = true" @end="isStart = false" :clone="clone">
               <li v-for="(cp, id) in group.components" :key="id">
-                <i :class="cp.icon"></i>
+                <el-icon><component :is="cp.icon"/></el-icon>
                 <span>{{ cp.title }}</span>
               </li>
             </draggable>
@@ -74,7 +74,7 @@
 
     <el-aside class="layout-param">
       <div class="tool-nav-r" v-if="selectFormItem">
-        <i :class="selectFormItem.icon" style="margin-right: 5px; font-size: medium"></i>
+        <el-icon style="margin-right: 5px; font-size: medium"><component :is="selectFormItem.icon"/></el-icon>
         <span>{{ selectFormItem.title }}</span>
       </div>
       <div v-if="!selectFormItem || forms.length === 0" class="tip">

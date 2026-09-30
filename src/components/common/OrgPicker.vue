@@ -4,11 +4,15 @@
       <div class="candidate" v-loading="loading">
         <div v-if="type !== 'role'">
           <el-input v-model="search" @input="searchUser" style="width: 95%;" size="small"
-                    clearable placeholder="搜索人员，支持拼音、姓名" prefix-icon="el-icon-search"/>
+                    clearable placeholder="搜索人员，支持拼音、姓名">
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+          </el-input>
           <div v-show="!showUsers">
             <ellipsis hoverTip style="height: 18px; color: #8c8c8c; padding: 5px 0 0" :row="1" :content="deptStackStr">
               <template #pre>
-                <i class="el-icon-office-building"></i>
+                <el-icon><OfficeBuilding /></el-icon>
               </template>
             </ellipsis>
             <div style="margin-top: 5px">
@@ -52,7 +56,7 @@
           <el-empty :image-size="100" description="请点击左侧列表选择数据" v-show="select.length === 0"/>
           <div v-for="(org, index) in select" :key="index" :class="orgItemClass(org)" >
             <div v-if="org.type === 'dept'">
-              <i class="el-icon-folder-opened"></i>
+              <el-icon><FolderOpened /></el-icon>
               <span style="position: static" class="name">{{ org.name }}</span>
             </div>
             <div v-else-if="org.type === 'user'" style="display: flex; align-items: center">
@@ -64,7 +68,7 @@
               <i class="iconfont icon-bumen"></i>
               <span class="name">{{ org.name }}</span>
             </div>
-            <i class="el-icon-close" @click="noSelected(index)"></i>
+            <el-icon class="el-icon-close" @click="noSelected(index)"><Close /></el-icon>
           </div>
         </div>
       </div>
@@ -75,6 +79,7 @@
 <script setup name="OrgPicker">
 import { ref, computed, getCurrentInstance } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search, OfficeBuilding, FolderOpened, Close } from '@element-plus/icons-vue'
 import { getOrgTree, getUserByName } from '@/api/org'
 
 const { proxy } = getCurrentInstance()

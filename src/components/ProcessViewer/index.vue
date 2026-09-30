@@ -43,10 +43,10 @@
       <div style="position: absolute; top: 0px; right: 0px;">
         <el-row type="flex" justify="end">
           <el-button-group key="scale-control" size="medium">
-            <el-button size="medium" type="default" :plain="true" :disabled="defaultZoom <= 0.3" icon="el-icon-zoom-out" @click="processZoomOut()" />
+            <el-button size="medium" type="default" :plain="true" :disabled="defaultZoom <= 0.3" icon="ZoomOut" @click="processZoomOut()" />
             <el-button size="medium" type="default" style="width: 90px;">{{ Math.floor(defaultZoom * 10 * 10) + "%" }}</el-button>
-            <el-button size="medium" type="default" :plain="true" :disabled="defaultZoom >= 3.9" icon="el-icon-zoom-in" @click="processZoomIn()" />
-            <el-button size="medium" type="default" icon="el-icon-c-scale-to-original" @click="processReZoom()" />
+            <el-button size="medium" type="default" :plain="true" :disabled="defaultZoom >= 3.9" icon="ZoomIn" @click="processZoomIn()" />
+            <el-button size="medium" type="default" icon="ScaleToOriginal" @click="processReZoom()" />
             <slot />
           </el-button-group>
         </el-row>

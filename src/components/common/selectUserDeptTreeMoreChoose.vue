@@ -81,21 +81,22 @@
           </el-col>
           <el-col :span="16" class="right-col">
              <div class="body-tool">
-              <hz-button
+              <el-button
                 class="button-item search"
                 round
+                icon="Search" 
                 type="primary"
                 @click="handleQuery"
               >
-              <icon-svg icon-class="Line-Search" />
                 搜索
-              </hz-button>
-              <hz-button
+              </el-button>
+              <el-button
                 class="button-item reset"
+                icon="RefreshLeft" 
                 round
                 @click="resetQuery"
-                ><icon-svg icon-class="Line-Refresh" class="icon-svg-blue" />重置
-              </hz-button>
+                ><span class="button-text">重置</span>
+              </el-button>
           </div>
             <el-table
               v-if="userOpen"

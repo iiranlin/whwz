@@ -32,7 +32,7 @@
           <el-input size="medium" v-model="newGroup" placeholder="请输入新的分组名">
             <el-button #append size="medium" type="primary" @click="addGroup">提交</el-button>
           </el-input>
-          <el-button icon="el-icon-plus" #reference size="medium" type="primary">新建分组</el-button>
+          <el-button icon="Plus" #reference size="medium" type="primary">新建分组</el-button>
         </el-popover>
       </el-form-item>
       <el-form-item label="备注">

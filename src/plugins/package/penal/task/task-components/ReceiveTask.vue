@@ -5,7 +5,7 @@
         <el-select v-model="bindMessageId" @change="updateTaskMessage">
           <el-option v-for="id in Object.keys(messageMap)" :value="id" :label="messageMap[id]" :key="id" />
         </el-select>
-        <el-button size="mini" type="primary" icon="el-icon-plus" style="margin-left: 8px" @click="openMessageModel" />
+        <el-button size="mini" type="primary" icon="Plus" style="margin-left: 8px" @click="openMessageModel" />
       </div>
     </el-form-item>
     <el-dialog v-model="messageModelVisible" :close-on-click-modal="false" title="创建新消息" width="400px" append-to-body destroy-on-close >

@@ -4,8 +4,8 @@
       <slot name="control-header"></slot>
       <template v-if="!slots.controlHeader">
         <el-button-group key="file-control">
-          <el-button :size="props.headerButtonSize" :type="props.headerButtonType" icon="el-icon-edit-outline" @click="onSave">保存流程</el-button>
-          <el-button :size="props.headerButtonSize" :type="props.headerButtonType" icon="el-icon-folder-opened" @click="refFile.click()">打开文件</el-button>
+          <el-button :size="props.headerButtonSize" :type="props.headerButtonType" :icon="Edit" @click="onSave">保存流程</el-button>
+          <el-button :size="props.headerButtonSize" :type="props.headerButtonType" :icon="FolderOpened" @click="refFile.click()">打开文件</el-button>
           <el-tooltip effect="light">
             <template #content>
               <el-button :size="props.headerButtonSize" type="text" @click="downloadProcessAsXml()">下载为XML文件</el-button>
@@ -14,7 +14,7 @@
               <br />
               <el-button :size="props.headerButtonSize" type="text" @click="downloadProcessAsBpmn()">下载为BPMN文件</el-button>
             </template>
-            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" icon="el-icon-download">下载文件</el-button>
+            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" :icon="Download">下载文件</el-button>
           </el-tooltip>
           <el-tooltip effect="light">
             <template #content>
@@ -22,55 +22,55 @@
               <br />
               <el-button :size="props.headerButtonSize" type="text" @click="previewProcessJson">预览JSON</el-button>
             </template>
-            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" icon="el-icon-view">预览</el-button>
+            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" :icon="View">预览</el-button>
           </el-tooltip>
           <el-tooltip v-if="props.simulation" effect="light" :content="simulationStatus ? '退出模拟' : '开启模拟'">
-            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" icon="el-icon-cpu" @click="processSimulation">
+            <el-button :size="props.headerButtonSize" :type="props.headerButtonType" :icon="Cpu" @click="processSimulation">
               模拟
             </el-button>
           </el-tooltip>
         </el-button-group>
         <el-button-group key="align-control">
           <el-tooltip effect="light" content="向左对齐">
-            <el-button :size="props.headerButtonSize" class="align align-left" icon="el-icon-s-data" @click="elementsAlign('left')" />
+            <el-button :size="props.headerButtonSize" class="align align-left" :icon="Histogram" @click="elementsAlign('left')" />
           </el-tooltip>
           <el-tooltip effect="light" content="向右对齐">
-            <el-button :size="props.headerButtonSize" class="align align-right" icon="el-icon-s-data" @click="elementsAlign('right')" />
+            <el-button :size="props.headerButtonSize" class="align align-right" :icon="Histogram" @click="elementsAlign('right')" />
           </el-tooltip>
           <el-tooltip effect="light" content="向上对齐">
-            <el-button :size="props.headerButtonSize" class="align align-top" icon="el-icon-s-data" @click="elementsAlign('top')" />
+            <el-button :size="props.headerButtonSize" class="align align-top" :icon="Histogram" @click="elementsAlign('top')" />
           </el-tooltip>
           <el-tooltip effect="light" content="向下对齐">
-            <el-button :size="props.headerButtonSize" class="align align-bottom" icon="el-icon-s-data" @click="elementsAlign('bottom')" />
+            <el-button :size="props.headerButtonSize" class="align align-bottom" :icon="Histogram" @click="elementsAlign('bottom')" />
           </el-tooltip>
           <el-tooltip effect="light" content="水平居中">
-            <el-button :size="props.headerButtonSize" class="align align-center" icon="el-icon-s-data" @click="elementsAlign('center')" />
+            <el-button :size="props.headerButtonSize" class="align align-center" :icon="Histogram" @click="elementsAlign('center')" />
           </el-tooltip>
           <el-tooltip effect="light" content="垂直居中">
-            <el-button :size="props.headerButtonSize" class="align align-middle" icon="el-icon-s-data" @click="elementsAlign('middle')" />
+            <el-button :size="props.headerButtonSize" class="align align-middle" :icon="Histogram" @click="elementsAlign('middle')" />
           </el-tooltip>
         </el-button-group>
         <el-button-group key="scale-control">
           <el-tooltip effect="light" content="缩小视图">
-            <el-button :size="props.headerButtonSize" :disabled="defaultZoom <= 0.3" icon="el-icon-zoom-out" @click="processZoomOut()" />
+            <el-button :size="props.headerButtonSize" :disabled="defaultZoom <= 0.3" :icon="ZoomOut" @click="processZoomOut()" />
           </el-tooltip>
           <el-button :size="props.headerButtonSize">{{ Math.floor(defaultZoom * 10 * 10) + "%" }}</el-button>
           <el-tooltip effect="light" content="放大视图">
-            <el-button :size="props.headerButtonSize" :disabled="defaultZoom >= 3.9" icon="el-icon-zoom-in" @click="processZoomIn()" />
+            <el-button :size="props.headerButtonSize" :disabled="defaultZoom >= 3.9" :icon="ZoomIn" @click="processZoomIn()" />
           </el-tooltip>
           <el-tooltip effect="light" content="重置视图并居中">
-            <el-button :size="props.headerButtonSize" icon="el-icon-c-scale-to-original" @click="processReZoom()" />
+            <el-button :size="props.headerButtonSize" :icon="ScaleToOriginal" @click="processReZoom()" />
           </el-tooltip>
         </el-button-group>
         <el-button-group key="stack-control">
           <el-tooltip effect="light" content="撤销">
-            <el-button :size="props.headerButtonSize" :disabled="!revocable" icon="el-icon-refresh-left" @click="processUndo()" />
+            <el-button :size="props.headerButtonSize" :disabled="!revocable" :icon="RefreshLeft" @click="processUndo()" />
           </el-tooltip>
           <el-tooltip effect="light" content="恢复">
-            <el-button :size="props.headerButtonSize" :disabled="!recoverable" icon="el-icon-refresh-right" @click="processRedo()" />
+            <el-button :size="props.headerButtonSize" :disabled="!recoverable" :icon="RefreshRight" @click="processRedo()" />
           </el-tooltip>
           <el-tooltip effect="light" content="重新绘制">
-            <el-button :size="props.headerButtonSize" icon="el-icon-refresh" @click="processRestart" />
+            <el-button :size="props.headerButtonSize" :icon="Refresh" @click="processRestart" />
           </el-tooltip>
         </el-button-group>
       </template>
@@ -89,6 +89,20 @@
 <script setup name="BpmnProcessDesigner">
 import { ref, computed, onMounted, onBeforeUnmount, useSlots } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  Edit,
+  FolderOpened,
+  Download,
+  View,
+  Cpu,
+  Histogram,
+  ZoomIn,
+  ZoomOut,
+  ScaleToOriginal,
+  RefreshLeft,
+  RefreshRight,
+  Refresh
+} from "@element-plus/icons-vue";
 // 生产环境时优化
 // const BpmnModeler = window.BpmnJS;
 import BpmnModeler from "bpmn-js/lib/Modeler";

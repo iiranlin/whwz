@@ -29,7 +29,8 @@
       v-model="showConfig"
       :size="selectedNode.type === 'CONDITION' ? '600px':'500px'"
       direction="rtl"
-      :modal="false"
+      :modal="true"
+      modal-class="process-drawer-mask"
       destroy-on-close
     >
       <template #title>
@@ -45,10 +46,7 @@
           @click="showInput = true"
           style="font-size: medium"
         >
-          <i
-            class="el-icon-edit"
-            style="margin-right: 10px"
-          ></i>
+          <el-icon style="margin-right: 10px"><EditPen /></el-icon>
           {{selectedNode.name}}
         </el-link>
       </template>
@@ -90,7 +88,21 @@ function nodeSelected(node) {
 }
 </script>
 
+<style lang="scss">
+/* el-drawer 遮罩层 teleport 到 body，需要非 scoped 样式覆盖 */
+.process-drawer-mask {
+  background-color: transparent !important;
+}
+</style>
 <style lang="scss" scoped>
+:deep(.process-drawer-mask){
+  .ep-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px !important;
+  }
+}
 .design {
   display: flex;
   transform-origin: 50% 0px 0px;

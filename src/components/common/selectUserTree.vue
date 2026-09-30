@@ -1,11 +1,11 @@
 <template>
-  <el-dialog title="候选用户" v-model="userOpen" width="1200px" append-to-body>
+  <el-dialog title="候选用户" class="ep-dialog-list"  v-model="userOpen" width="1200px" append-to-body>
     <template #title>
       <div class="dialog-title dialog-search">
         <span class="title">候选用户</span>
         <div class="button-top">
-          <el-button class="button-item search" round icon="el-icon-search" type="primary" @click="handleQuery"> 搜索</el-button>
-          <el-button class="button-item reset" icon="el-icon-refresh-left" round @click="resetQuery"><span class="button-text">重置</span>
+          <el-button class="button-item search" round icon="Search" type="primary" @click="handleQuery"> 搜索</el-button>
+          <el-button class="button-item reset" icon="RefreshLeft" round @click="resetQuery"><span class="button-text">重置</span>
           </el-button>
         </div>
       </div>
@@ -178,7 +178,7 @@ async function getUserList(p = {}) {
   const api = type.value === 'EXPERT' ? getExpertList : getUserListAllByDept
   api(params).then((res) => {
     if (res.code === 0) {
-      userTableList.value = res.data.list.map(item => ({ ...item, nickName: item.userName, username: item.userCode }))
+      userTableList.value = res.data.list.map(item => ({ ...item, nickName: item.nickName, username: item.userCode }))
       userTotal.value = res.data.total
 
       nextTick(() => {

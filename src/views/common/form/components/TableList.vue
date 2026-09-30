@@ -33,7 +33,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button size="small" icon="el-icon-plus" @click="addRow">{{placeholder}}</el-button>
+        <el-button size="small" icon="Plus" @click="addRow">{{placeholder}}</el-button>
       </div>
       <div v-else>
         <el-form :rules="rules" :model="row" :ref="`table-form-${i}`" class="table-column" v-for="(row, i) in _value" :key="i">
@@ -45,7 +45,7 @@
             <form-design-render v-model="row[column.id]" :mode="mode" :config="column"/>
           </el-form-item>
         </el-form>
-        <el-button size="small" icon="el-icon-plus" @click="addRow">{{placeholder}}</el-button>
+        <el-button size="small" icon="Plus" @click="addRow">{{placeholder}}</el-button>
       </div>
     </div>
   </div>

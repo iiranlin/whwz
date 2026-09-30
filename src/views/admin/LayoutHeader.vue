@@ -11,7 +11,7 @@
         <el-button size="mini" type="primary" @click="publish"><el-icon><Promotion /></el-icon>发布</el-button>
       </div>
       <div class="back">
-        <el-button @click="exit" size="medium" :icon="ArrowLeft" circle></el-button>
+        <el-button @click="exit" size="medium" icon="ArrowLeft" circle></el-button>
         <span style="paddingLeft: 10px">
           <!-- <i :class="" :style="'background:' + setup.logo.background"></i> -->
           <span>{{ route.query.modelName }}</span>
@@ -25,7 +25,6 @@
 import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft } from '@element-plus/icons-vue'
 import { useProcessStore } from '@/store/modules/process'
 
 const { proxy } = getCurrentInstance()

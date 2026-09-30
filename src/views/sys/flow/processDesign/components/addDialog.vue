@@ -196,6 +196,9 @@ function submit() {
     }
     delete params.useOrgNames
     delete params.useOrgIds
+    if(id.value) {
+      params.id = id.value
+    }
 
     const request = type.value === 'update' ? updateCategory : addCategory
     request(params).then(res => {

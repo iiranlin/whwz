@@ -7,17 +7,20 @@
       <el-form-item label="选项设置" class="options">
         <div #label class="option-item-label">
           <span>选项设置</span>
-          <el-button icon="el-icon-plus" type="text" size="mini"
+          <el-button icon="Plus" type="text" size="mini"
                      @click="value.options.push('新选项')">新增选项</el-button>
         </div>
-        <draggable :list="value.options" group="option" handler=".el-icon-rank" :options="dragOption">
-          <div v-for="(op, index) in value.options" :key="index" class="option-item">
-            <i class="el-icon-rank"></i>
-            <el-input v-model="value.options[index]" size="medium" placeholder="请设置选项值" clearable>
-              <el-button icon="el-icon-delete" #append type="danger" size="medium"
-                         @click="value.options.splice(index, 1)"></el-button>
-            </el-input>
-          </div>
+        <draggable :list="value.options" group="option" handle=".el-icon-rank"
+                   :animation="300" :sort="true" :item-key="option => option">
+          <template #item="{ index }">
+            <div class="option-item">
+              <el-icon class="el-icon-rank"><Rank /></el-icon>
+              <el-input v-model="value.options[index]" size="medium" placeholder="请设置选项值" clearable>
+                <el-button icon="Delete" #append type="danger" size="medium"
+                           @click="value.options.splice(index, 1)"></el-button>
+              </el-input>
+            </div>
+          </template>
         </draggable>
 
       </el-form-item>
@@ -31,6 +34,7 @@
 
 <script setup name="SelectInputConfig">
 import draggable from "vuedraggable";
+import { Rank } from '@element-plus/icons-vue'
 
 defineProps({
   value: {
@@ -40,11 +44,6 @@ defineProps({
     }
   }
 })
-
-const dragOption = {
-  animation: 300,
-  sort: true
-}
 </script>
 
 <style lang="scss" scoped>
@@ -55,7 +54,7 @@ const dragOption = {
     text-align: left;
   }
   .el-icon-rank{
-    padding-right: 5px;
+    margin-right: 5px;
     cursor: move;
   }
   .option-item{

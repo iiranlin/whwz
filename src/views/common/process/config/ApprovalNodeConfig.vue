@@ -20,7 +20,7 @@
         <div v-if="['ASSIGN_USER'].includes( nodeProps.assignedType)">
           <el-button
             size="mini"
-            icon="el-icon-plus"
+            icon="Plus"
             type="primary"
             @click="selectUser('ASSIGN')"
             round
@@ -31,7 +31,7 @@
         <div v-if="['EXPERT'].includes( nodeProps.assignedType)">
           <el-button
             size="mini"
-            icon="el-icon-plus"
+            icon="Plus"
             type="primary"
             @click="selectUser('EXPERT')"
             round
@@ -73,7 +73,7 @@
         <div v-else-if="nodeProps.assignedType === 'ROLE'">
           <el-button
             size="mini"
-            icon="el-icon-plus"
+            icon="Plus"
             type="primary"
             @click="selectRole"
             round
@@ -103,7 +103,7 @@
         <div>
           <el-button
             size="mini"
-            icon="el-icon-plus"
+            icon="Plus"
             type="primary"
             @click="selectUser('NOTICE')"
             round
@@ -130,7 +130,7 @@
         >
           <el-button
             size="mini"
-            icon="el-icon-plus"
+            icon="Plus"
             type="primary"
             @click="selectNoSetUser"
             round
@@ -172,10 +172,9 @@
           content="如果开启了字段编辑，则审批时需要填写相关信息"
           placement="top-start"
         >
-          <i
-            class="el-icon-question"
+          <el-icon
             style="margin-left: 10px; font-size: medium; color: #b0b0b1"
-          ></i>
+          ><QuestionFilled /></el-icon>
         </el-tooltip>
       </el-form-item> -->
       <el-form-item
@@ -204,10 +203,9 @@
           content="如果选择是，则当前节点审核完成后，单据可撤回"
           placement="top-start"
         >
-          <i
-            class="el-icon-question"
+          <el-icon
             style="margin-left: 10px; font-size: medium; color: #b0b0b1"
-          ></i>
+          ><QuestionFilled /></el-icon>
         </el-tooltip>
       </el-form-item>
       <el-form-item
@@ -225,10 +223,9 @@
           content="如果选择是，则驳回到当前节点时自动跳过到上一节点"
           placement="top-start"
         >
-          <i
-            class="el-icon-question"
+          <el-icon
             style="margin-left: 10px; font-size: medium; color: #b0b0b1"
-          ></i>
+          ><QuestionFilled /></el-icon>
         </el-tooltip>
       </el-form-item>
       <!-- <el-form-item
@@ -247,10 +244,9 @@
           content="如果选择是，则上个节点审核完成后，该节点相同审批人会自动审核通过"
           placement="top-start"
         >
-          <i
-            class="el-icon-question"
+          <el-icon
             style="margin-left: 10px; font-size: medium; color: #b0b0b1"
-          ></i>
+          ><QuestionFilled /></el-icon>
         </el-tooltip>
       </el-form-item> -->
       <!-- <el-divider>高级设置</el-divider>
@@ -570,6 +566,9 @@ async function getFunctionByType() {
     width: 110px;
     margin-top: 10px;
     margin-bottom: 20px;
+  }
+  :deep(.ep-radio-group){
+    width: 100%;
   }
 }
 

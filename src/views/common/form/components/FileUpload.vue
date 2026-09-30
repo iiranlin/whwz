@@ -1,12 +1,12 @@
 <template>
   <div>
     <div v-if="mode === 'DESIGN'">
-      <el-button size="small" icon="el-icon-paperclip" round>选择文件</el-button>
+      <el-button size="small" icon="Paperclip" round>选择文件</el-button>
       <ellipsis :row="1" :content="placeholder + sizeTip" hoverTip #tip class="el-upload__tip"/>    </div>
     <div v-else>
       <el-upload :file-list="_value" action="#" :limit="maxSize" with-credentials :multiple="maxSize > 0" :data="uploadParams"
                  :auto-upload="false" :before-upload="beforeUpload">
-        <el-button size="small" icon="el-icon-paperclip" round>选择文件</el-button>
+        <el-button size="small" icon="Paperclip" round>选择文件</el-button>
         <ellipsis :row="1" :content="placeholder + sizeTip" hoverTip #tip class="el-upload__tip"/>      </el-upload>
     </div>
   </div>

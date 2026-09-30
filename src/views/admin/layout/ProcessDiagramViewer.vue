@@ -1,9 +1,9 @@
 <template>
   <el-main>
     <div class="scale">
-      <el-button icon="el-icon-plus" size="small" @click="scale += 10" :disabled="scale >= 150" circle></el-button>
+      <el-button icon="Plus" size="small" @click="scale += 10" :disabled="scale >= 150" circle></el-button>
       <span>{{ scale }}%</span>
-      <el-button icon="el-icon-minus" size="small" @click="scale -= 10" :disabled="scale <= 40" circle></el-button>
+      <el-button icon="Minus" size="small" @click="scale -= 10" :disabled="scale <= 40" circle></el-button>
     </div>
     <div class="design" :style="'transform: scale('+ scale / 100 +');'">
       <process-tree-viewer ref="processTree" @selectedNode="nodeSelected"/>

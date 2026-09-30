@@ -13,7 +13,7 @@
             <el-button
               class="button-item search"
               round
-              icon="el-icon-search"
+              icon="Search" 
               type="primary"
               @click="handleQuery"
             >
@@ -21,7 +21,7 @@
             </el-button>
             <el-button
               class="button-item reset"
-              icon="el-icon-refresh-left"
+              icon="RefreshLeft" 
               round
               @click="resetQuery"
               ><span class="button-text">重置</span>

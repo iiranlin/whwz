@@ -1,6 +1,6 @@
 <template>
   <div :style="{'color': color}">
-    <el-icon class="el-icon-warning-outline"></el-icon>
+    <el-icon><Warning /></el-icon>
     <span> {{placeholder}}</span>
   </div>
 

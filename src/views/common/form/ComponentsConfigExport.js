@@ -16,7 +16,7 @@ export const baseComponents = [
       {
         title: '分栏布局',
         name: 'SpanLayout',
-        icon: 'el-icon-c-scale-to-original',
+        icon: 'ScaleToOriginal',
         value: [],
         valueType: ValueType.array,
         props: {
@@ -30,7 +30,7 @@ export const baseComponents = [
       {
         title: '单行文本输入',
         name: 'TextInput',
-        icon: 'el-icon-edit',
+        icon: 'Edit',
         value: '',
         valueType: ValueType.string,
         props: {
@@ -41,7 +41,7 @@ export const baseComponents = [
       {
         title: '多行文本输入',
         name: 'TextareaInput',
-        icon: 'el-icon-more-outline',
+        icon: 'MoreFilled',
         value: '',
         valueType: ValueType.string,
         props: {
@@ -52,7 +52,7 @@ export const baseComponents = [
       {
         title: '数字输入框',
         name: 'NumberInput',
-        icon: 'el-icon-edit-outline',
+        icon: 'EditPen',
         value: '',
         valueType: ValueType.number,
         props: {
@@ -63,7 +63,7 @@ export const baseComponents = [
       {
         title: '金额输入框',
         name: 'AmountInput',
-        icon: 'iconfont icon-zhufangbutiezhanghu',
+        icon: 'Money',
         value: '',
         valueType: ValueType.number,
         props: {
@@ -75,7 +75,7 @@ export const baseComponents = [
       {
         title: '单选框',
         name: 'SelectInput',
-        icon: 'el-icon-circle-check',
+        icon: 'CircleCheck',
         value: '',
         valueType: ValueType.string,
         props: {
@@ -88,7 +88,7 @@ export const baseComponents = [
       {
         title: '多选框',
         name: 'MultipleSelect',
-        icon: 'iconfont icon-duoxuankuang',
+        icon: 'Checked',
         value: [],
         valueType: ValueType.array,
         props: {
@@ -101,7 +101,7 @@ export const baseComponents = [
       {
         title: '日期时间点',
         name: 'DateTime',
-        icon: 'el-icon-date',
+        icon: 'Calendar',
         value: '',
         valueType: ValueType.date,
         props: {
@@ -113,7 +113,7 @@ export const baseComponents = [
       {
         title: '日期时间区间',
         name: 'DateTimeRange',
-        icon: 'iconfont icon-kaoqin',
+        icon: 'Clock',
         valueType: ValueType.dateRange,
         props: {
           required: false,
@@ -126,7 +126,7 @@ export const baseComponents = [
       {
         title: '上传图片',
         name: 'ImageUpload',
-        icon: 'el-icon-picture-outline',
+        icon: 'Picture',
         value: [],
         valueType: ValueType.array,
         props: {
@@ -140,7 +140,7 @@ export const baseComponents = [
       {
         title: '上传附件',
         name: 'FileUpload',
-        icon: 'el-icon-folder-opened',
+        icon: 'FolderOpened',
         value: [],
         valueType: ValueType.array,
         props: {
@@ -155,7 +155,7 @@ export const baseComponents = [
       {
         title: '人员选择',
         name: 'UserPicker',
-        icon: 'el-icon-user',
+        icon: 'User',
         value: [],
         valueType: ValueType.user,
         props: {
@@ -167,7 +167,7 @@ export const baseComponents = [
       {
         title: '部门选择',
         name: 'DeptPicker',
-        icon: 'iconfont icon-map-site',
+        icon: 'OfficeBuilding',
         value: [],
         valueType: ValueType.dept,
         props: {
@@ -179,7 +179,7 @@ export const baseComponents = [
       {
         title: '说明文字',
         name: 'Description',
-        icon: 'el-icon-warning-outline',
+        icon: 'Warning',
         value: '',
         valueType: ValueType.string,
         props: {
@@ -194,7 +194,7 @@ export const baseComponents = [
       {
         title: '明细表',
         name: 'TableList',
-        icon: 'el-icon-tickets',
+        icon: 'Tickets',
         value: [],
         valueType: ValueType.array,
         props: {

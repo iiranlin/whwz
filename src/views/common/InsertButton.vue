@@ -1,15 +1,15 @@
 <template>
-  <el-popover placement="bottom-start" title="添加流程节点" width="350" trigger="click">
+  <el-popover v-model:visible="visible" placement="bottom-start" title="添加流程节点" width="350" trigger="click">
     <template #reference>
-      <el-button style="margin: 0" icon="el-icon-plus" type="primary" size="small" circle></el-button>
+      <el-button style="margin: 0" type="primary" size="small" circle><el-icon><Plus /></el-icon></el-button>
     </template>
     <div class="node-select">
       <div @click="addApprovalNode">
-        <i class="el-icon-s-check" style="color:rgb(255, 148, 62);"></i>
+        <el-icon style="color:rgb(255, 148, 62);" size="35"><UserFilled /></el-icon>
         <span>审批人</span>
       </div>
       <div @click="addConditionsNode">
-        <i class="el-icon-share" style="color:rgb(21, 188, 131);"></i>
+        <el-icon style="color:rgb(21, 188, 131);" size="35"><Share /></el-icon>
         <span>条件分支</span>
       </div>
     </div>
@@ -17,11 +17,13 @@
 </template>
 
 <script setup name="InsertButton">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useProcessStore } from '@/store/modules/process'
 
 const processStore = useProcessStore()
 const emit = defineEmits(['insertNode'])
+
+const visible = ref(false)
 
 /* ========== 调试日志开始 ========== */
 console.log('[InsertButton] setup 执行')
@@ -35,26 +37,32 @@ const selectedNode = computed(() => processStore.selectedNode)
 function addApprovalNode() {
   console.log('[InsertButton] 点击了 审批人')
   emit('insertNode', "APPROVAL")
+  visible.value = false
 }
 function addCcNode() {
   console.log('[InsertButton] 点击了 抄送人')
   emit('insertNode', "CC")
+  visible.value = false
 }
 function addDelayNode() {
   console.log('[InsertButton] 点击了 延迟等待')
   emit('insertNode', "DELAY")
+  visible.value = false
 }
 function addConditionsNode() {
   console.log('[InsertButton] 点击了 条件分支')
   emit('insertNode', "CONDITIONS")
+  visible.value = false
 }
 function addConcurrentsNode() {
   console.log('[InsertButton] 点击了 并行分支')
   emit('insertNode', "CONCURRENTS")
+  visible.value = false
 }
 function addTriggerNode() {
   console.log('[InsertButton] 点击了 触发器')
   emit('insertNode', "TRIGGER")
+  visible.value = false
 }
 </script>
 

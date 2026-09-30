@@ -1,12 +1,12 @@
 <template>
   <div style="max-width: 350px">
     <div v-if="mode === 'DESIGN'">
-      <el-button disabled icon="el-icon-user" type="primary" size="mini" round>选择人员</el-button>
+      <el-button disabled icon="User" type="primary" size="mini" round>选择人员</el-button>
       <span class="placeholder"> {{placeholder}}</span>
     </div>
     <div v-else>
       <template v-if="!readerMode">
-        <el-button icon="el-icon-user" type="primary" size="mini" round @click="orgPickerRef.show()">选择人员</el-button>
+        <el-button icon="User" type="primary" size="mini" round @click="orgPickerRef.show()">选择人员</el-button>
         <org-picker type="user" :multiple="multiple" ref="orgPickerRef" :selected="_value" @ok="selected"/>
         <span class="placeholder"> {{placeholder}}</span>
         <div style="margin-top: 5px">

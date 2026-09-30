@@ -1,21 +1,21 @@
 <template>
   <div :class="{'node': true, 'root': isRoot || !show, 'node-error-state': showError}">
     <div v-if="show" @click="onSelect" :class="{'node-body': true, 'error': showError}" >
-      <div>
+      <div @mouseenter="hoverHeader = true" @mouseleave="hoverHeader = false">
         <div class="node-body-header" :style="{'background-color': headerBgc}">
-          <i :class="headerIcon" style="margin-right: 5px" v-if="(headerIcon || '') !== ''"></i>
+          <el-icon style="margin-right: 5px" size="12" v-if="(iconComponent || '') !== ''"><component :is="iconComponent" /></el-icon>
           <ellipsis class="name" hover-tip :content="title"/>
-          <i class="el-icon-close" v-if="!isRoot && processStore.diagramMode !== 'viewer'" style="float:right;" @click="onDelNode"></i>
+          <el-icon v-if="!isRoot && processStore.diagramMode !== 'viewer'" v-show="hoverHeader" style="float:right;" size="15" @click="onDelNode"><Close/></el-icon>
         </div>
         <div class="node-body-content">
           <i :class="leftIcon" v-if="leftIcon"></i>
           <span class="placeholder" v-if="(content || '').trim() === ''">{{placeholder}}</span>
           <ellipsis :row="3" :content="content" v-else/>
-          <i class="el-icon-arrow-right" v-if="processStore.diagramMode !== 'viewer'" ></i>
+          <el-icon v-if="processStore.diagramMode !== 'viewer'"><ArrowRight /></el-icon>
         </div>
         <div class="node-error" v-if="showError">
           <el-tooltip effect="dark" :content="errorInfo" placement="top-start">
-            <i class="el-icon-warning-outline"></i>
+            <el-icon><Warning /></el-icon>
           </el-tooltip>
         </div>
       </div>
@@ -32,12 +32,19 @@
 </template>
 
 <script setup name="Node">
-import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import InsertButton from '@/views/common/InsertButton.vue'
 import { useProcessStore } from '@/store/modules/process'
+import {
+  UserFilled,
+  Search,
+  Edit,
+  Setting,
+  Delete
+} from '@element-plus/icons-vue'
 
 const processStore = useProcessStore()
-
+const hoverHeader = ref(false)
 const props = defineProps({
   //是否为根节点
   isRoot: {
@@ -88,16 +95,21 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['selected', 'delNode', 'insertNode'])
+// Element UI 类名 → Element Plus 组件的映射
+const iconMap = {
+  'el-icon-user-solid': UserFilled,
+  'el-icon-s-check': UserFilled,
+  'el-icon-search': Search,
+  'el-icon-edit': Edit,
+  'el-icon-setting': Setting,
+  'el-icon-delete': Delete
+  // ...按项目实际用到的图标继续补充
+}
 
-/* ========== 调试日志开始 ========== */
-console.log('[Node] setup 执行, title =', props.title, ', isRoot =', props.isRoot)
-console.log('[Node] setup 时 diagramMode =', processStore.diagramMode)
-console.log('[Node] setup 时 InsertButton 组件 =', InsertButton)
+const iconComponent = computed(() => iconMap[props.headerIcon] || null)
+
 
 onMounted(() => {
-  console.log('[Node] onMounted, title =', props.title)
-  console.log('[Node] onMounted 时 diagramMode =', processStore.diagramMode)
-  console.log('[Node] onMounted 时 v-show 条件 (diagramMode !== viewer) =', processStore.diagramMode !== 'viewer')
 })
 
 onBeforeUnmount(() => {

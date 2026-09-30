@@ -1,7 +1,8 @@
 <template>
   <el-dialog custom-class="custom-dialog" class="border" :width="width" :title="title"
              append-to-body :close-on-click-modal="clickClose"
-             :destroy-on-close="closeFree" v-model:visible="_value">
+             :destroy-on-close="closeFree" v-model:visible="_value"
+             :show-footer="showFooter">
     <slot></slot>
     <template #footer v-if="showFooter">
       <div>

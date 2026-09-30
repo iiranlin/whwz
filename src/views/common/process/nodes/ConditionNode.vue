@@ -2,7 +2,7 @@
   <div :class="{'node': true, 'node-error-state': showError}">
     <div :class="{'node-body': true, 'error': showError}">
       <div class="node-body-left" @click="$emit('leftMove')" v-if="level > 1 && processStore.diagramMode !== 'viewer' && config.id.indexOf('default_node') === -1">
-        <i class="el-icon-arrow-left"></i>
+        <el-icon><ArrowLeft /></el-icon>
       </div>
       <div class="node-body-main" @click="$emit('selected')">
         <div class="node-body-main-header">
@@ -10,9 +10,9 @@
           <span class="level">优先级{{ level }}</span>
           <span class="option"  v-if="processStore.diagramMode !== 'viewer' && config.id.indexOf('default_node') === -1">
             <el-tooltip effect="dark" content="复制条件" placement="top">
-              <i class="el-icon-copy-document" @click.stop="$emit('copy')"></i>
+              <el-icon @click.stop="$emit('copy')"><CopyDocument /></el-icon>
             </el-tooltip>
-            <i class="el-icon-close" @click.stop="$emit('delNode')"></i>
+            <el-icon @click.stop="$emit('delNode')"><Close /></el-icon>
           </span>
         </div>
         <!-- 条件显示框内的条件 -->
@@ -22,11 +22,11 @@
         </div>
       </div>
       <div class="node-body-right" @click="$emit('rightMove')" v-if="level < size && processStore.diagramMode !== 'viewer' && config.id.indexOf('default_node') === -1">
-        <i class="el-icon-arrow-right"></i>
+        <el-icon><ArrowRight /></el-icon>
       </div>
       <div class="node-error" v-if="showError">
         <el-tooltip effect="dark" :content="errorInfo" placement="top-start">
-          <i class="el-icon-warning-outline"></i>
+          <el-icon><Warning /></el-icon>
         </el-tooltip>
       </div>
     </div>
@@ -281,7 +281,7 @@ function validate(err) {
         .title {
           color: #15bca3;
           display: inline-block;
-          height: 14px;
+          height: 15px;
           width: 125px;
         }
 

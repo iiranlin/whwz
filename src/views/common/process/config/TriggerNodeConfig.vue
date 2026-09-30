@@ -33,7 +33,7 @@
               <el-option v-for="form in forms" :key="form.id" :label="form.title" :value="form.title"></el-option>
             </el-select>
             <el-input v-else placeholder="请设置字段值" size="small" v-model="header.value" style="width: 180px;"/>
-            <el-icon class="el-icon-delete" @click="delItem(config.http.headers, index)" style="margin-left: 5px; color: #c75450; cursor: pointer"/>
+            <el-icon class="Delete" @click="delItem(config.http.headers, index)" style="margin-left: 5px; color: #c75450; cursor: pointer"/>
           </div>
         </el-form-item>
         <el-form-item label="Header请求参数" prop="text">
@@ -56,7 +56,7 @@
               <el-option v-for="form in forms" :key="form.id" :label="form.title" :value="form.title"></el-option>
             </el-select>
             <el-input v-else placeholder="请设置字段值" size="small" v-model="param.value" style="width: 180px;"/>
-            <el-icon class="el-icon-delete" @click="delItem(config.http.params, index)" style="margin-left: 5px; color: #c75450; cursor: pointer"/>
+            <el-icon class="Delete" @click="delItem(config.http.params, index)" style="margin-left: 5px; color: #c75450; cursor: pointer"/>
           </div>
           <div>
 

@@ -60,7 +60,7 @@
             ></i>
           </ellipsis>
         </div>
-        <template slot="extra">
+        <template #extra>
           <el-button
             type="primary"
             v-if="validResult.finished"
@@ -406,7 +406,7 @@ async function doPublish() {
   overflow: scroll;
 }
 
-:deep(.el-step) {
+:deep(.ep-step) {
   .is-success {
     color: #2a99ff;
     border-color: #2a99ff;

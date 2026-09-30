@@ -28,7 +28,7 @@
           <el-button
             size="mini"
             type="primary"
-            icon="el-icon-plus"
+            icon="Plus"
             @click="onSelectUsers()"
           >添加用户</el-button>
         </div>

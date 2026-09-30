@@ -18,20 +18,20 @@
                 {{ condition.title }}
               </el-checkbox>
             </el-checkbox-group>
-            <template #reference><i class="el-icon-plus"></i></template>
+            <template #reference><el-icon><Plus /></el-icon></template>
           </el-popover>
-          <i class="el-icon-delete" @click="delGroup(index)"></i>
+          <el-icon class="Delete" @click="delGroup(index)"><Delete /></el-icon>
         </div>
       </div>
       <div class="group-content">
-        <p v-if="group.conditions.length === 0">点击右上角 + 为本条件组添加条件 ☝</p>
+        <p v-if="group.conditions.length === 0">点击右上角 + 为本条件组添加条件 <el-icon class="pointer-icon"><Pointer /></el-icon></p>
         <div v-else>
           <el-form label-width="100px">
             <!--构建表达式-->
             <el-form-item v-for="(condition, cindex) in group.conditions" :key="condition.id + '_' + cindex">
               <Ellipsis #label hover-tip :content="condition.title"/>
               <template v-if="condition.valueType === ValueType.string" style="display: flex;">
-                <el-select size="small" placeholder="判断符" style="width: 120px;" v-model="condition.compare"
+                <el-select size="small" placeholder="判断符" style="width: 120px;margin-left: 10px;" v-model="condition.compare"
                            @change="condition.value = []">
                   <el-option v-if="condition.id !== 'materialClassify'" label="等于" value="="></el-option>
                   <el-option v-if="condition.id !== 'materialClassify'" label="包含在" value="IN"></el-option>
@@ -101,16 +101,16 @@
               </span>
               <!-- <span v-else-if="condition.valueType === ValueType.user">
                 <span class="item-desc" style="margin-right: 20px">为某些人其中之一</span>
-                <el-button size="mini" icon="el-icon-plus" type="primary" @click="selectUser(condition.value, 'user')" round>选择人员</el-button>
+                <el-button size="mini" icon="Plus" type="primary" @click="selectUser(condition.value, 'user')" round>选择人员</el-button>
                 <org-items v-model="condition.value"/>
               </span> -->
               <!-- <span v-else-if="condition.valueType === ValueType.dept">
                 <span class="item-desc" style="margin-right: 20px">为某部门 / 某部门下的部门</span>
-                <el-button size="mini" icon="el-icon-plus" type="primary" @click="selectUser(condition.value, 'dept')" round>选择部门</el-button>
+                <el-button size="mini" icon="Plus" type="primary" @click="selectUser(condition.value, 'dept')" round>选择部门</el-button>
                 <org-items v-model="condition.value"/>
               </span> -->
               <span v-else-if="condition.valueType === ValueType.date"></span>
-              <i class="el-icon-delete" @click="rmSubCondition(group, cindex)"></i>
+              <el-icon class="el-icon-delete" @click="rmSubCondition(group, cindex)"><Delete /></el-icon>
             </el-form-item>
           </el-form>
         </div>
@@ -122,7 +122,7 @@
 
     <el-dialog
       class="unit-dialog"
-      v-model:visible="visible"
+      v-model="visible"
       append-to-body
       width="800px"
       :title="`${currentCondition.title}`"
@@ -406,11 +406,8 @@ onMounted(() => {
   .group-header {
     padding: 5px 10px;
     background: #e3e3e3;
-    position: relative;
-
-    div {
-      display: inline-block;
-    }
+    display: flex;
+    align-items: center;
 
     .group-name {
       font-size: small;
@@ -418,20 +415,18 @@ onMounted(() => {
 
     .group-cp {
       font-size: small;
-      position: absolute;
-      left: 100px;
       display: flex;
-      top: 5px;
-      justify-content: center;
       align-items: center;
+      margin-left: 20px;
     }
 
     .group-operation {
-      position: absolute;
-      right: 10px;
+      display: flex;
+      align-items: center;
+      margin-left: auto;
 
       i {
-        padding: 0 10px;
+        margin: 0 10px;
 
         &:hover {
           cursor: pointer;
@@ -446,6 +441,14 @@ onMounted(() => {
     p {
       text-align: center;
       font-size: small;
+
+      // 替代 U+261D 字符（其字形依赖系统回退字体，颜色/方向不稳定），改用 EP 图标固定为橙色、方向朝上
+      .pointer-icon {
+        color: #e6a23c;
+        vertical-align: middle;
+        font-weight: bold;
+        font-size: 16px;
+      }
     }
 
     .el-icon-delete {
