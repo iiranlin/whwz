@@ -293,7 +293,7 @@ const tsNumChange = (row) => {
   if (row.ptNum !== '') {
     let newPtAmount = Number(row.cardPrice) * Number(row.ptNum)
     row.ptAmount = Number(newPtAmount.toFixed(2))
-    let newprofitAmount = Number(row.prAmount) - Number(row.ptAmount)
+    let newprofitAmount = Number(row.ptAmount) - Number(row.prAmount)
     row.profitAmount = Number(newprofitAmount.toFixed(2))
   } else {
     row.ptAmount = null

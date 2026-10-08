@@ -21,7 +21,7 @@
       :selection-mode="'multiple'"
       :keep-selection="true"
       :show-action="false" 
-      :grid-options="{ rowId: 'recoredId' }"
+      :grid-options="{ rowId: 'cardId' }"
     >
     </el-pro-table>
     </el-col>
