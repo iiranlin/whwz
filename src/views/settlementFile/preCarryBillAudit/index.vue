@@ -17,6 +17,7 @@
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
+      :grid-options="{ rowId: 'billId' }"
     >
       <template #billCode-cell="{ row }">
         <el-link type="primary" @click="handleClickLink(row)">{{ row.billCode }}</el-link>

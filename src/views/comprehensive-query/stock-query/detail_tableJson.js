@@ -179,7 +179,7 @@ export const columns = async (ctx) => {
     },
     {
       field: "validityPeriod",
-      type: "number",
+      // type: "number",
       title: "有效期",
     },
     {

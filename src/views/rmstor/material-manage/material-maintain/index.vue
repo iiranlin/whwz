@@ -17,6 +17,7 @@
       @search="handleQuery"
       :show-checkbox="true"
       :selection-mode="'multiple'"
+      :grid-options="{ rowId: 'returnId' }"
       :keep-selection="true"
       @selectionChange="handleSelectionChange"
     >

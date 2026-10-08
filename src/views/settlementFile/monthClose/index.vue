@@ -93,6 +93,7 @@
       :show-checkbox="true"
       :selection-mode="'multiple'"
       :keep-selection="true"
+      :grid-options="{ rowId: 'recoredId' }"
     >
       <template #stopnoteFlag="{ row }">
         <el-checkbox

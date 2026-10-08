@@ -11,11 +11,11 @@
       </div>
     </template>
     <el-form ref="userFormDataRef" label-suffix=":" :inline="true" :model="userFormData" class="demo-form-inline search-form">
-      <el-form-item label="员工工号" prop="userCode">
-        <el-input v-model="userFormData.userCode" placeholder="员工工号" @keyup.enter="handleQuery"></el-input>
+      <el-form-item label="员工工号" prop="username">
+        <el-input v-model="userFormData.username" placeholder="员工工号" @keyup.enter="handleQuery"></el-input>
       </el-form-item>
-      <el-form-item label="员工姓名" prop="userName">
-        <el-input v-model="userFormData.userName" placeholder="员工姓名" @keyup.enter="handleQuery"></el-input>
+      <el-form-item label="员工姓名" prop="nickName">
+        <el-input v-model="userFormData.nickName" placeholder="员工姓名" @keyup.enter="handleQuery"></el-input>
       </el-form-item>
     </el-form>
     <!--部门数据-->
@@ -86,8 +86,8 @@ const userTotal = ref(0)
 const userTableList = ref([])
 const selectedUserData = ref([])
 const userFormData = reactive({
-  userName: '',
-  userCode: ''
+  nickName: '',
+  username: ''
 })
 const treeDeptId = ref('00600023')
 const defExpandedKeys = ref([])
@@ -117,8 +117,8 @@ function init(t, selected) {
   type.value = t
   selectedUserData.value = [...selected]
   // this.getDeptTreeData();
-  userFormData.userCode = ''
-  userFormData.userName = ''
+  userFormData.nickName = ''
+  userFormData.username = ''
   getUserList()
 }
 // 节点单击事件
@@ -178,7 +178,7 @@ async function getUserList(p = {}) {
   const api = type.value === 'EXPERT' ? getExpertList : getUserListAllByDept
   api(params).then((res) => {
     if (res.code === 0) {
-      userTableList.value = res.data.list.map(item => ({ ...item, nickName: item.nickName, username: item.userCode }))
+      userTableList.value = res.data.list.map(item => ({ ...item, nickName: item.nickName, username: item.username }))
       userTotal.value = res.data.total
 
       nextTick(() => {

@@ -59,7 +59,7 @@
                 {{ parseTime(scope.row.expirationDate, "{y}-{m}-{d}") }}
               </template>
               <template #taxFlag="{name, scope}">
-                {{ scope.row.taxFlag === "1" ? "含税" : "不含说" }}
+                {{ scope.row.taxFlag === "1" ? "含税" : scope.row.taxFlag === "0" ? "不含税" : "" }}
               </template>
             </receipt-table>
             <pagination 

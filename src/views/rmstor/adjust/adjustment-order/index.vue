@@ -279,7 +279,7 @@ const handleDelete = (row, selectedRows) => {
         proxy.$modal.msgWarning('请选择至少一条数据')
         return
     }
-    const isFlag = selectedRows.some(a => a.flag !== '0')
+    const isFlag = selectedRows.some(a => a.flag !== '1')
     if (isFlag) {
         proxy.$modal.msgWarning('请选择未登卡的数据')
         return

@@ -24,7 +24,7 @@ export const tableJson = [
   {searchType: '', field: 'nowNum', title: '卡片期末', align: 'center',},
 
   // 搜索
-  {field: 'yearMonth', title: '财务年月', searchType: 'date',searchable: true,hideInTable:true},
+  {field: 'yearMonth', title: '财务年月', searchType: 'date',dateType: "month",searchable: true,hideInTable:true,searchProps:{type: "month", valueFormat: "YYYY-MM"}},
   {field: 'plantCode', title: '用料地区', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'depotCode', title: '仓库', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'partitionCode', title: '仓库分区', searchType: 'select',searchable: true,hideInTable:true},
@@ -61,7 +61,7 @@ export const tablePriceJson = [
   {searchType: '', field: 'nowAmount', title: '卡片期末', align: 'center',},
 
    // 搜索
-  {field: 'yearMonth', title: '财务年月', searchType: 'date',searchable: true,hideInTable:true},
+  {field: 'yearMonth', title: '财务年月', searchType: 'date',dateType: "month",searchable: true,hideInTable:true,searchProps:{type: "month", valueFormat: "YYYY-MM"}},
   {field: 'plantCode', title: '用料地区', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'depotCode', title: '仓库', searchType: 'select',searchable: true,hideInTable:true},
   {field: 'partitionCode', title: '仓库分区', searchType: 'select',searchable: true,hideInTable:true},

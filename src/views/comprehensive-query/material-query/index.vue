@@ -6,7 +6,7 @@
             :footer-config="footerConfig" :sort-remote="false" :show-checkbox="true"
             :default-search-form="defaultSearchForm" :editable="false" :show-action="false" row-key="transfer-order"
             :table-alert-render="false" border @search="onSearch" @action="onAction"
-            :grid-options="{ rowId: 'mtId', rowStyle: handleRowStyle }">
+            :grid-options="{ rowId: 'returnId', rowStyle: handleRowStyle }">
         </el-pro-table>
         <add-dialog ref="addDialog" @createSuccess="getList" />
     </div>

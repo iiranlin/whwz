@@ -4,7 +4,21 @@ import { selectPlantDict } from '@/api/warehouse/plantDict'
 import { getwarehouseByUserAndPlant } from '@/api/warehouse/warehouseDict'
 import { getWarehousePartition } from '@/api/warehouse/partition'
 
+const plantData = async () => {
+  try {
+    const res = await selectPlantDict()
+    return (res.data || []).map(item => {
+      return {...item, label: item.plantName, value: item.plantCode}
+    })
+  } catch (e) {
+    console.warn('selectPlantDict 接口调用失败:', e)
+    return []
+  }
+}
+
 export const columns = async (ctx) => {
+  const plantArr = await plantData()
+  let whArr = []
   return [
     {
       field: "flag",
@@ -35,15 +49,7 @@ export const columns = async (ctx) => {
       labelKey: "plantName",
       valueKey: "plantCode",
       searchProps: {
-        options: async () => {
-          try {
-            const { data } = await selectPlantDict();
-            return data || [];
-          } catch (e) {
-            console.warn('selectPlantDict 接口调用失败:', e);
-            return [];
-          }
-        },
+        options: plantArr,
         clearable: true,
       },
     },
@@ -66,16 +72,21 @@ export const columns = async (ctx) => {
         changedField,
         setFieldValue,
         setFieldProps,
-        selectedRecords,
       }) {
+        if (changedField !== 'ptPlantCode') return
         setFieldValue("ptWhCode", undefined);
         setFieldProps("ptWhCode", { options: [] });
-        if (!selectedRecords["ptPlantCode"]) return;
+        if(!form.ptPlantCode) return
+        const plantCodeObj = plantArr.find(a => a.plantCode === form.ptPlantCode)
+        if(!plantCodeObj) return
         try {
           const { data } = await getwarehouseByUserAndPlant({
-            plantId: selectedRecords["ptPlantCode"].id,
+            plantId: plantCodeObj.id,
           });
-          setFieldProps("ptWhCode", { options: data || [] });
+          whArr = (data || []).map(r => {
+            return {...r, label: r.whName, value: r.whCode}
+          })
+          setFieldProps("ptWhCode", { options: whArr });
         } catch (e) {
           console.warn('getwarehouseByUserAndPlant 接口调用失败:', e);
         }
@@ -100,16 +111,21 @@ export const columns = async (ctx) => {
         changedField,
         setFieldValue,
         setFieldProps,
-        selectedRecords,
       }) {
+        if (changedField !== 'ptWhCode' && changedField !== 'ptPlantCode') return
         setFieldValue("ptPartitionCode", undefined);
         setFieldProps("ptPartitionCode", { options: [] });
-        if (!selectedRecords["ptWhCode"]) return;
+        if(!form.ptWhCode) return
+        const whCodeObj = whArr.find(a => a.whCode === form.ptWhCode)
+        if(!whCodeObj) return
         try {
           const { data } = await getWarehousePartition({
-            whId: selectedRecords["ptWhCode"].id,
+            whId: whCodeObj.id,
           });
-          setFieldProps("ptPartitionCode", { options: data || [] });
+          const options = (data || []).map(r => {
+            return {...r, label: r.partitionName, value: r.partitionCode}
+          })
+          setFieldProps("ptPartitionCode", { options });
         } catch (e) {
           console.warn('getWarehousePartition 接口调用失败:', e);
         }

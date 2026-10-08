@@ -168,8 +168,9 @@ async function createRichColumns() {
       title: '是否应税',
       minWidth: 100,
       align: 'center',
-      showOverflowTooltip: true,
+      showOverflowTooltip: false,
       searchable: false,
+      hideInTable: true,
       searchType: 'input',
     },
     {

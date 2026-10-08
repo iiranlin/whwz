@@ -21,6 +21,7 @@
       :selection-mode="'multiple'"
       :keep-selection="true"
       :show-action="false" 
+      :grid-options="{ rowId: 'recoredId' }"
     >
     </el-pro-table>
     </el-col>
@@ -79,9 +80,10 @@ const data = reactive({
   },
 });
 
-const defaultSearchForm = {
-  yearMonth: getCookie("warehouseYearMonth"),
-};
+const defaultSearchForm = (() => {
+  const ym = getCookie("warehouseYearMonth");
+  return { yearMonth: ym ? ym.substring(0, 7) : "" };
+})();
 
 const { queryParams } = toRefs(data);
 
