@@ -29,10 +29,10 @@
             <el-form-item label="存储物资编码范围：" label-width="150px">
             </el-form-item>
             <el-form-item :prop="`matlCodeRangeList.${index}.firMatlCode`" label="前物资范围：" label-width="100px" :rules="rules.firMatlCode">
-              <el-input v-model.trim="item.firMatlCode" v-only-alphanumeric placeholder="请输入" style="width: 100px;" />
+              <el-input v-model.trim="item.firMatlCode" v-only-alphanumeric maxlength="15" placeholder="请输入" style="width: 100px;" />
             </el-form-item>
             <el-form-item :prop="`matlCodeRangeList.${index}.endMatlCode`" label="后物资范围：" label-width="100px" :rules="rules.endMatlCode">
-              <el-input v-model.trim="item.endMatlCode" v-only-alphanumeric placeholder="请输入" style="width: 100px;" />
+              <el-input v-model.trim="item.endMatlCode" v-only-alphanumeric maxlength="15" placeholder="请输入" style="width: 100px;" />
             </el-form-item>
             <el-form-item label-width="10px" v-if="dialogType === 'create'">
               <el-button type="primary" icon="Plus" circle @click="handleAdd"></el-button>
