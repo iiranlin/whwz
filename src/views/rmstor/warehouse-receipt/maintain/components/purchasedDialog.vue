@@ -88,7 +88,9 @@ import receiptTable from '../../components/receiptTable.vue';
 import { markComplete, revokeMarkComplete, purchaseOrderList as getPurchaseOrderList } from '@/api/warehouse/purchaseOrder';
 
 const { proxy } = getCurrentInstance();
-const tableJsonArr = ref(purchasedDialogTableJson);
+const tableJsonArr = ref(purchasedDialogTableJson.map(column =>
+  column.prop === 'stkPrice' ? { ...column, key: 'contPrice', prop: 'contPrice' } : column
+));
 // 接收参数并指定类型（可选）
 const props = defineProps({
   iconTitle: {
@@ -187,7 +189,10 @@ const getList = async () => {
       spdCode: purchaseForm.value.currentPurchaseOrder.spdCode,
       pdmId: purchaseForm.value.currentPurchaseOrder.pdmId,
     });
-    tableData.value = res.data?.list || [];
+    tableData.value = (res.data?.list || []).map(item => ({
+      ...item,
+      contPrice: item.contPrice ?? item.stkPrice,
+    }));
     total.value = res.data?.total || 0;
   } catch (error) {
     
@@ -263,7 +268,9 @@ const handleConfirm = () => {
   emit('returnData', [selectedData.value.map(item => ({
     ...item,
     refBillCode: item.spdCode,
-    orderPrice: item.stkPrice || 0,
+    contPrice: item.contPrice ?? item.stkPrice ?? 0,
+    cardPrice: item.cardPrice ?? 0,
+    orderPrice: item.contPrice ?? item.stkPrice ?? 0,
     paNum: item.arrivalNum || 0,
     refBillSeq: item.spdSeq,
     refBillDid: item.pddId,

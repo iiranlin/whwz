@@ -138,8 +138,8 @@
             <template #accPic="{row}">
               <el-link type="primary" @click="clickLink('accPic', row)">验收照片</el-link>
             </template>
-            <template #stkPrice="{row}">
-             {{ row.stkPrice != null && row.stkPrice !== '' ? Number(row.stkPrice).toFixed(2) : '' }}
+            <template #contPrice="{row}">
+             {{ row.contPrice != null && row.contPrice !== '' ? Number(row.contPrice).toFixed(2) : '' }}
             </template>
             <template #cardPrice="{row}">
              {{ row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' }}
@@ -331,16 +331,16 @@ const columns = computed(() => [
   { field: "matlType", title: "规格类型/图号/材质", minWidth: 200, align: "center", render: (row) => [row.matlType, row.matlpCode, row.matlRaw].filter(item => !!item).join("/") },
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
   { field: "paNum", title: "入库数量", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '', editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 4, "controls-position": "right", style: "width: 100%" } } },
-  { field: "stkPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "stkPrice" },
+  { field: "contPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "contPrice" },
   { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '', visible: createForm.value.ibSource === "0" },
   { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '',editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 2, "controls-position": "right", style: "width: 100%" } } },
   { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "cardPrice" },
   { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", type: "slot", slotName: "standardAmount" },
   { field: "credCode", title: "技证号", minWidth: 180, align: "center", editRender: { name: "el-input", props: { placeholder: "请输入" } }},
-  { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date", editRender: {name: "el-date-picker", props: { valueFormat: "yyyy-MM-dd", editable: false, placeholder: "请选择"}}},
+  { field: "productionDate", title: "生产日期", minWidth: 180, align: "center", type: "date", editRender: {name: "el-date-picker", props: { valueFormat: "YYYY-MM-DD", editable: false, placeholder: "请选择"}}},
   { field: "validityPeriod", title: "有效期", minWidth: 160, align: "center", editRender: { name: "el-input-number", props: { placeholder: "请输入" } } },
   { field: "validityPeriodUnit", title: "有效期单位", minWidth: 120, align: "center", editRender: { name: "el-select", props: { placeholder: "请选择", options: validityPeriodUnitArr } } },
-  { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center", type: "date", editRender: { name: "el-date-picker", props: { placeholder: "自动计算", readonly: true, } } },
+  { field: "expirationDate", title: "到期日期", minWidth: 180, align: "center", type: "date", editRender: { name: "el-date-picker", props: { valueFormat: "YYYY-MM-DD", placeholder: "自动计算", readonly: true, } } },
   // { field: "accPic", title: "验收照片",minWidth: 160, align: "center", slotName: "accPic", hideInTable: createForm.value.ibSource !== "0"},
   // { field: "contractPic", title: "合同照片",minWidth: 160, align: "center", slotName: "contractPic", hideInTable: createForm.value.ibSource !== "0" }
 ]);
@@ -649,6 +649,9 @@ const toSave = () => {
       let periodFlag = true;
       tableData.value.forEach((item, index) => {
         const arr = [];
+        if (item.productionDate && item.validityPeriod && item.validityPeriodUnit) {
+          item.expirationDate = computedExpirationDate(item.productionDate, item.validityPeriod, item.validityPeriodUnit);
+        }
         if (!!!item.matlCode) {
           periodFlag = false;
           arr.push("物资编号");
@@ -657,7 +660,7 @@ const toSave = () => {
           periodFlag = false;
           arr.push("入库数量");
         }
-        if (!!!item.stkPrice || Number(item.stkPrice) === 0) {
+        if (!!!item.contPrice || Number(item.contPrice) === 0) {
           periodFlag = false;
           arr.push("采购单价");
         }
@@ -701,7 +704,7 @@ const toSave = () => {
             periodFlag2 = false;
             arr2.push(`输入的入库数量大于可入库数量${item.arrivalNum}！`);
           }
-          if (stkPriceRange && item._stkPrice && Number(item.stkPrice) - Number(item._stkPrice) < stkPriceRange.value.split(",")[0] || Number(item.stkPrice) - Number(item._stkPrice) > stkPriceRange.value.split(",")[1]) {
+          if (stkPriceRange.value && item._contPrice && (Number(item.contPrice) - Number(item._contPrice) < Number(stkPriceRange.value.split(",")[0]) || Number(item.contPrice) - Number(item._contPrice) > Number(stkPriceRange.value.split(",")[1]))) {
             periodFlag2 = false;
             arr2.push(`采购单价与订单单价差异超出系统参数配置值！`)
           }
@@ -761,12 +764,12 @@ const toSave = () => {
               return {
                 ...item,
                 matlpCode: item.matlpCode || null,
-                stkPrice: item.stkPrice || 0,
+                contPrice: item.contPrice || 0,
+                cardPrice: item.cardPrice || 0,
                 stkAmount: item.stkAmount || 0,
                 orderPrice: item.orderPrice || null,
                 matlRaw: item.matlRaw || null,
                 standardAmount: getStandardAmount(item) || 0,
-                stkPrice: item.stkPrice || 0,
                 productionDate: parseTime(item.productionDate, '{y}-{m}-{d}'),
                 expirationDate: parseTime(item.expirationDate, '{y}-{m}-{d}'),
               }
@@ -774,12 +777,12 @@ const toSave = () => {
               return {
                 ...item,
                 matlpCode: item.matlpCode || null,
-                stkPrice: item.stkPrice || 0,
+                contPrice: item.contPrice || 0,
+                cardPrice: item.cardPrice || 0,
                 stkAmount: item.stkAmount || 0,
                 orderPrice: item.orderPrice || null,
                 matlRaw: item.matlRaw || null,
                 standardAmount: getStandardAmount(item) || 0,
-                stkPrice: item.stkPrice || 0,
               }
             }
           }),
@@ -1069,12 +1072,16 @@ const returnMatlData = async (data = []) => {
       }
     }
   }
+  data.forEach(item => {
+    item.contPrice = item.contPrice ?? item.stkPrice;
+  });
   tableData.value = [...data];
   _tableData.value = [...data];
 }
 
 const returnOutsaleData = ([arr, data]) => {
   for (const element of arr) {
+    element.contPrice = element.contPrice ?? element.stkPrice;
     element.cardPrice = _formatDecimal(element.cardPrice, decimalPlaces.value) || 0;
     // element.cardPrice = detailPriceformat(element.cardPrice) || 0;
     element.paNum = detailPriceformat(element.paNum, "4") || 0;
@@ -1088,17 +1095,17 @@ const returnOutsaleData = ([arr, data]) => {
 
 const returnPurchaseData = ([arr, data]) => {
   for (const item of arr) {
-    if(!!item.productionDate && typeof item.productionDate === 'string') item.productionDate.includes("-") ? item.productionDate = new Date(item.productionDate).getTime() : item.productionDate = Number(item.productionDate);
-    if(!!item.expirationDate && typeof item.expirationDate === 'string') item.expirationDate.includes("-") ? item.expirationDate = new Date(item.expirationDate).getTime() : item.expirationDate = Number(item.expirationDate);
-    item.stkPrice = detailPriceformat(item.stkPrice) || 0;
+    if (item.productionDate) item.productionDate = parseTime(item.productionDate, '{y}-{m}-{d}');
+    if (item.expirationDate) item.expirationDate = parseTime(item.expirationDate, '{y}-{m}-{d}');
+    item.contPrice = detailPriceformat(item.contPrice ?? item.stkPrice) || 0;
     item.paNum = detailPriceformat(item.paNum, "4") || 0;
-    item._stkPrice = item.stkPrice;
+    item._contPrice = item.contPrice;
     // item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value);
     item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value) || 0;
     item.orderPrice = detailPriceformat(item.orderPrice) || 0;
 
-    if (!!item.stkPrice && !!item.paNum && !isNaN(Number(item.stkPrice)) && !isNaN(Number(item.paNum))) {
-      item.stkAmount = detailPriceformat(item.stkPrice * item.paNum) || 0;
+    if (!!item.contPrice && !!item.paNum && !isNaN(Number(item.contPrice)) && !isNaN(Number(item.paNum))) {
+      item.stkAmount = detailPriceformat(item.contPrice * item.paNum) || 0;
     }
 
     if (createForm.value.taxFlagName === "免税" || createForm.value.taxFlagName === "零税率" || createForm.value.taxFlagCode === "03" || createForm.value.taxFlagCode === "04") {
@@ -1189,11 +1196,10 @@ const paNumInput = (val, data, row) => {
     ElMessage.error(`大于可入库数量${data.outsaleNum - data.outQuantity}！`);
   }
   if (!!row.stkAmount && !!val && row.stkAmount !== "0" && !!val !== "0") {
-      // data.stkPrice = _formatDecimal(data.stkAmount / val, 2);
-      row.stkPrice = detailPriceformat(data.stkAmount / val) || 0;
+      row.contPrice = detailPriceformat(data.stkAmount / val) || 0;
 
   } else {
-    row.stkPrice = 0;
+    row.contPrice = 0;
   }
 
   if (createForm.value.ibSource !== "0" && createForm.value.ibSource !== "2") {
@@ -1204,11 +1210,10 @@ const paNumInput = (val, data, row) => {
 
 const stkAmountInput = (val, data, row) => {
   if (!!val && !!row.paNum && val !== "0" && row.paNum !== "0") {
-    // data.stkPrice = _formatDecimal(val / data.paNum, 2);
-    row.stkPrice = detailPriceformat(val / data.paNum) || 0;
+    row.contPrice = detailPriceformat(val / data.paNum) || 0;
     
   } else {
-    row.stkPrice = 0;
+    row.contPrice = 0;
   }
 
   if (createForm.value.ibSource !== "0" && createForm.value.ibSource !== "2") {
@@ -1227,7 +1232,9 @@ const getStandardAmount = (data = {}) => {
 }
 
 const computedExpirationDate = (productionDate, num, unit) => {
-  const date = new Date(productionDate);
+  const date = typeof productionDate === 'string' && productionDate.includes('-')
+    ? new Date(productionDate.replace(/-/g, '/'))
+    : new Date(Number(productionDate));
 
   switch (unit) {
     case "天":
@@ -1246,7 +1253,7 @@ const computedExpirationDate = (productionDate, num, unit) => {
       return null;
   }
 
-  return date.getTime();
+  return parseTime(date, '{y}-{m}-{d}');
 }
 
 const productionDateChange = (val, data) => {
@@ -1432,14 +1439,16 @@ const editSave = ({editedData, row, rowId}) => {
 
   res.paNum = row.paNum = detailPriceformat2(row.paNum, "4");
   res.stkAmount = row.stkAmount = detailPriceformat2(row.stkAmount);
-  res.stkPrice = row.stkPrice;
+  res.contPrice = row.contPrice;
   res.cardPrice = row.cardPrice;
 
   res.credCode = row.credCode;
   res.productionDate = row.productionDate;
   res.validityPeriod = row.validityPeriod;
   res.validityPeriodUnit = row.validityPeriodUnit;
-  res.expirationDate = row.expirationDate;
+  res.expirationDate = res.productionDate && res.validityPeriod && res.validityPeriodUnit
+    ? computedExpirationDate(res.productionDate, res.validityPeriod, res.validityPeriodUnit)
+    : null;
 
 }
 
@@ -1447,6 +1456,8 @@ const editCancel = ({row, rowId}) => {
   const res = tableData.value.find(item => item[cTableKey.value] === rowId);
   row.paNum = res.paNum;
   row.stkAmount = res.stkAmount;
+  row.contPrice = res.contPrice;
+  row.cardPrice = res.cardPrice;
   row.credCode = res.credCode;
   row.productionDate = res.productionDate;
   row.validityPeriod = res.validityPeriod;
