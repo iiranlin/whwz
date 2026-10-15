@@ -130,6 +130,13 @@ const handleConfirm = () => {
     proxy.$modal.msgWarning('请选择未确认订单')
     return
   }
+  const invalidIndex = selectionData.value.findIndex(({ arrivalNum }) =>
+    arrivalNum == null || arrivalNum === '' || !Number.isFinite(Number(arrivalNum)) || Number(arrivalNum) <= 0
+  )
+  if (invalidIndex !== -1) {
+    proxy.$modal.msgWarning(`请填写第 ${invalidIndex + 1} 条数据的到货数量`)
+    return
+  }
   proxy.$modal.confirm('您确定要到货确认所选订单吗？').then( async ()=>{
     const params = selectionData.value.map(a => {
       return {[props.idName]: a[props.idName], arrivalNum: a.arrivalNum}
