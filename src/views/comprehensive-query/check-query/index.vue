@@ -27,6 +27,7 @@ const { proxy } = getCurrentInstance()
 const columnsData = ref([])
 const tableJsonList = ref([])
 const defaultSearchForm = ref({})
+const lastSearchQuery = ref(null)
 async function init() {
   columnsData.value = await columns()
   tableJsonList.value = columnsData.value.map(a => ({ ...a }))
@@ -38,15 +39,17 @@ const beforeSearchFormat = (params) => {
   return nextParams
 }
 const getList = async (params) => {
+  lastSearchQuery.value = { ...params }
   const { data:{list, total} } = await checkQueryList(params)
   return {data: list, total: total, success: true}
 }
 
 const onAction = (payload) => {
-  const { name, code, row, files, searchForm } = payload
+  const { code } = payload
   const eventObj = {
     export: () => {
-      proxy.$download.name(checkExport, searchForm)
+      if (!lastSearchQuery.value) return
+      proxy.$download.name(checkExport, { ...lastSearchQuery.value })
     },
     link: () => {
       // handleClickLink(name, row)
