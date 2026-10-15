@@ -29,6 +29,7 @@ import { columns, toolbarConfig } from "./tableJson";
 const { proxy } = getCurrentInstance();
 const columnsData = ref([]);
 const tableJsonList = ref([]);
+const lastSearchQuery = ref(null);
 
 async function init() {
   try {
@@ -51,6 +52,7 @@ const beforeSearchFormat = (params) => {
   return nextParams;
 };
 const getList = async (params) => {
+  lastSearchQuery.value = { ...params };
   const {
     data: { list, total },
   } = await rmstorInternalQueryList(params);
@@ -64,10 +66,11 @@ const spanMethod = ({ row, column, rowIndex, columnIndex }) => {
   return { rowspan: 1, colspan: 1 };
 };
 const onAction = (payload) => {
-  const { name, code, row, files, searchForm } = payload;
+  const { code } = payload;
   const eventObj = {
     export: () => {
-      proxy.$download.name(rmstorInternalQueryExport, searchForm);
+      if (!lastSearchQuery.value) return;
+      proxy.$download.name(rmstorInternalQueryExport, { ...lastSearchQuery.value });
     },
     link: () => {
       // handleClickLink(name, row)

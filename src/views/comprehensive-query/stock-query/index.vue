@@ -95,6 +95,7 @@ const summaryData = ref([]);
 const proTableRef = ref();
 const columnsData = ref([]);
 const tableJsonList = ref([]);
+const lastSearchQuery = ref(null);
 
 const { footerConfig } = useTableSummaryFooter({
   summaryData,
@@ -144,6 +145,7 @@ const getList = async (params) => {
     params.yearMonthEnd = defaultSearchForm.value.dateRange[1].replace("-", "");
   }
   const query = { ...params, queryType: currentView.value };
+  lastSearchQuery.value = query;
 
   // 接口 1：列表数据（空值保护 + 异常隔离）
   let list = [];
@@ -179,11 +181,11 @@ const getList = async (params) => {
 };
 
 const onAction = (payload) => {
-  const { name, code, row, files, searchForm } = payload;
-  const query = { ...searchForm, queryType: currentView.value };
+  const { code } = payload;
   const eventObj = {
     export: () => {
-      proxy.$download.name(exportComprehensiveSearch, query);
+      if (!lastSearchQuery.value) return;
+      proxy.$download.name(exportComprehensiveSearch, { ...lastSearchQuery.value });
     },
     docs: () => {
       proxy.$modal.alert(
