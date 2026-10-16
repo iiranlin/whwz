@@ -10,7 +10,7 @@
               <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable suffix-icon="Search" />
             </div>
             <el-scrollbar class="head-container-tree">
-          <el-tree ref="treeRef" class="drawer-tree" v-loading="roleLoading" :data="roleOptions"
+          <el-tree ref="treeRef" class="drawer-tree" v-loading="roleLoading || saving" :data="roleOptions"
             :props="{ label: 'roleName', children: 'children' }" node-key="id" highlight-current
             :expand-on-click-node="false" :filter-node-method="filterNode" @node-click="handleNodeClick">
             <template #default="{ data }">
@@ -33,18 +33,31 @@
           <template #header>
             <div class="table-card-header">
               <span>菜单权限</span>
-              <el-button type="primary" icon="Finished" @click="handleSave">保存</el-button>
+              <el-button type="primary" icon="Finished" :loading="saving"
+                :disabled="loading || !loadedRoleId || loadedRoleId !== currentRoleId" @click="handleSave">保存</el-button>
             </div>
           </template>
-          <el-table ref="productRef" v-loading="loading" class="container_table" height="100%" :data="arrAclList" border
-            row-key="id" default-expand-all :row-class-name="rowClassNameFun" :header-row-class-name="headerRowClassName"
-            @select="selectFun" @select-all="selectAllFun">
-            <el-table-column type="selection" width="55" align="center" />
+          <el-table v-loading="loading" class="container_table" height="100%" :data="arrAclList" border
+            row-key="id" default-expand-all>
+            <!-- index 列使用自定义内容，使树形缩进仍落在后面的菜单名称列。 -->
+            <el-table-column type="index" width="55" align="center">
+              <template #header>
+                <el-checkbox :model-value="allSelected" :indeterminate="someSelected && !allSelected"
+                  :disabled="loading || saving || !arrAclList.length" aria-label="选择所有菜单"
+                  @change="selectAllFun" />
+              </template>
+              <template #default="{ row }">
+                <el-checkbox :model-value="row.isSelect && !row.indeterminate" :indeterminate="row.indeterminate"
+                  :disabled="loading || saving" :aria-label="`选择${row.menuName}`"
+                  @change="selected => selectFun(row, selected)" />
+              </template>
+            </el-table-column>
             <el-table-column prop="menuName" label="菜单名称" min-width="500">
               <template #default="{ row }">
                 <span>{{ row.menuName }}</span>
                 <acl-checkbox v-if="(row.buttonList && row.buttonList.length) || (row.fieldList && row.fieldList.length)"
-                  :ref="el => setCheckboxRef(el, row.id)" :item="row" :id="row.id" @change-all="changeAll" />
+                  :item="row" :id="row.id" :selected-ids="arrChangeAllObj[row.id] || []"
+                  :disabled="loading || saving" @change-all="changeAll" />
               </template>
             </el-table-column>
           </el-table>
@@ -66,9 +79,11 @@ import AclCheckbox from './components/aclCheckbox'
 const { proxy } = getCurrentInstance()
 
 const treeRef = ref(null)
-const productRef = ref(null)
 const loading = ref(false)
 const roleLoading = ref(false)
+const saving = ref(false)
+const loadedRoleId = ref('')
+let aclRequestId = 0
 const filterText = ref('')
 // 角色树数据
 const roleOptions = ref([])
@@ -78,20 +93,15 @@ const currentRoleId = ref('')
 const arrAclList = ref([])
 // 各菜单行已勾选的按钮/字段权限 { [menuId]: aclId[] }
 const arrChangeAllObj = ref({})
-// 复选框组件 ref 集合 { [menuId]: componentInstance }
-const checkboxRefs = {}
+const allSelected = computed(() => arrAclList.value.length > 0 &&
+  arrAclList.value.every(item => item.isSelect && !item.indeterminate))
+const someSelected = computed(() => arrAclList.value.some(item => item.isSelect))
 const resizeSplitData = ref(0)
 watch(filterText, val => treeRef.value?.filter(val))
 
 onMounted(() => {
   getRolePage()
 })
-
-/** 收集 aclCheckbox 组件 ref */
-function setCheckboxRef(el, id) {
-  if (el) checkboxRefs[id] = el
-  else delete checkboxRefs[id]
-}
 
 /** 树过滤：名称/编码文本匹配 */
 function filterNode(value, data) {
@@ -115,234 +125,131 @@ function getRolePage() {
 
 /** 角色节点点击 */
 function handleNodeClick(data) {
+  if (saving.value) return
   currentRoleId.value = data.id
-  arrChangeAllObj.value = {}
+  getAclList()
+}
+
+/** 权限回显只读取绑定值，不通过表格选择 API 触发子级授权。 */
+async function getAclList() {
+  const requestId = ++aclRequestId
+  const roleId = currentRoleId.value
+  loadedRoleId.value = ''
   arrAclList.value = []
-  if (data.id) getAclList()
-}
-
-/** 权限矩阵数据 */
-function getAclList() {
-  loading.value = true
   arrChangeAllObj.value = {}
-  aclList({}, currentRoleId.value).then(({ data }) => {
+  loading.value = true
+  try {
+    if (!roleId) return
+    const { data } = await aclList({}, roleId)
+    if (requestId !== aclRequestId || roleId !== currentRoleId.value) return
     arrAclList.value = data || []
-    initData(arrAclList.value)
-    nextTick(() => {
-      // 递归勾选已绑定菜单（isBind == 1）
-      (function selectAllFor(list) {
-        list.forEach(item => {
-          if (item.isBind == 1) {
-            item.isSelect = true
-            toggleSelection([item], true)
-          }
-          if (item.children && item.children.length) selectAllFor(item.children)
-        })
-      })(arrAclList.value)
-      loading.value = false
+    walkMenus(arrAclList.value, item => {
+      const aclIds = [...(item.buttonList || []), ...(item.fieldList || [])]
+        .filter(acl => acl.isBind == 1).map(acl => acl.id)
+      arrChangeAllObj.value[item.id] = aclIds
+      item.isSelect = item.isBind == 1 || aclIds.length > 0
+      item.indeterminate = false
     })
-  }).catch(() => { loading.value = false })
-}
-
-/** 初始化：默认全部不选中 */
-function initData(data) {
-  data.forEach(item => {
-    item.isSelect = false
-    if (item.children && item.children.length) initData(item.children)
-  })
-}
-
-/** 保存：收集勾选菜单与按钮/字段权限 */
-function handleSave() {
-  if (!currentRoleId.value) {
-    proxy.$modal.msgError('请先选择角色')
-    return
+    refreshParents(arrAclList.value, true)
+    loadedRoleId.value = roleId
+  } catch {
+    // 请求层统一提示错误；加载失败时保持禁止保存。
+  } finally {
+    if (requestId === aclRequestId) loading.value = false
   }
-  const arrChangeAll = [];
-  (function selectAllFor(list) {
-    list.forEach(item => {
-      // isSelect 为 true 或 ""（半选）均视为勾选
-      if (item.isSelect || item.isSelect === '') {
-        arrChangeAll.push({ menuId: item.id, aclIds: arrChangeAllObj.value[item.id] || [] })
-      }
-      if (item.children && item.children.length) selectAllFor(item.children)
-    })
-  })(arrAclList.value)
-  const objChangeAll = { roleId: currentRoleId.value, menuIds: [], aclIds: [] }
-  arrChangeAll.forEach(item => {
-    objChangeAll.menuIds.push(item.menuId)
-    objChangeAll.aclIds.push(...item.aclIds)
-  })
-  aclAssign(objChangeAll).then(({ message }) => {
-    proxy.$modal.msgSuccess(message)
+}
+
+function walkMenus(list, callback) {
+  list.forEach(item => {
+    callback(item)
+    if (item.children?.length) walkMenus(item.children, callback)
   })
 }
 
-/** aclCheckbox 勾选变化：联动菜单行勾选状态 */
+/** 自底向上计算祖先状态；回显时保留接口单独绑定的父菜单。 */
+function refreshParents(list, preserveBound = false) {
+  list.forEach(item => {
+    if (!item.children?.length) return
+    refreshParents(item.children, preserveBound)
+    item.isSelect = (preserveBound && item.isBind == 1) || item.children.some(child => child.isSelect)
+    item.indeterminate = item.isSelect &&
+      !item.children.every(child => child.isSelect && !child.indeterminate)
+  })
+}
+
+/** 用户勾选菜单时批量操作该子树，回显和按钮单选不走此逻辑。 */
+function setSubtreeSelected(row, selected) {
+  walkMenus([row], item => {
+    item.isSelect = selected
+    item.indeterminate = false
+    arrChangeAllObj.value[item.id] = selected
+      ? [...(item.buttonList || []), ...(item.fieldList || [])].map(acl => acl.id)
+      : []
+  })
+}
+
+function selectFun(row, selected) {
+  setSubtreeSelected(row, selected)
+  updateAncestors(row)
+}
+
+/** 只更新操作节点的祖先，避免改变其他分支单独绑定的父菜单。 */
+function updateAncestors(row) {
+  const parents = new Map()
+  walkMenus(arrAclList.value, item => {
+    item.children?.forEach(child => parents.set(child.id, item))
+  })
+  let parent = parents.get(row.id)
+  while (parent) {
+    parent.isSelect = parent.children.some(child => child.isSelect) ||
+      (arrChangeAllObj.value[parent.id]?.length || 0) > 0
+    parent.indeterminate = parent.isSelect &&
+      !parent.children.every(child => child.isSelect && !child.indeterminate)
+    parent = parents.get(parent.id)
+  }
+}
+
+/** 按钮/字段权限独立于菜单访问权，清空按钮不取消菜单。 */
 function changeAll(data, id, item) {
+  if (loading.value || saving.value) return
   arrChangeAllObj.value[id] = data
-  if (item) {
-    const len = arrChangeAllObj.value[id].length
-    const lens1 = item.buttonList ? item.buttonList.length : 0
-    const lens2 = item.fieldList ? item.fieldList.length : 0
-    const lens = lens1 + lens2
-    if (item.isSelect === false) {
-      productRef.value?.toggleRowSelection(item, true)
-    } else {
-      productRef.value?.toggleRowSelection(item, item.isSelect)
+  if (data.length > 0) {
+    item.isSelect = true
+    if (item.children?.length) {
+      item.indeterminate = !item.children.every(child => child.isSelect && !child.indeterminate)
     }
-    if (len > 0 && len < lens) {
-      item.isSelect = ''
-      productRef.value?.toggleRowSelection(item, false)
-      setRowIsSelect(item, true)
-    }
-    if (len === 0) {
-      item.isSelect = false
-      productRef.value?.toggleRowSelection(item, false)
-      setRowIsSelect(item, true)
-    }
-    if (len === lens) {
-      item.isSelect = true
-      productRef.value?.toggleRowSelection(item, true)
-      setRowIsSelect(item, true)
-    }
+    updateAncestors(item)
   }
 }
 
-/** 行勾选/取消 */
-function selectFun(selection, row) {
-  setRowIsSelect(row)
+function selectAllFun(selected) {
+  arrAclList.value.forEach(item => setSubtreeSelected(item, selected))
 }
 
-/**
- * 树形表格父子级联勾选（保留源项目递归语义）
- * @param row 操作行 @param type true 时仅按既有状态同步子级（不翻转）
- */
-function setRowIsSelect(row, type) {
-  // 点击父级复选框时，当前状态可能为半选（""），置为 false 并选中，实现子级全选效果
-  if (!type) {
-    if (row.isSelect === '') {
-      row.isSelect = false
-      productRef.value?.toggleRowSelection(row, true)
+/** 保存与展示使用同一份状态，祖先菜单随选中的子菜单一并提交。 */
+async function handleSave() {
+  if (loading.value || saving.value || !loadedRoleId.value || loadedRoleId.value !== currentRoleId.value) return
+  const payload = { roleId: loadedRoleId.value, menuIds: [], aclIds: [] }
+  walkMenus(arrAclList.value, item => {
+    if (item.isSelect) {
+      payload.menuIds.push(item.id)
+      payload.aclIds.push(...(arrChangeAllObj.value[item.id] || []))
     }
-    row.isSelect = !row.isSelect
-  }
-
-  // 子级随父级同步
-  function selectAllChildrens(data) {
-    data.forEach(item => {
-      item.isSelect = row.isSelect
-      productRef.value?.toggleRowSelection(item, row.isSelect)
-      if (item.children && item.children.length) selectAllChildrens(item.children)
-      if (checkboxRefs[item.id] && !type) checkboxRefs[item.id].isWatch()
-    })
-  }
-
-  // 收集子孙选中状态
-  function getSelectStatus(arr, data) {
-    data.forEach(child => {
-      arr.push(child.isSelect)
-      if (child.children && child.children.length) getSelectStatus(arr, child.children)
-    })
-    return arr
-  }
-
-  // 节点级别：1 仅父级 / 2 既是子级又是父级 / 3 仅子级 / 4 顶层无子级 / 5 带按钮/字段的子级
-  function getLevelStatus(row) {
-    if (!row.parentId) {
-      return row.children && row.children.length ? 1 : 4
-    }
-    if ((row.buttonList && row.buttonList.length) || (row.fieldList && row.fieldList.length)) {
-      return 5
-    } else if (!row.children || !row.children.length) {
-      return 3
-    }
-    return 2
-  }
-
-  // 按 parentId 查找父节点对象
-  let result = {}
-  function getExplicitNode(data, parentId) {
-    data.forEach(item => {
-      if (item.id == parentId) result = item
-      if (item.children && item.children.length) getExplicitNode(item.children, parentId)
-    })
-    return result
-  }
-
-  // 操作子节点后向上回溯：全选→父选true；全不选→false；部分→半选""
-  function operateLastLeve(row, type) {
-    let statusArr = []
-    const item = getExplicitNode(arrAclList.value, row.parentId)
-    if (!item.children) return
-    statusArr = getSelectStatus(statusArr, item.children)
-    if (statusArr.every(v => v === true)) {
-      item.isSelect = true
-      productRef.value?.toggleRowSelection(item, true)
-    } else if (statusArr.every(v => v === false)) {
-      if (!type) {
-        item.isSelect = false
-        productRef.value?.toggleRowSelection(item, false)
-      } else {
-        item.isSelect = false
-      }
-    } else {
-      item.isSelect = ''
-    }
-    // 继续向上回溯
-    if (item.parentId != null && item.parentId !== '') operateLastLeve(item, type)
-  }
-
-  const levelStatus = getLevelStatus(row)
-  if (levelStatus == 1) {
-    selectAllChildrens(row.children)
-  } else if (levelStatus == 2) {
-    selectAllChildrens(row.children)
-    operateLastLeve(row)
-  } else if (levelStatus == 3) {
-    operateLastLeve(row)
-  } else if (levelStatus == 5) {
-    selectAllChildrens([row])
-    operateLastLeve(row, type)
-  }
-  if (checkboxRefs[row.id] && !type) checkboxRefs[row.id].isWatch()
-}
-
-/** 顶层是否全部勾选 */
-function checkIsAllSelect() {
-  const statusArr = arrAclList.value.map(item => item.isSelect)
-  return statusArr.every(v => v === true)
-}
-
-/** 表头全选/取消全选 */
-function selectAllFun() {
-  const isAllSelect = checkIsAllSelect()
-  arrAclList.value.forEach(item => {
-    item.isSelect = isAllSelect
-    productRef.value?.toggleRowSelection(item, !isAllSelect)
-    setRowIsSelect(item)
   })
-}
-
-/** 半选行样式 */
-function rowClassNameFun({ row }) {
-  if (row.isSelect === '') return 'indeterminate'
-}
-
-/** 表头半选样式 */
-function headerRowClassName() {
-  const statusArr = arrAclList.value.map(item => item.isSelect)
-  return statusArr.includes('') ? 'indeterminate' : ''
-}
-
-/** 批量设置行勾选 */
-function toggleSelection(rows, flag) {
-  if (rows) {
-    rows.forEach(row => productRef.value?.toggleRowSelection(row, flag))
-  } else {
-    productRef.value?.clearSelection()
+  payload.aclIds = [...new Set(payload.aclIds)]
+  saving.value = true
+  try {
+    const { message } = await aclAssign(payload)
+    proxy.$modal.msgSuccess(message)
+  } catch {
+    // 请求层统一提示错误，保留当前编辑状态以便重试。
+  } finally {
+    saving.value = false
   }
 }
+
+onBeforeUnmount(() => { aclRequestId++ })
+
 const resizeSplit = (val) => {
   resizeSplitData.value = val.event.x
 }
@@ -414,30 +321,5 @@ const resizeSplit = (val) => {
     }
   }
 
-  // 半选状态样式（selection 复选框显示为横线）
-  :deep(.indeterminate) {
-    .el-table-column--selection {
-      .el-checkbox__input {
-        .el-checkbox__inner {
-          background-color: var(--el-color-primary) !important;
-          border-color: var(--el-color-primary) !important;
-
-          &::after {
-            content: "";
-            position: absolute;
-            display: block;
-            width: auto !important;
-            height: 2px;
-            left: 3px;
-            right: 3px;
-            top: 5px;
-            transform: scale(0.5);
-            border-color: #fff !important;
-            background-color: #fff;
-          }
-        }
-      }
-    }
-  }
 }
 </style>
