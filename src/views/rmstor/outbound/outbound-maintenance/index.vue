@@ -6,7 +6,7 @@
         <el-pro-table ref="proTableRef" :columns="columnsData" :page-size="queryParams.pageSize" :max-visible-buttons="99"
             :toolbar-config="toolbarConfig" :search-collapse-threshold="5" @action="onAction" :data="tableData"
             :total="total" @search="onSearch" table-id="outbound-maintenance" :show-checkbox="true" action-width="120"
-            :grid-options="{ rowId: 'obmtId' }" :default-search-form="defaultSearchForm" />
+            :grid-options="{ rowId: 'obmtId' }" />
             </el-col>
         </el-row>
         <create-dialog ref="createDialog" @createSuccess="getList" />
@@ -38,26 +38,9 @@ const loading = ref(false)
 const total = ref(0)
 
 
-const initDate = () => {
-    const date = new Date(getCookie("warehouseYearMonth"));
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    const formatDate = (date) => {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-    }
-    return [formatDate(firstDay), formatDate(lastDay)]
-}
-const defaultSearchForm = {
-    orderDate: initDate()
-};
-
 const queryParams = ref({
     pageNum: 1,
-    pageSize: 30,
-    orderDate: defaultSearchForm.orderDate
+    pageSize: 30
 })
 // const handleButtonShow = (code) => {
 //     if (['publish', 'cancelPublish'].includes(code) && byCodeObj.value['45'] === '1') {
@@ -86,9 +69,7 @@ const queryParams = ref({
 /** 查询列表 */
 function getList() {
     loading.value = true
-    const paramsObj = proxy.addDateRange(queryParams.value, queryParams.value.orderDate, 'orderDate')
-    delete queryParams.value.orderDate
-    rmstorInternalList(paramsObj).then(({ data }) => {
+    rmstorInternalList(queryParams.value).then(({ data }) => {
         tableData.value = data.list || []
         total.value = data.total
     }).finally(() => {
@@ -96,9 +77,7 @@ function getList() {
     })
 }
 const onSearch = (params, pageConfig) => {
-    const form = proTableRef.value?.getSearchForm?.()
-    const paramsObj = proxy.addDateRange({ ...params, ...pageConfig }, form.orderDate, 'orderDate')
-    queryParams.value = paramsObj
+    queryParams.value = { ...params, ...pageConfig }
     getList()
 }
 const toolbarConfig = {
