@@ -271,7 +271,7 @@ const handleConfirm = () => {
     refBillCode: item.spdCode,
     contPrice: item.contPrice ?? item.stkPrice ?? 0,
     cardPrice: item.cardPrice ?? 0,
-    orderPrice: item.contPrice ?? item.stkPrice ?? 0,
+    orderPrice: item.stkPrice ?? item.contPrice ?? 0,
     paNum: item.arrivalNum || 0,
     refBillSeq: item.spdSeq,
     refBillDid: item.pddId,

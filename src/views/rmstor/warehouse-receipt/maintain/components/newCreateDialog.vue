@@ -142,10 +142,10 @@
              {{ row.contPrice != null && row.contPrice !== '' ? Number(row.contPrice).toFixed(2) : '' }}
             </template>
             <template #cardPrice="{row}">
-             {{ row.cardPrice != null && row.cardPrice !== '' ? Number(row.cardPrice).toFixed(2) : '' }}
+             {{ formatUnitPrice(row.cardPrice) }}
             </template>
             <template #standardAmount="{row}">
-             {{ getStandardAmount(row)}}
+             {{ createForm.ibSource === '0' && row.standardAmount != null ? Number(row.standardAmount).toFixed(2) : getStandardAmount(row) }}
             </template>
           </el-pro-table>
           <div style="margin-top: 16px;">采购金额合计：{{ (tableData.map(item => item.stkAmount ? Number(item.stkAmount) : 0).reduce((acc, curr) => acc + curr, 0) || 0).toFixed(2) }}</div>
@@ -326,6 +326,10 @@ const currentData = ref({});
 
 const tableRef = ref(null);
 
+const formatUnitPrice = (value) => value != null && value !== ''
+  ? Number(value).toFixed(Math.max(2, checkDecimalPlaces(value)))
+  : '';
+
 const columns = computed(() => [
   { field: "matlCode", title: "物资编号", minWidth: 180, align: "center", required: true, headerClassName: "required-col-header" },
   { field: "matlName", title: "物资名称", minWidth: 200, align: "center"},
@@ -333,7 +337,7 @@ const columns = computed(() => [
   { field: "matlUnit", title: "计量单位", minWidth: 140, align: "center" },
   { field: "paNum", title: "入库数量", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.paNum != null && row.paNum !== '' ? Number(row.paNum).toFixed(4) : '', editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 4, "controls-position": "right", style: "width: 100%" } } },
   { field: "contPrice", title: "采购单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "contPrice", visible: createForm.value.ibSource !== "0" },
-  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => row.orderPrice != null && row.orderPrice !== '' ? Number(row.orderPrice).toFixed(2) : '', visible: createForm.value.ibSource === "0" },
+  { field: "orderPrice", title: "订单单价", minWidth: 140, align: "center", render: (row) => formatUnitPrice(row.orderPrice), visible: createForm.value.ibSource === "0" },
   { field: "stkAmount", title: "采购金额", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", render: (row) => row.stkAmount != null && row.stkAmount !== '' ? Number(row.stkAmount).toFixed(2) : '',editRender: { name: "el-input-number", props: { min: 0, max: 9999999999, precision: 2, "controls-position": "right", style: "width: 100%" } } },
   { field: "cardPrice", title: "库存单价", minWidth: 140, align: "center", required: true, headerClassName: "required-col-header", type: "slot", slotName: "cardPrice" },
   { field: "standardAmount", title: "入库金额", minWidth: 140, align: "center", type: "slot", slotName: "standardAmount" },
@@ -770,7 +774,7 @@ const toSave = () => {
                 stkAmount: item.stkAmount || 0,
                 orderPrice: item.orderPrice || null,
                 matlRaw: item.matlRaw || null,
-                standardAmount: getStandardAmount(item) || 0,
+                standardAmount: createForm.value.ibSource === "0" ? (item.standardAmount ?? getStandardAmount(item)) : (getStandardAmount(item) || 0),
                 productionDate: parseTime(item.productionDate, '{y}-{m}-{d}'),
                 expirationDate: parseTime(item.expirationDate, '{y}-{m}-{d}'),
               }
@@ -783,7 +787,7 @@ const toSave = () => {
                 stkAmount: item.stkAmount || 0,
                 orderPrice: item.orderPrice || null,
                 matlRaw: item.matlRaw || null,
-                standardAmount: getStandardAmount(item) || 0,
+                standardAmount: createForm.value.ibSource === "0" ? (item.standardAmount ?? getStandardAmount(item)) : (getStandardAmount(item) || 0),
               }
             }
           }),
@@ -1101,39 +1105,10 @@ const returnPurchaseData = ([arr, data]) => {
     item.contPrice = detailPriceformat(item.contPrice ?? item.stkPrice) || 0;
     item.paNum = detailPriceformat(item.paNum, "4") || 0;
     item._contPrice = item.contPrice;
-    // item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value);
-    item.cardPrice = _formatDecimal(item.cardPrice, decimalPlaces.value) || 0;
-    item.orderPrice = detailPriceformat(item.orderPrice) || 0;
-
-    if (!!item.contPrice && !!item.paNum && !isNaN(Number(item.contPrice)) && !isNaN(Number(item.paNum))) {
-      item.stkAmount = detailPriceformat(item.contPrice * item.paNum) || 0;
-    }
-
-    if (createForm.value.taxFlagName === "免税" || createForm.value.taxFlagName === "零税率" || createForm.value.taxFlagCode === "03" || createForm.value.taxFlagCode === "04") {
-      item.cardPrice = _formatDecimal(item.stkAmount / item.paNum, decimalPlaces.value) || 0;
-    }
-
-    if (createForm.value.taxFlagName === "应税" || createForm.value.taxFlagCode === "01") {
-      // 含税
-      if (item.taxFlag === "1") {
-        item.cardPrice = _formatDecimal(item.orderPrice / (1 + item.taxRate), decimalPlaces.value) || 0;
-      }
-
-      // 不含税
-      if (item.taxFlag == "0") {
-          item.cardPrice = item.orderPrice;
-      }
-    }
-    if (createForm.value.taxFlagName === "非应税" || createForm.value.taxFlagCode === "02") {
-      // 含税
-      if (item.taxFlag === "1") {
-        item.cardPrice = item.orderPrice;
-      }
-      // 不含税
-      if (item.taxFlag === "0") {
-        item.cardPrice = _formatDecimal(item.orderPrice * (1 + item.taxRate), decimalPlaces.value) || 0;
-      }
-    }
+    item.orderPrice = item.stkPrice ?? item.orderPrice ?? item.contPrice ?? 0;
+    item.stkAmount = detailPriceformat(item.stkAmound ?? (item.contPrice * item.paNum)) || 0;
+    item.cardPrice = item.cardPrice ?? 0;
+    item.standardAmount = detailPriceformat(item.standardAmound ?? getStandardAmount(item)) || 0;
 
     if (!!item.productionDate && !!item.validityPeriod && !!item.validityPeriodUnit) {
       item.expirationDate = computedExpirationDate(item.productionDate, item.validityPeriod, item.validityPeriodUnit);
@@ -1205,6 +1180,9 @@ const paNumInput = (val, data, row) => {
 
   if (createForm.value.ibSource !== "0" && createForm.value.ibSource !== "2") {
     row.cardPrice = _formatDecimal(row.stkAmount / val, decimalPlaces.value) || 0;
+  }
+  if (createForm.value.ibSource === "0") {
+    row.standardAmount = getStandardAmount(row);
   }
 };
 
@@ -1442,6 +1420,7 @@ const editSave = ({editedData, row, rowId}) => {
   res.stkAmount = row.stkAmount = detailPriceformat2(row.stkAmount);
   res.contPrice = row.contPrice;
   res.cardPrice = row.cardPrice;
+  res.standardAmount = row.standardAmount;
 
   res.credCode = row.credCode;
   res.productionDate = row.productionDate;
@@ -1459,6 +1438,7 @@ const editCancel = ({row, rowId}) => {
   row.stkAmount = res.stkAmount;
   row.contPrice = res.contPrice;
   row.cardPrice = res.cardPrice;
+  row.standardAmount = res.standardAmount;
   row.credCode = res.credCode;
   row.productionDate = res.productionDate;
   row.validityPeriod = res.validityPeriod;
