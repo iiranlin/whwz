@@ -188,6 +188,7 @@ const getList = async () => {
       ...queryParams.value,
       spdCode: purchaseForm.value.currentPurchaseOrder.spdCode,
       pdmId: purchaseForm.value.currentPurchaseOrder.pdmId,
+      taxFlagCode: props.taxFlagCode,
     });
     tableData.value = (res.data?.list || []).map(item => ({
       ...item,

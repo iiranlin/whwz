@@ -173,6 +173,7 @@
       :key="purchaseKey"
       :visible="purchasedVisible"
       :refBillCode="createForm.refBillCode"
+      :taxFlagCode="createForm.taxFlagCode"
       :already-table-data="_tableData"
       width="90%"
       @dialog-close="purchasedDialogClose"
