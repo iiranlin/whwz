@@ -188,7 +188,7 @@ const plantData = async () => {
       type: "amount",
     },
   {
-      field: "profieLoseNum",
+      field: "profitLoseNum",
       title: "调整总数量",
       type: "amount",
     },
