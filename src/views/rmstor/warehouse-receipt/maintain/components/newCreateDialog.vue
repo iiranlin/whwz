@@ -1105,7 +1105,7 @@ const returnPurchaseData = ([arr, data]) => {
     item.contPrice = detailPriceformat(item.contPrice ?? item.stkPrice) || 0;
     item.paNum = detailPriceformat(item.paNum, "4") || 0;
     item._contPrice = item.contPrice;
-    item.orderPrice = item.stkPrice ?? item.orderPrice ?? item.contPrice ?? 0;
+    item.orderPrice = item.contPrice ?? item.stkPrice ?? item.orderPrice ?? 0;
     item.stkAmount = detailPriceformat(item.stkAmound ?? (item.contPrice * item.paNum)) || 0;
     item.cardPrice = item.cardPrice ?? 0;
     item.standardAmount = detailPriceformat(item.standardAmound ?? getStandardAmount(item)) || 0;
