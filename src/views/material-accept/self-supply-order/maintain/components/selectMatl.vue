@@ -43,7 +43,7 @@ const queryParams = ref({
 const columnsData = ref([
   { field: 'matlCode', title: '物资编号', minWidth: 140, align: 'center', searchable: true, searchType: 'input' },
   { field: 'matlName', title: '物资名称', minWidth: 160, align: 'left', searchable: true, searchType: 'input' },
-  { field: 'matlType', title: '规格型号/材质/图号', minWidth: 220, align: 'left', type: 'slot' },
+  { field: 'matlType', title: '规格型号/材质/图号', minWidth: 220, align: 'left', type: 'slot', searchable: true, searchType: 'input' },
   { field: 'matlUnit', title: '计量单位', minWidth: 100, align: 'center' },
   { field: 'matlRaw', title: '材质', minWidth: 100, align: 'center' },
   { field: 'matlPcode', title: '图号', minWidth: 120, align: 'center' },
